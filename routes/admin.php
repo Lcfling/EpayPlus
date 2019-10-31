@@ -46,4 +46,5 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/saveinfo/{type}',     'UserController@saveInfo');
     Route::resource('/roles',           'RoleController');
     Route::resource('/permissions',     'PermissionController');
+    Route::resource('/notices',         'NoticeController');
 });
