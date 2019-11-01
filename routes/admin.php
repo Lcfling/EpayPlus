@@ -50,6 +50,7 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/noticesUpdate',       'NoticeController@update');
     Route::resource('/options',         'OptionController');
     Route::post('/optionsUpdate',       'OptionController@update');
+    Route::resource('/codeuser',        'CodeUserController');
 
 });
 
