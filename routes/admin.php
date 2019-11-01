@@ -47,8 +47,9 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/roles',           'RoleController');
     Route::resource('/permissions',     'PermissionController');
     Route::resource('/notices',         'NoticeController');
+    Route::post('/noticesUpdate',       'NoticeController@update');
     Route::resource('/options',         'OptionController');
-    Route::post('/optionsUpdate',    'OptionController@update');
+    Route::post('/optionsUpdate',       'OptionController@update');
 
 });
 

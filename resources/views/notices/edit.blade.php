@@ -1,23 +1,18 @@
-@section('title', '配置编辑')
+@section('title', '公告编辑')
 @section('content')
 
     <div class="layui-form-item">
-        <label class="layui-form-label">key：</label>
+        <label class="layui-form-label">标题：</label>
         <div class="layui-input-inline">
-            <input type="text" value="{{$info['key'] or ''}}" name="key"  placeholder="请填写key值" lay-verify="required" lay-reqText="请填写key值" autocomplete="off" class="layui-input">
+            <input type="text" value="{{$info['title'] or ''}}" name="title"  placeholder="请填写标题" lay-verify="required" lay-reqText="请填写标题" autocomplete="off" class="layui-input">
         </div>
     </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">value：</label>
-        <div class="layui-input-inline">
-            <input type="text" value="{{$info['value'] or ''}}" name="value"  placeholder="请填写value值" lay-verify="required" lay-reqText="请填写value值" autocomplete="off" class="layui-input">
-        </div>
-    </div>
+
 
     <div class="layui-form-item">
         <label class="layui-form-label">内容：</label>
         <div class="layui-input-inline">
-            <input type="text" value="{{$info['content'] or ''}}" name="content" placeholder="请填写内容" lay-verify="required" lay-reqText="请填写内容" autocomplete="off" class="layui-input">
+            <textarea name="content" placeholder="请填写内容" lay-verify="required" style="width: 260px;height: 160px;resize: none">{{$info['content'] or ''}}</textarea>
         </div>
     </div>
 
@@ -36,7 +31,7 @@
             if(id==0){
                 form.on('submit(formDemo)', function(data) {
                     $.ajax({
-                        url:"{{url('/admin/options')}}",
+                        url:"{{url('/admin/notices')}}",
                         data:$('form').serialize(),
                         type:'post',
                         dataType:'json',
@@ -46,6 +41,7 @@
                                     parent.layer.close(index);
                                     window.parent.frames[1].location.reload();
                                 });
+
 
                             }else{
                                 layer.msg(res.msg,{shift: 6,icon:5});
@@ -59,8 +55,9 @@
                 });
             }else{
                 form.on('submit(formDemo)', function(data) {
+
                     $.ajax({
-                        url:"{{url('/admin/optionsUpdate')}}",
+                        url:"{{url('/admin/noticesUpdate')}}",
                         data:$('form').serialize(),
                         type:'post',
                         dataType:'json',
@@ -70,7 +67,6 @@
                                     parent.layer.close(index);
                                     window.parent.frames[1].location.reload();
                                 });
-
                             }else{
                                 layer.msg(res.msg,{shift: 6,icon:5});
                             }
