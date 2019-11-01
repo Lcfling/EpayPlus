@@ -35,7 +35,6 @@ class OptionController extends Controller
      * 用户增加保存
      */
     public function store(StoreRequest $request){
-        $id =$request->input('id');
         $data=$request->all();
         unset($data['_token']);
         $res=$this->add_unique($data['key'],$data['value']);
