@@ -29,9 +29,6 @@ class BusinessController extends Controller
         }
         return view('business.list',['list'=>$data,'input'=>$request->all()]);
     }
-    /**
-     * 根据条件来筛选数据列表
-     */
 
     /**
      * 编辑页
