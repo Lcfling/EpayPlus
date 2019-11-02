@@ -3,8 +3,6 @@
 
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-
 class Busdraw extends Model
 {
     protected $table = "business_withdraw";
