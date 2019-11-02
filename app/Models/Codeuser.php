@@ -14,4 +14,5 @@ class Codeuser extends Model
     protected $fillable = ['user_id','account','mobile','pid','shenfen','take_status','rate','rates','jh_status'];
     protected $codeUserInfo;
     public $timestamps = false;
+
 }

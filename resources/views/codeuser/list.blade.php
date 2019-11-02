@@ -4,6 +4,15 @@
     <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-desc="添加码商" data-url="{{url('/admin/codeuser/0/edit')}}"><i class="layui-icon">&#xe654;</i></button>
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商号" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
+    </div>
+    <div class="layui-inline">
+        <button class="layui-btn layui-btn-warm" lay-submit name="excel" value="is" lay-filter="formDemo2">导出Excel</button>
+    </div>
 @endsection
 @section('table')
     <table class="layui-table" lay-even lay-skin="nob">
@@ -11,7 +20,17 @@
             <col class="hidden-xs" width="50">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
-            <col>
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
             <col width="200">
@@ -83,7 +102,9 @@
             ;
             laydate({istoday: true});
             form.render();
-            form.on('submit(formDemo)', function(data) {
+            form.on('submit(formDemo1)', function(data) {
+            });
+            form.on('submit(formDemo2)', function(data) {
             });
         });
     </script>

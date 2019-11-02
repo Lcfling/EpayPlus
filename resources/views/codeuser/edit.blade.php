@@ -46,8 +46,9 @@
             <input type="text" value="{{$info['rates'] or ''}}" name="rates" lay-verify="alifee" placeholder="请输入支付宝费率" autocomplete="off" class="layui-input">
         </div>
     </div>
+
 @endsection
-@section('user_id',$id)
+@section('id',$id)
 @section('js')
     <script>
         layui.use(['form','jquery','laypage', 'layer'], function() {
@@ -108,8 +109,6 @@
 
             if(id==0){
                 form.on('submit(formDemo)', function(data) {
-                    console.log($('form').serialize());
-
                     $.ajax({
                         url:"{{url('/admin/codeuser')}}",
                         data:$('form').serialize(),
@@ -133,7 +132,29 @@
                     return false;
                 });
             }else{
+                form.on('submit(formDemo)', function(data) {
+                    $.ajax({
+                        url:"{{url('/admin/codeuserUpdate')}}",
+                        data:$('form').serialize(),
+                        type:'post',
+                        dataType:'json',
+                        success:function(res){
+                            if(res.status == 1){
+                                layer.msg(res.msg,{icon:6},function () {
+                                    parent.layer.close(index);
+                                    window.parent.frames[1].location.reload();
+                                });
 
+                            }else{
+                                layer.msg(res.msg,{shift: 6,icon:5});
+                            }
+                        },
+                        error : function(XMLHttpRequest, textStatus, errorThrown) {
+                            layer.msg('网络失败', {time: 1000});
+                        }
+                    });
+                    return false;
+                });
             }
 
         });
