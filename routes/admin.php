@@ -51,6 +51,13 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/options',         'OptionController');
     Route::post('/optionsUpdate',       'OptionController@update');
     Route::resource('/codeuser',        'CodeUserController');
+    Route::post('/codeuserUpdate', 'CodeUserController@update');
+    Route::resource('/coderakemoney',   'CoderakemoneyController');
+    Route::post('/coderakemoneyUpdate', 'CoderakemoneyController@update');
+    Route::resource('/business',        'BusinessController');
+    Route::post('/businessUpdate',      'BusinessController@update');
+    Route::resource('/busdrawnone',     'BusdrawnoneController');
+    Route::post('/busdrawnone/changstatus', 'BusdrawnoneController@changstatus');
 
 });
 
