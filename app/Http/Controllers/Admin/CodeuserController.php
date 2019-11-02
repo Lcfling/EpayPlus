@@ -48,7 +48,6 @@ class CodeuserController extends Controller
         $res=$this->add_unique($data['account']);
         if(!$res){
             $pid=$data['pid']?$data['pid']:0;
-            $data['account']=intval($data['account']);
             $data['mobile']=$data['account'];
             $data['pid']=intval($pid);
             $data['shenfen']=intval($data['shenfen']);
@@ -83,14 +82,12 @@ class CodeuserController extends Controller
             $data['shenfen']=intval($data['shenfen']);
             $data['rate']=floatval($data['rate']);
             $data['rates']=floatval($data['rates']);
-
-            $insert=Codeuser::where('user_id',$id)->update($data);
-            if($insert){
+            $update=Codeuser::where('user_id',$id)->update($data);
+            if($update!==false){
                 return ['msg'=>'修改成功！','status'=>1];
             }else{
                 return ['msg'=>'修改失败！'];
             }
-
         }else{
             return ['msg'=>'手机号已存在！'];
         }
