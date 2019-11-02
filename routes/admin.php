@@ -58,7 +58,8 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/businessUpdate',      'BusinessController@update');
     Route::resource('/busdrawnone',     'BusdrawnoneController');
     Route::post('/busdrawnone/changstatus', 'BusdrawnoneController@changstatus');
-
+    Route::resource('/agent',        'AgentController');
+    Route::post('/agentUpdate',      'AgentController@update');
 });
 
 Route::get('/phpinfo',function (Request $request){
