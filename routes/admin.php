@@ -51,15 +51,18 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/options',         'OptionController');
     Route::post('/optionsUpdate',       'OptionController@update');
     Route::resource('/codeuser',        'CodeUserController');
-    Route::post('/codeuserUpdate', 'CodeUserController@update');
+    Route::post('/codeuserUpdate',      'CodeUserController@update');
     Route::resource('/coderakemoney',   'CoderakemoneyController');
     Route::post('/coderakemoneyUpdate', 'CoderakemoneyController@update');
     Route::resource('/business',        'BusinessController');
     Route::post('/businessUpdate',      'BusinessController@update');
     Route::resource('/busdrawnone',     'BusdrawnoneController');
-    Route::post('/busdrawnone/changstatus', 'BusdrawnoneController@changstatus');
-    Route::resource('/agent',        'AgentController');
-    Route::post('/agentUpdate',      'AgentController@update');
+    Route::post('/busdrawnone/pass',    'BusdrawnoneController@pass');
+    Route::post('/busdrawnone/reject',  'BusdrawnoneController@reject');
+    Route::resource('/busdrawdone',     'BusdrawdoneController');
+    Route::resource('/busdrawreject',   'BusdrawrejectController');
+    Route::resource('/agent',           'AgentController');
+    Route::post('/agentUpdate',         'AgentController@update');
 });
 
 Route::get('/phpinfo',function (Request $request){
