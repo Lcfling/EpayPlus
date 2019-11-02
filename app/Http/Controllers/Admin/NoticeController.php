@@ -55,7 +55,6 @@ class NoticeController extends Controller
         $data=$request->all();
         unset($data['_token']);
         unset($data['id']);
-
         $update=Notice::where('id',$id)->update($data);
             if($update!==false){
                 return ['msg'=>'修改成功！','status'=>1];
