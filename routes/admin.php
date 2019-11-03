@@ -63,6 +63,13 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/busdrawreject',   'BusdrawrejectController');
     Route::resource('/agent',           'AgentController');
     Route::post('/agentUpdate',         'AgentController@update');
+    Route::resource('/agentdrawnone',   'AgentdrawnoneController');
+    Route::post('/agentdrawnone/pass',  'AgentdrawnoneController@pass');
+    Route::post('/agentdrawnone/reject','AgentdrawnoneController@reject');
+    Route::resource('/agentdrawdone',   'AgentdrawdoneController');
+    Route::resource('/agentdrawreject', 'AgentdrawrejectController');
+
+
 });
 
 Route::get('/phpinfo',function (Request $request){
