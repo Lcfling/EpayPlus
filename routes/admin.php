@@ -46,14 +46,10 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/saveinfo/{type}',     'UserController@saveInfo');
     Route::resource('/roles',           'RoleController');
     Route::resource('/permissions',     'PermissionController');
-    Route::resource('/notices',         'NoticeController');
-    Route::post('/noticesUpdate',       'NoticeController@update');
     Route::resource('/options',         'OptionController');
     Route::post('/optionsUpdate',       'OptionController@update');
-    Route::resource('/codeuser',        'CodeUserController');
-    Route::post('/codeuserUpdate',      'CodeUserController@update');
-    Route::resource('/coderakemoney',   'CoderakemoneyController');
-    Route::post('/coderakemoneyUpdate', 'CoderakemoneyController@update');
+    Route::resource('/notices',         'NoticeController');
+    Route::post('/noticesUpdate',       'NoticeController@update');
     Route::resource('/business',        'BusinessController');
     Route::post('/businessUpdate',      'BusinessController@update');
     Route::resource('/busdrawnone',     'BusdrawnoneController');
@@ -68,6 +64,15 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/agentdrawnone/reject','AgentdrawnoneController@reject');
     Route::resource('/agentdrawdone',   'AgentdrawdoneController');
     Route::resource('/agentdrawreject', 'AgentdrawrejectController');
+    Route::resource('/codeuser',        'CodeUserController');
+    Route::post('/codeuserUpdate',      'CodeUserController@update');
+    Route::resource('/coderakemoney',   'CoderakemoneyController');
+    Route::post('/coderakemoneyUpdate', 'CoderakemoneyController@update');
+    Route::resource('/codedrawnone',    'CodedrawnoneController');
+    Route::post('/codedrawnone/pass',   'CodedrawnoneController@pass');
+    Route::post('/codedrawnone/reject', 'CodedrawnoneController@reject');
+    Route::resource('/codedrawdone',    'CodedrawdoneController');
+    Route::resource('/codedrawreject',    'CodedrawrejectController');
 
 
 });
