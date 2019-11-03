@@ -18,3 +18,17 @@ if (!function_exists('is_config_id')) {
         return in_array($id, $ids);
     }
 }
+
+/**获取周
+ * @param $date
+ * @return float
+ */
+function computeWeek($date,$status = 'true'){
+    if($status){
+        $diff = strtotime($date);
+    }else{
+        $diff = $date;
+    }
+    $res = ceil($diff/(24*60*60*7));
+    return $res;
+}

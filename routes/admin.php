@@ -73,11 +73,11 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/codedrawnone/reject', 'CodedrawnoneController@reject');
     Route::resource('/codedrawdone',    'CodedrawdoneController');
     Route::resource('/codedrawreject',  'CodedrawrejectController');
-    Route::resource('/recharge','RechargeController');
-    Route::post('/recharge/enable','RechargeController@enable');
+    Route::resource('/recharge',        'RechargeController');
+    Route::post('/recharge/enable',     'RechargeController@enable');
     Route::resource('/rechargelist',    'RechargelistController');
     Route::post('/rechargelist/enable', 'RechargelistController@enable');
-
+    Route::resource('/billflow',        'BillflowController');
 });
 
 Route::get('/phpinfo',function (Request $request){
