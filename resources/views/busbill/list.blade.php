@@ -1,4 +1,4 @@
-@section('title', '商户账单')
+@section('title', '商户流水')
 @section('header')
     <div class="layui-inline">
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>

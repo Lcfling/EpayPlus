@@ -19,7 +19,6 @@ class BusbillController extends Controller
         $data = Busbill::where($map)->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
-            $data[$key]['savetime'] =date("Y-m-d H:i:s",$value["savetime"]);
         }
         return view('busbill.list',['list'=>$data,'input'=>$request->all()]);
 

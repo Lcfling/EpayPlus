@@ -50,6 +50,8 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/optionsUpdate',       'OptionController@update');
     Route::resource('/notices',         'NoticeController');
     Route::post('/noticesUpdate',       'NoticeController@update');
+    Route::resource('/callcenter',      'CallcenterController');
+    Route::post('/callcenterUpdate',    'CallcenterController@update');
     Route::resource('/business',        'BusinessController');
     Route::post('/businessUpdate',      'BusinessController@update');
     Route::resource('/busdrawnone',     'BusdrawnoneController');
@@ -81,6 +83,10 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/order',           'OrderController');
     Route::resource('/buscount',        'BuscountController');
     Route::resource('/busbill',         'BusbillController');
+    Route::resource('/agentcount',      'AgentcountController');
+    Route::resource('/agentbill',       'AgentbillController');
+    Route::resource('/codecount',       'CodecountController');
+    Route::resource('/codebill',        'BillflowController');
 });
 
 Route::get('/phpinfo',function (Request $request){

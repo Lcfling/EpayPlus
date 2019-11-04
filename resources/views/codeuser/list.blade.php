@@ -1,4 +1,4 @@
-@section('title', '商户')
+@section('title', '码商')
 @section('header')
     <div class="layui-inline">
     <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-desc="添加码商" data-url="{{url('/admin/codeuser/0/edit')}}"><i class="layui-icon">&#xe654;</i></button>
@@ -77,7 +77,7 @@
                 <td class="hidden-xs"></td>
                 <td>
                     <div class="layui-inline">
-                        <button class="layui-btn layui-btn-small layui-btn-normal edit-btn" data-id="{{$info['user_id']}}" data-desc="编辑商户" data-url="{{url('/admin/codeuser/'. $info['user_id'] .'/edit')}}"><i class="layui-icon">&#xe642;</i></button>
+                        <button class="layui-btn layui-btn-small layui-btn-normal edit-btn" data-id="{{$info['user_id']}}" data-desc="编辑码商" data-url="{{url('/admin/codeuser/'. $info['user_id'] .'/edit')}}"><i class="layui-icon">&#xe642;</i></button>
                         <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="{{$info['user_id']}}" data-url="{{url('/admin/codeuser/'.$info['user_id'])}}"><i class="layui-icon">&#xe640;</i></button>
                     </div>
                 </td>

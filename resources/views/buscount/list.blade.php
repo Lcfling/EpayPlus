@@ -27,6 +27,7 @@
         <tr>
             <th class="hidden-xs">ID</th>
             <th class="hidden-xs">商户ID</th>
+            <th class="hidden-xs">余额</th>
             <th class="hidden-xs">总分</th>
             <th class="hidden-xs">总佣金</th>
             <th class="hidden-xs">当天利润</th>
@@ -40,6 +41,7 @@
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['business_id']}}</td>
+                <td class="hidden-xs">{{$info['balance']}}</td>
                 <td class="hidden-xs">{{$info['tol_sore']}}</td>
                 <td class="hidden-xs">{{$info['tol_brokerage']}}</td>
                 <td class="hidden-xs">{{$info['day_brokerage']}}</td>

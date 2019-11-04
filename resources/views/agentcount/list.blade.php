@@ -1,19 +1,10 @@
-@section('title', '码商流水')
+@section('title', '代理商账单')
 @section('header')
     <div class="layui-inline">
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商号" autocomplete="off" class="layui-input">
-    </div>
-    <div class="layui-inline">
-        <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户号" autocomplete="off" class="layui-input">
-    </div>
-    <div class="layui-inline">
-        <input type="text"  value="{{ $input['order_id'] or '' }}" name="order_id" placeholder="请输入订单号" autocomplete="off" class="layui-input">
-    </div>
-    <div class="layui-inline">
-        <input type="text"  value="{{ $input['erweima_id'] or '' }}" name="erweima_id" placeholder="请输入二维码号" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['agent_id'] or '' }}" name="agent_id" placeholder="请输入代理商ID" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
@@ -35,28 +26,26 @@
         <thead>
         <tr>
             <th class="hidden-xs">ID</th>
-            <th class="hidden-xs">码商ID</th>
-            <th class="hidden-xs">商户ID</th>
-            <th class="hidden-xs">订单号</th>
-            <th class="hidden-xs">积分</th>
-            <th class="hidden-xs">二维码ID</th>
-            <th class="hidden-xs">状态</th>
-            <th class="hidden-xs">支付类型</th>
+            <th class="hidden-xs">代理商ID</th>
+            <th class="hidden-xs">总分</th>
+            <th class="hidden-xs">总佣金</th>
+            <th class="hidden-xs">当天利润</th>
+            <th class="hidden-xs">冻结金额</th>
             <th class="hidden-xs">创建时间</th>
+            <th class="hidden-xs">更新时间</th>
         </tr>
         </thead>
         <tbody>
         @foreach($list as $info)
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
-                <td class="hidden-xs">{{$info['user_id']}}</td>
-                <td class="hidden-xs">{{$info['business_code']}}</td>
-                <td class="hidden-xs">{{$info['order_id']}}</td>
-                <td class="hidden-xs">{{$info['score']}}</td>
-                <td class="hidden-xs">{{$info['erweima_id']}}</td>
-                <td class="hidden-xs">{{$info['status']}}</td>
-                <td class="hidden-xs">{{$info['payType']}}</td>
+                <td class="hidden-xs">{{$info['agent_id']}}</td>
+                <td class="hidden-xs">{{$info['tol_sore']}}</td>
+                <td class="hidden-xs">{{$info['tol_brokerage']}}</td>
+                <td class="hidden-xs">{{$info['day_brokerage']}}</td>
+                <td class="hidden-xs">{{$info['freeze_money']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
+                <td class="hidden-xs">{{$info['savetime']}}</td>
             </tr>
         @endforeach
         @if(!$list[0])

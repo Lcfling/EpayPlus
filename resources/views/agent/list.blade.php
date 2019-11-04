@@ -1,11 +1,11 @@
-@section('title', '商户')
+@section('title', '代理商')
 @section('header')
     <div class="layui-inline">
-    <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-desc="添加商户" data-url="{{url('/admin/agent/0/edit')}}"><i class="layui-icon">&#xe654;</i></button>
+    <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-desc="添加代理商" data-url="{{url('/admin/agent/0/edit')}}"><i class="layui-icon">&#xe654;</i></button>
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['id'] or '' }}" name="id" placeholder="请输入商户号" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['id'] or '' }}" name="id" placeholder="请输入代理商ID" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
@@ -49,7 +49,7 @@
                 <td class="hidden-xs">{{$info['create_at']}}</td>
                 <td>
                     <div class="layui-inline">
-                        <button class="layui-btn layui-btn-small layui-btn-normal edit-btn" data-id="{{$info['id']}}" data-desc="编辑商户" data-url="{{url('/admin/agent/'. $info['id'] .'/edit')}}"><i class="layui-icon">&#xe642;</i></button>
+                        <button class="layui-btn layui-btn-small layui-btn-normal edit-btn" data-id="{{$info['id']}}" data-desc="编辑代理商" data-url="{{url('/admin/agent/'. $info['id'] .'/edit')}}"><i class="layui-icon">&#xe642;</i></button>
                         <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="{{$info['id']}}" data-url="{{url('/admin/agent/'.$info['id'])}}"><i class="layui-icon">&#xe640;</i></button>
                     </div>
                 </td>
