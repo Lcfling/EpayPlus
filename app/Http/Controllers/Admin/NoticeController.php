@@ -34,9 +34,9 @@ class NoticeController extends Controller
      * 用户增加保存
      */
     public function store(StoreRequest $request){
-        $id =$request->input('id');
         $data=$request->all();
         unset($data['_token']);
+        unset($data['id']);
         $data['creattime']=time();
         $insert=Notice::insert($data);
         if($insert){
