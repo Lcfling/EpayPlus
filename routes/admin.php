@@ -78,6 +78,8 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/rechargelist',    'RechargelistController');
     Route::post('/rechargelist/enable', 'RechargelistController@enable');
     Route::resource('/billflow',        'BillflowController');
+    Route::resource('/order',           'OrderController');
+    Route::resource('/buscount',        'BuscountController');
 });
 
 Route::get('/phpinfo',function (Request $request){
