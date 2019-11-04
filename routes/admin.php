@@ -80,6 +80,7 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/billflow',        'BillflowController');
     Route::resource('/order',           'OrderController');
     Route::resource('/buscount',        'BuscountController');
+    Route::resource('/busbill',         'BusbillController');
 });
 
 Route::get('/phpinfo',function (Request $request){
