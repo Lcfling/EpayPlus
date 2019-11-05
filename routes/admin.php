@@ -60,6 +60,8 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/busdrawdone',     'BusdrawdoneController');
     Route::resource('/busdrawreject',   'BusdrawrejectController');
     Route::resource('/agent',           'AgentController');
+    Route::get('/agent/editpwd/{id}',   'AgentController@editpwd');
+    Route::post('/changepwd',             'AgentController@changepwd');
     Route::post('/agentUpdate',         'AgentController@update');
     Route::resource('/agentdrawnone',   'AgentdrawnoneController');
     Route::post('/agentdrawnone/pass',  'AgentdrawnoneController@pass');

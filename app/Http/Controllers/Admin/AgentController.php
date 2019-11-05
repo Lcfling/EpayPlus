@@ -21,12 +21,13 @@ class AgentController extends Controller
         }
         $data=Agent::where($map)->paginate(10)->appends($request->all());
         foreach ($data as $key=>$value){
-            $data[$key]['create_at']=date("Y-m-d H:i:s",$value["create_at"]);
+            $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
+            $data[$key]['updatetime']=date("Y-m-d H:i:s",$value["updatetime"]);
         }
         return view('agent.list',['list'=>$data,'input'=>$request->all()]);
     }
     /**
-     * 添加-编辑页
+     * 添加/编辑页
      */
     public function edit($id=0){
         $info = $id?Agent::find($id):[];
@@ -48,7 +49,8 @@ class AgentController extends Controller
         }else if($res2){
             return ['msg'=>'手机号已存在！'];
         }else{
-            $data['create_at']=time();
+            $data['password']=bcrypt($data['password']);
+            $data['creatime']=time();
             $res=Agent::insert($data);
             if($res){
                 return ['msg'=>'添加成功！','status'=>1];
@@ -75,6 +77,7 @@ class AgentController extends Controller
         }else if($res2){
             return ['msg'=>'手机号已存在！'];
         }else{
+            $data['updatetime']=time();
             $res=Agent::where('id',$id)->update($data);
             if($res!==false){
                 return ['msg'=>'修改成功！','status'=>1];
@@ -85,14 +88,27 @@ class AgentController extends Controller
 
     }
     /**
-     * 删除数据
+     * 修改登录密码页
      */
-    public function destroy($id){
-        $res=Agent::where('id',$id)->delete();
-        if($res==1){
-            return ['msg'=>'删除成功！','status'=>1];
+    public function editpwd($id){
+        $info = $id?Agent::find($id):[];
+        return view('agent.editpwd',['id'=>$id,'info'=>$info]);
+    }
+    /**
+     * 修改登录密码
+     */
+    public function changepwd(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        unset($data['id']);
+        $pwd=bcrypt($data['password']);
+        $res=Agent::where('id',$id)->update(array('password'=>$pwd,'updatetime'=>time()));
+        if($res!==false){
+            return ['msg'=>'修改成功！','status'=>1];
         }else{
-            return ['msg'=>'删除失败！'];
+            return ['msg'=>'修改失败！'];
         }
     }
+
 }
