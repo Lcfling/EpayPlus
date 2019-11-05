@@ -13,13 +13,20 @@ class NoticeController extends Controller
     /**
      * 公告列表
      */
-    public function index()
+    public function index(StoreRequest $request)
     {
-        $data=Notice::paginate();
+        $map=array();
+        if(true==$request->has('title')){
+            $map[]=['title','like','%'.$request->input('title').'%'];
+        }
+        if(true==$request->has('content')){
+            $map[]=['content','like','%'.$request->input('content').'%'];
+        }
+        $data=Notice::where($map)->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creattime']=date("Y-m-d H:i:s",$value["creattime"]);
         }
-        return view('notices.list',['pager'=>$data]);
+        return view('notices.list',['pager'=>$data,'input'=>$request->all()]);
     }
 
     /**
@@ -62,5 +69,16 @@ class NoticeController extends Controller
                 return ['msg'=>'修改失败！'];
             }
 
+    }
+    /**
+     * 删除
+     */
+    public function destroy($id){
+        $res = Notice::where('id',$id)->delete();
+        if($res){
+            return ['msg'=>'删除成功！','status'=>1];
+        }else{
+            return ['msg'=>'删除失败！'];
+        }
     }
 }

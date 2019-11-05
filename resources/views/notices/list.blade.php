@@ -1,8 +1,17 @@
 @section('title', '公告管理')
 @section('header')
     <div class="layui-inline">
-        <a class="layui-btn layui-btn-small layui-btn-normal" data-desc="添加公告" onclick="add()"><i class="layui-icon">&#xe654;</i></a>
+        <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-desc="添加公告" data-url="{{url('/admin/notices/0/edit')}}"><i class="layui-icon">&#xe654;</i></button>
         <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['title'] or '' }}" name="title" placeholder="请输入标题" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['content'] or '' }}" name="content" placeholder="请输入内容" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
     </div>
 @endsection
 @section('table')
@@ -60,22 +69,6 @@
             });
             //layer.msg(layui.v);
         });
-
-        function add() {
-            layer.open({
-                type: 2,
-                title: '添加配置',
-                closeBtn: 1,
-                area: ['400px','400px'],
-                shadeClose: false, //点击遮罩关闭
-                resize:false,
-                content: ['/admin/notices/0/edit','no'],
-                end:function(){
-
-                }
-            });
-        }
-
     </script>
 @endsection
 @extends('common.list')
