@@ -61,8 +61,12 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/busdrawreject',   'BusdrawrejectController');
     Route::resource('/agent',           'AgentController');
     Route::get('/agent/editpwd/{id}',   'AgentController@editpwd');
-    Route::post('/changepwd',             'AgentController@changepwd');
+    Route::post('/changepwd',           'AgentController@changepwd');
+    Route::get('/agent/editpayword/{id}','AgentController@editpayword');
+    Route::post('/changepayword',       'AgentController@changepayword');
     Route::post('/agentUpdate',         'AgentController@update');
+    Route::post('/agent_switch',        'AgentController@agent_switch');
+    Route::post('/agent_islogin',       'AgentController@agent_islogin');
     Route::resource('/agentdrawnone',   'AgentdrawnoneController');
     Route::post('/agentdrawnone/pass',  'AgentdrawnoneController@pass');
     Route::post('/agentdrawnone/reject','AgentdrawnoneController@reject');

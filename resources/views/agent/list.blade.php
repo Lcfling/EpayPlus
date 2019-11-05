@@ -8,6 +8,15 @@
         <input type="text"  value="{{ $input['id'] or '' }}" name="id" placeholder="请输入代理商ID" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
+        <input type="text"  value="{{ $input['account'] or '' }}" name="account" placeholder="请输入代理商账号" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['agent_name'] or '' }}" name="agent_name" placeholder="请输入代理商昵称" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
     </div>
 @endsection
@@ -15,28 +24,30 @@
     <table class="layui-table" lay-even lay-skin="nob">
         <colgroup>
             <col class="hidden-xs" width="50">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="200">
-            <col class="hidden-xs" width="200">
-            <col width="200">
         </colgroup>
         <thead>
         <tr>
             <th class="hidden-xs">ID</th>
             <th class="hidden-xs">帐号</th>
-            <th class="hidden-xs">代理商</th>
+            <th class="hidden-xs">代理商昵称</th>
             <th class="hidden-xs">联系电话</th>
-            <th>费率</th>
+            <th class="hidden-xs">费率</th>
+            <th class="hidden-xs">分红利润</th>
             <th class="hidden-xs">状态</th>
-            <th class="hidden-xs">收货盈利</th>
+            <th class="hidden-xs">登录</th>
             <th class="hidden-xs">创建时间</th>
             <th class="hidden-xs">更新时间</th>
-            <th>操作</th>
+            <th class="hidden-xs" style="text-align: center">操作</th>
         </tr>
         </thead>
         <tbody>
@@ -48,13 +59,19 @@
                 <td class="hidden-xs">{{$info['mobile']}}</td>
                 <td class="hidden-xs">{{$info['fee']}}%</td>
                 <td class="hidden-xs">{{$info['profit']}}</td>
-                <td class="hidden-xs">{{$info['status']}}</td>
+                <td class="hidden-xs">
+                    <input type="checkbox" name="status" value="{{$info['id']}}" lay-skin="switch" lay-text="正常|停止" lay-filter="status" {{ $info['status'] == 1 ? 'checked' : '' }}>
+                </td>
+                <td class="hidden-xs">
+                    <input type="checkbox" name="is_login" value="{{$info['id']}}" lay-skin="switch" lay-text="允许|禁止" lay-filter="is_login" {{ $info['is_login'] == 1 ? 'checked' : '' }}>
+                </td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">{{$info['updatetime']}}</td>
                 <td>
                     <div class="layui-inline">
                         <button class="layui-btn layui-btn-small layui-btn-normal edit-btn" data-id="{{$info['id']}}" data-desc="编辑代理商" data-url="{{url('/admin/agent/'. $info['id'] .'/edit')}}">编辑</button>
-                        <a class="layui-btn layui-btn-small layui-btn-danger" onclick="editpwd({{$info['id']}})">改密</a>
+                        <a class="layui-btn layui-btn-small layui-btn-danger" onclick="editpwd({{$info['id']}})">登录密码</a>
+                        <a class="layui-btn layui-btn-small layui-btn-warm" onclick="editpayword({{$info['id']}})">支付密码</a>
                     </div>
                 </td>
             </tr>
@@ -63,7 +80,7 @@
             <tr><td colspan="6" style="text-align: center;color: orangered;">暂无数据</td></tr>
         @endif
         </tbody>
-        </tbody>
+        <input type="hidden" id="token" value="{{csrf_token()}}">
     </table>
     <div class="page-wrap">
         {{$list->render()}}
@@ -76,21 +93,108 @@
                 $ = layui.jquery,
                 laydate = layui.laydate,
                 layer = layui.layer;
-
+            laydate({istoday: true});
             form.render();
             form.on('submit(formDemo)', function(data) {
             });
+            //监听开关操作
+            form.on('switch(status)', function(obj){
+                //layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+                var id=this.value,
+                    status=obj.elem.checked;
+                if(status==false){
+                    var aswitch=0;
+                }else if(status==true){
+                    aswitch=1;
+                }
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('#token').val()
+                    },
+                    url:"{{url('/admin/agent_switch')}}",
+                    data:{
+                        id:id,
+                        aswitch:aswitch
+                    },
+                    type:'post',
+                    dataType:'json',
+                    success:function(res){
+                        if(res.status == 1){
+                            layer.msg(res.msg,{icon:6},function () {
+                                location.reload();
+                            });
+
+                        }else{
+                            layer.msg(res.msg,{shift: 6,icon:5});
+                        }
+                    },
+                    error : function(XMLHttpRequest, textStatus, errorThrown) {
+                        layer.msg('网络失败', {time: 1000});
+                    }
+                });
+            });
+            //允许登录
+            form.on('switch(is_login)', function(obj){
+                //layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+                var id=this.value,
+                    status=obj.elem.checked;
+                if(status==false){
+                    var login=0;
+                }else if(status==true){
+                    login=1;
+                }
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('#token').val()
+                    },
+                    url:"{{url('/admin/agent_islogin')}}",
+                    data:{
+                        id:id,
+                        login:login
+                    },
+                    type:'post',
+                    dataType:'json',
+                    success:function(res){
+                        if(res.status == 1){
+                            layer.msg(res.msg,{icon:6},function () {
+                                location.reload();
+                            });
+                        }else{
+                            layer.msg(res.msg,{shift: 6,icon:5});
+                        }
+                    },
+                    error : function(XMLHttpRequest, textStatus, errorThrown) {
+                        layer.msg('网络失败', {time: 1000});
+                    }
+                });
+            });
         });
+
         function editpwd(id) {
             var id=id;
             layer.open({
                 type: 2,
-                title: '修改密码',
+                title: '修改登录密码',
                 closeBtn: 1,
                 area: ['500px','500px'],
                 shadeClose: false, //点击遮罩关闭
                 resize:false,
                 content: ['/admin/agent/editpwd/'+id,'no'],
+                end:function(){
+
+                }
+            });
+        }
+        function editpayword(id) {
+            var id=id;
+            layer.open({
+                type: 2,
+                title: '修改支付密码',
+                closeBtn: 1,
+                area: ['500px','500px'],
+                shadeClose: false, //点击遮罩关闭
+                resize:false,
+                content: ['/admin/agent/editpayword/'+id,'no'],
                 end:function(){
 
                 }

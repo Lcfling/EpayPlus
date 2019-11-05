@@ -1,4 +1,4 @@
-@section('title', '登录密码')
+@section('title', '支付密码')
 @section('content')
     <div class="layui-form-item">
         <label class="layui-form-label">代理商：</label>
@@ -15,16 +15,16 @@
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">登录密码：</label>
+        <label class="layui-form-label">支付密码：</label>
         <div class="layui-input-block">
-            <input type="password"  name="password" required placeholder="请输入登录密码(6-12数字字母)" autocomplete="off" class="layui-input">
+            <input type="password"  name="pay_pass" required placeholder="请输入支付密码（6位纯数字）" autocomplete="off" class="layui-input">
         </div>
     </div>
 
     <div class="layui-form-item">
         <label class="layui-form-label">确认密码：</label>
         <div class="layui-input-block">
-            <input type="password" required lay-verify="confirmPass" placeholder="请确认登录密码" autocomplete="off" class="layui-input">
+            <input type="password" required lay-verify="confirmPass" placeholder="请确认支付密码" autocomplete="off" class="layui-input">
         </div>
     </div>
 
@@ -42,18 +42,18 @@
 
             form.verify({
                 confirmPass:function(value){
-                    if($('input[name=password]').val() !== value)
+                    if($('input[name=pay_pass]').val() !== value)
                         return '两次密码输入不一致！';
-                    var reg1 = new RegExp("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$");
+                    var reg1 = new RegExp("^\\d{6}$");
                     if(!reg1.test(value)){
-                        return '密码为6-12数字字母';
+                        return '密码为6位纯数字';
                     }
                 },
             });
 
             form.on('submit(formDemo)', function(data) {
                 $.ajax({
-                    url:"{{url('/admin/changepwd')}}",
+                    url:"{{url('/admin/changepayword')}}",
                     data:$('form').serialize(),
                     type:'post',
                     dataType:'json',
