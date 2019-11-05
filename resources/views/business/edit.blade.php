@@ -13,7 +13,7 @@
             <input type="text" value="{{$info['account'] or ''}}" name="account" required lay-verify="account" placeholder="请输入账号" autocomplete="off" class="layui-input" id="account">
         </div>
     </div>
-
+    @if($id==0)
     <div class="layui-form-item">
         <label class="layui-form-label">密码：</label>
         <div class="layui-input-block">
@@ -27,20 +27,14 @@
             <input type="password" value="{{$info['password'] or ''}}" required lay-verify="confirmPass" placeholder="请输入密码" autocomplete="off" class="layui-input">
         </div>
     </div>
+    @endif
 
-    <div class="layui-form-item">
-        <label class="layui-form-label">密钥：</label>
-        <div class="layui-input-block">
-            <input type="text" value="{{$info['accessKey'] or ''}}" name="accessKey" required placeholder="请输入密钥" autocomplete="off" class="layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">身份：</label>
-        <div class="layui-input-inline">
-            <input type="number" value="{{$info['shenfen'] or ''}}" name="shenfen" lay-verify="shenfen" placeholder="请输入身份(正整数)" autocomplete="off" class="layui-input">
-        </div>
-    </div>
+{{--    <div class="layui-form-item">--}}
+{{--        <label class="layui-form-label">身份：</label>--}}
+{{--        <div class="layui-input-block">--}}
+{{--            <input type="number" value="{{$info['shenfen'] or ''}}" name="shenfen" lay-verify="shenfen" placeholder="请输入身份(正整数)" autocomplete="off" class="layui-input">--}}
+{{--        </div>--}}
+{{--    </div>--}}
 
     <div class="layui-form-item">
         <label class="layui-form-label">费率：</label>
