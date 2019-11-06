@@ -40,7 +40,7 @@
             <th class="hidden-xs">状态</th>
             <th class="hidden-xs">创建时间</th>
             <th class="hidden-xs">更新时间</th>
-            <th class="hidden-xs">操作</th>
+            <th class="hidden-xs" style="text-align: center">操作</th>
         </tr>
         </thead>
         <tbody>
@@ -57,6 +57,7 @@
                 <td>
                     <div class="layui-inline">
                         <button class="layui-btn layui-btn-small layui-btn-normal edit-btn" data-id="{{$info['business_code']}}" data-desc="编辑商户" data-url="{{url('/admin/business/'. $info['business_code'] .'/edit')}}">编辑</button>
+                        <a class="layui-btn layui-btn-small layui-btn-normal" onclick="bank({{$info['business_code']}})">银行</a>
                         <a class="layui-btn layui-btn-small layui-btn-danger" onclick="editpwd({{$info['business_code']}})">登录密码</a>
                         <a class="layui-btn layui-btn-small layui-btn-warm" onclick="editpayword({{$info['business_code']}})">支付密码</a>
                         <a class="layui-btn layui-btn-small layui-btn" onclick="editfee({{$info['business_code']}})">更改费率</a>
@@ -86,6 +87,20 @@
             form.on('submit(formDemo)', function(data) {
             });
         });
+        function bank(id) {
+            var id=id;
+            layer.open({
+                type: 2,
+                title: '银行信息',
+                closeBtn: 1,
+                area: ['500px','600px'],
+                shadeClose: false, //点击遮罩关闭
+                content: ['/admin/business/bankinfo/'+id],
+                end:function(){
+
+                }
+            });
+        }
         function editpwd(id) {
             var id=id;
             layer.open({

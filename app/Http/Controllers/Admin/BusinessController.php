@@ -8,6 +8,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
+use App\Models\Busbank;
 use App\Models\Business;
 use Illuminate\Support\Facades\DB;
 
@@ -109,6 +110,14 @@ class BusinessController extends Controller
             }
         }
 
+    }
+    /**
+     * 银行信息页
+     */
+    public function bankinfo($bussiness_code){
+        $info = $bussiness_code?Business::find($bussiness_code):[];
+        $bank=Busbank::where('business_code','=',$bussiness_code)->get()->toArray();
+        return view('business.bankinfo',['id'=>$bussiness_code,'info'=>$info,'bank'=>$bank]);
     }
     /**
      * 费率编辑页

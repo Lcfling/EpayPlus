@@ -6,6 +6,7 @@ created by z
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Agent;
+use App\Models\Agentbank;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
@@ -98,6 +99,14 @@ class AgentController extends Controller
             }
         }
 
+    }
+    /**
+     * 银行信息页
+     */
+    public function agentbankinfo($id){
+        $info = $id?Agent::find($id):[];
+        $bank=Agentbank::where('agent_id','=',$id)->get()->toArray();
+        return view('agent.bankinfo',['id'=>$id,'info'=>$info,'bank'=>$bank]);
     }
     /**
      * 修改登录密码页

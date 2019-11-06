@@ -70,6 +70,7 @@
                 <td>
                     <div class="layui-inline">
                         <button class="layui-btn layui-btn-small layui-btn-normal edit-btn" data-id="{{$info['id']}}" data-desc="编辑代理商" data-url="{{url('/admin/agent/'. $info['id'] .'/edit')}}">编辑</button>
+                        <a class="layui-btn layui-btn-small layui-btn-normal" onclick="bank({{$info['id']}})">银行</a>
                         <a class="layui-btn layui-btn-small layui-btn-danger" onclick="editpwd({{$info['id']}})">登录密码</a>
                         <a class="layui-btn layui-btn-small layui-btn-warm" onclick="editpayword({{$info['id']}})">支付密码</a>
                     </div>
@@ -169,6 +170,20 @@
                 });
             });
         });
+        function bank(id) {
+            var id=id;
+            layer.open({
+                type: 2,
+                title: '银行信息',
+                closeBtn: 1,
+                area: ['500px','600px'],
+                shadeClose: false, //点击遮罩关闭
+                content: ['/admin/agent/agentbankinfo/'+id],
+                end:function(){
+
+                }
+            });
+        }
 
         function editpwd(id) {
             var id=id;

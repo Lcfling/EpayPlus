@@ -53,6 +53,7 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/callcenter',      'CallcenterController');
     Route::post('/callcenterUpdate',    'CallcenterController@update');
     Route::resource('/business',        'BusinessController');
+    Route::get('/business/bankinfo/{id}', 'BusinessController@bankinfo');
     Route::get('/business/buspwd/{id}', 'BusinessController@buspwd');
     Route::post('/busnewpwd',           'BusinessController@busnewpwd');
     Route::get('/business/buspayword/{id}','BusinessController@buspayword');
@@ -66,6 +67,7 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/busdrawdone',     'BusdrawdoneController');
     Route::resource('/busdrawreject',   'BusdrawrejectController');
     Route::resource('/agent',           'AgentController');
+    Route::get('/agent/agentbankinfo/{id}', 'AgentController@agentbankinfo');
     Route::get('/agent/editpwd/{id}',   'AgentController@editpwd');
     Route::post('/changepwd',           'AgentController@changepwd');
     Route::get('/agent/editpayword/{id}','AgentController@editpayword');
@@ -99,6 +101,8 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/agentbill',       'AgentbillController');
     Route::resource('/codecount',       'CodecountController');
     Route::resource('/codebill',        'BillflowController');
+    Route::resource('/busbank',         'BusbankController');
+    Route::resource('/agentbank',       'AgentbankController');
 });
 
 Route::get('/phpinfo',function (Request $request){
