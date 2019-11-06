@@ -10,21 +10,21 @@
     <div class="layui-form-item">
         <label class="layui-form-label">账号：</label>
         <div class="layui-input-block">
-            <input type="text" value="{{$info['account'] or ''}}" name="account" required lay-verify="account" placeholder="请输入账号" autocomplete="off" class="layui-input" id="account">
+            <input type="text" value="{{$info['account'] or ''}}" name="account" required lay-verify="account" placeholder="请输入账号(4-8位数字字母,字母开头)" autocomplete="off" class="layui-input" id="account">
         </div>
     </div>
     @if($id==0)
     <div class="layui-form-item">
         <label class="layui-form-label">密码：</label>
         <div class="layui-input-block">
-            <input type="password"  name="password" required placeholder="请输入密码" autocomplete="off" class="layui-input">
+            <input type="password"  name="password" required placeholder="请输入密码(6-12数字字母)" autocomplete="off" class="layui-input">
         </div>
     </div>
 
     <div class="layui-form-item">
         <label class="layui-form-label">确认密码：</label>
         <div class="layui-input-block">
-            <input type="password" required lay-verify="confirmPass" placeholder="请输入密码" autocomplete="off" class="layui-input">
+            <input type="password" required lay-verify="confirmPass" placeholder="请确认密码" autocomplete="off" class="layui-input">
         </div>
     </div>
     @endif

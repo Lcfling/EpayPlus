@@ -26,10 +26,9 @@
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
-            <col class="hidden-xs" width="250">
+            <col class="hidden-xs" width="300">
         </colgroup>
         <thead>
         <tr>
@@ -37,7 +36,6 @@
             <th class="hidden-xs">帐号</th>
             <th class="hidden-xs">商户昵称</th>
             <th class="hidden-xs">联系电话</th>
-            <th class="hidden-xs">身份</th>
             <th class="hidden-xs">费率</th>
             <th class="hidden-xs">状态</th>
             <th class="hidden-xs">创建时间</th>
@@ -52,7 +50,6 @@
                 <td class="hidden-xs">{{$info['account']}}</td>
                 <td class="hidden-xs">{{$info['nickname']}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
-                <td class="hidden-xs">{{$info['shenfen']}}</td>
                 <td class="hidden-xs">{{$info['fee']}}%</td>
                 <td class="hidden-xs">{{$info['status']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
@@ -62,6 +59,7 @@
                         <button class="layui-btn layui-btn-small layui-btn-normal edit-btn" data-id="{{$info['business_code']}}" data-desc="编辑商户" data-url="{{url('/admin/business/'. $info['business_code'] .'/edit')}}">编辑</button>
                         <a class="layui-btn layui-btn-small layui-btn-danger" onclick="editpwd({{$info['business_code']}})">登录密码</a>
                         <a class="layui-btn layui-btn-small layui-btn-warm" onclick="editpayword({{$info['business_code']}})">支付密码</a>
+                        <a class="layui-btn layui-btn-small layui-btn" onclick="editfee({{$info['business_code']}})">更改费率</a>
                     </div>
                 </td>
             </tr>
@@ -113,6 +111,21 @@
                 shadeClose: false, //点击遮罩关闭
                 resize:false,
                 content: ['/admin/business/buspayword/'+id,'no'],
+                end:function(){
+
+                }
+            });
+        }
+        function editfee(id) {
+            var id=id;
+            layer.open({
+                type: 2,
+                title: '更改费率',
+                closeBtn: 1,
+                area: ['700px','500px'],
+                shadeClose: false, //点击遮罩关闭
+                resize:false,
+                content: ['/admin/business/busfee/'+id,'no'],
                 end:function(){
 
                 }

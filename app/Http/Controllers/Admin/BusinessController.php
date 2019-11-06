@@ -59,17 +59,24 @@ class BusinessController extends Controller
             return ['msg'=>'手机号已存在！'];
         }else{
             $data['password']=bcrypt($data['password']);
-//            $data['remember_token']='';
-//            $data['paypassword']='';
+            $data['remember_token']='';
+            $data['paypassword']='';
             $unicode=$this->unicode();
             $accessKey=bcrypt(md5(md5($unicode)));
             $data['accessKey']=$accessKey;
-//            $data['shenfen']=1;
             $data['creatime']=time();
             $data['updatetime']=time();
-            $res=Business::insert($data);
-            if($res){
-                return ['msg'=>'添加成功！','status'=>1];
+            $insertID=Business::insertGetId($data);
+            if($insertID){
+                $agent['business_code']=$insertID;
+                $agent['creatime']=time();
+                $res3=DB::table('agent_fee')->insert($agent);
+                if($res3){
+                    return ['msg'=>'添加成功！','status'=>1];
+                }else{
+                    return ['msg'=>'添加失败！'];
+                }
+
             }else{
                 return ['msg'=>'添加失败！'];
             }
@@ -96,6 +103,107 @@ class BusinessController extends Controller
             $data['accessKey']=md5($data['accessKey']);
             $res=Business::where('business_code',$id)->update($data);
             if($res!==false){
+                return ['msg'=>'修改成功！','status'=>1];
+            }else{
+                return ['msg'=>'修改失败！'];
+            }
+        }
+
+    }
+    /**
+     * 费率编辑页
+     */
+    public function busfee($bussiness_code){
+        $info = $bussiness_code?Business::find($bussiness_code):[];
+        $fee=DB::table('agent_fee')->where('business_code','=',$bussiness_code)->first();
+        $fee=get_object_vars($fee);
+        return view('business.editfee',['id'=>$bussiness_code,'info'=>$info,'fee'=>$fee]);
+    }
+    /**
+     * 费率更改
+     */
+    public function busnewfee(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        unset($data['id']);
+        $fee=floatval($data['fee']);
+        $busfee=Business::where('business_code','=',$id)->update(array('fee'=>$fee));
+        $agent1_id=$data['agent1_id'];
+        $agent1_fee=$data['agent1_fee'];
+        $agent2_id=$data['agent2_id'];
+        $agent2_fee=$data['agent2_fee'];
+        if($agent1_id!=null&&$agent2_id!=null){
+            if($agent1_id==$agent2_id){
+                return ['msg'=>'一、二级代理商不可相同！'];
+            }else{
+                $res1=Business::is_agent($agent1_id);
+                $res2=Business::is_agent($agent2_id);
+                if($res1==false){
+                    return ['msg'=>'一级代理商不存在！'];
+                }else if($res2==false){
+                    return ['msg'=>'二级代理商不存在！'];
+                }else{
+                    if(!preg_match("/^[0-9]+(.?[0-9]{1,2})?$/", $agent1_fee)){
+                        return ['msg'=>'请输入正确一级费率！'];
+                    }else if(!preg_match("/^[0-9]+(.?[0-9]{1,2})?$/", $agent2_fee)){
+                        return ['msg'=>'请输入正确二级费率！'];
+                    }else{
+                        $agent1_fee=floatval($agent1_fee);
+                        $agent2_fee=floatval($agent2_fee);
+                        if($agent1_fee>=$fee){
+                            return ['msg'=>'一级费率不可大于商户费率！'];
+                        }else if($agent2_fee>=$agent1_fee){
+                            return ['msg'=>'二级费率不可大于一级费率！'];
+                        }else{
+                            $fee=[
+                                'agent1_id'=>intval($agent1_id),
+                                'agent1_fee'=>$agent1_fee,
+                                'agent2_id'=>intval($agent2_id),
+                                'agent2_fee'=>$agent2_fee,
+                            ];
+                            $up1=DB::table('agent_fee')->where('business_code','=',$id)->update($fee);
+                            if($up1!==false&&$busfee!==false){
+                                return ['msg'=>'修改成功！','status'=>1];
+                            }else{
+                                return ['msg'=>'修改失败！'];
+                            }
+                        }
+
+                    }
+                }
+            }
+
+        }else if($agent1_id!=null&&$agent2_id==null){
+            $res2=Business::is_agent($agent1_id);
+            if($res2==true){
+                if(preg_match("/^[0-9]+(.?[0-9]{1,2})?$/", $agent1_fee)){
+                    $agent1_fee=floatval($agent1_fee);
+                    if($agent1_fee>=$fee){
+                        return ['msg'=>'一级费率不可大于商户费率！'];
+                    }else{
+                        $fee=[
+                            'agent1_id'=>intval($agent1_id),
+                            'agent1_fee'=>$agent1_fee,
+                        ];
+                        $up2=DB::table('agent_fee')->where('business_code','=',$id)->update($fee);
+                        if($up2!==false&&$busfee!==false){
+                            return ['msg'=>'修改成功！','status'=>1];
+                        }else{
+                            return ['msg'=>'修改失败！'];
+                        }
+                    }
+
+                }else{
+                    return ['msg'=>'请输入正确一级费率！'];
+                }
+            }else{
+                return ['msg'=>'一级代理商不存在！'];
+            }
+        }else if($agent2_id!=null&&$agent1_id==null){
+            return ['msg'=>'请先填写一级代理和费率！'];
+        }else{
+            if($busfee!==false){
                 return ['msg'=>'修改成功！','status'=>1];
             }else{
                 return ['msg'=>'修改失败！'];

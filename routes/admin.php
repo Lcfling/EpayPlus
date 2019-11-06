@@ -57,6 +57,8 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/busnewpwd',           'BusinessController@busnewpwd');
     Route::get('/business/buspayword/{id}','BusinessController@buspayword');
     Route::post('/busnewpayword',       'BusinessController@busnewpayword');
+    Route::get('/business/busfee/{id}', 'BusinessController@busfee');
+    Route::post('/busnewfee',           'BusinessController@busnewfee');
     Route::post('/businessUpdate',      'BusinessController@update');
     Route::resource('/busdrawnone',     'BusdrawnoneController');
     Route::post('/busdrawnone/pass',    'BusdrawnoneController@pass');

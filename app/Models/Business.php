@@ -5,12 +5,13 @@ namespace App\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Business extends Model
 {
     protected $table = 'business';
     protected $primaryKey = 'business_code';
-    protected $fillable = ['nickname','account','password','accessKey','shenfen','mobile','fee','status','paypassword','remork','creatime','price','money'];
+    protected $fillable = ['nickname','account','password','accessKey','mobile','fee','paypassword','creatime'];
     protected $businessInfo;
     public $timestamps = false;
 
@@ -41,5 +42,11 @@ class Business extends Model
     public static function edit_mobile($id,$mobile){
         return Business::where(array('mobile'=>$mobile))->whereNotIn('business_code',[$id])->exists();
 
+    }
+    /**
+     * 编辑代理商是否存在
+     */
+    public static function is_agent($agent_id){
+        return DB::table('agent')->where('id','=',$agent_id)->exists();
     }
 }
