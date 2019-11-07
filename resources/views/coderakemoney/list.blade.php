@@ -41,17 +41,17 @@
         @foreach($list as $info)
             <tr>
 
-                <td class="hidden-xs">{{$info['jhmoney']}}</td>
-                <td class="hidden-xs">{{$info['fymoney1']}}</td>
-                <td class="hidden-xs">{{$info['fymoney2']}}</td>
-                <td class="hidden-xs">{{$info['fymoney3']}}</td>
-                <td class="hidden-xs">{{$info['fymoney4']}}</td>
-                <td class="hidden-xs">{{$info['fymoney5']}}</td>
-                <td class="hidden-xs">{{$info['fymoney6']}}</td>
-                <td class="hidden-xs">{{$info['fymoney7']}}</td>
-                <td class="hidden-xs">{{$info['fymoney8']}}</td>
-                <td class="hidden-xs">{{$info['fymoney9']}}</td>
-                <td class="hidden-xs">{{$info['fymoney10']}}</td>
+                <td class="hidden-xs">{{$info['jhmoney']/100}}</td>
+                <td class="hidden-xs">{{$info['fymoney1']/100}}</td>
+                <td class="hidden-xs">{{$info['fymoney2']/100}}</td>
+                <td class="hidden-xs">{{$info['fymoney3']/100}}</td>
+                <td class="hidden-xs">{{$info['fymoney4']/100}}</td>
+                <td class="hidden-xs">{{$info['fymoney5']/100}}</td>
+                <td class="hidden-xs">{{$info['fymoney6']/100}}</td>
+                <td class="hidden-xs">{{$info['fymoney7']/100}}</td>
+                <td class="hidden-xs">{{$info['fymoney8']/100}}</td>
+                <td class="hidden-xs">{{$info['fymoney9']/100}}</td>
+                <td class="hidden-xs">{{$info['fymoney10']/100}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td>
                     <div class="layui-inline">

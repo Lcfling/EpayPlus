@@ -12,7 +12,7 @@ class BillflowController extends Controller
      */
     public function index(StoreRequest $request){
         $map=array();
-        $tablepfe=date('ymd');
+        $tablepfe=date('Ymd');
         $account =new Billflow;
         $account->setTable('account_'.$tablepfe);
 

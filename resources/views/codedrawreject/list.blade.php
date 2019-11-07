@@ -21,26 +21,32 @@
         <input type="hidden" id="token" value="{{csrf_token()}}">
         <colgroup>
             <col class="hidden-xs" width="50">
-            <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
-
+            <col class="hidden-xs" width="100">
         </colgroup>
         <thead>
         <tr>
             <th class="hidden-xs">ID</th>
             <th class="hidden-xs">码商编号</th>
-            <th class="hidden-xs">申请时间</th>
+            <th class="hidden-xs">订单号</th>
             <th class="hidden-xs">提现额度</th>
+            <th class="hidden-xs">手机号</th>
+            <th class="hidden-xs">微信昵称</th>
             <th class="hidden-xs">开户人</th>
             <th class="hidden-xs">开户行</th>
             <th class="hidden-xs">卡号</th>
+            <th class="hidden-xs">申请时间</th>
+            <th class="hidden-xs">提现时间</th>
             <th class="hidden-xs">状态</th>
-
         </tr>
         </thead>
         <tbody>
@@ -48,11 +54,15 @@
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
-                <td class="hidden-xs">{{$info['creatime']}}</td>
-                <td class="hidden-xs">{{$info['money']}}</td>
+                <td class="hidden-xs">{{$info['order_no']}}</td>
+                <td class="hidden-xs">{{$info['money']/100}}</td>
+                <td class="hidden-xs">{{$info['mobile']/100}}</td>
+                <td class="hidden-xs">{{$info['wx_name']/100}}</td>
                 <td class="hidden-xs">{{$info['name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
+                <td class="hidden-xs">{{$info['creatime']}}</td>
+                <td class="hidden-xs">{{$info['withdraw_time']}}</td>
                 <td class="hidden-xs">已驳回</td>
 
             </tr>

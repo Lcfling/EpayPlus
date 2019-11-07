@@ -16,7 +16,8 @@
             <col class="hidden-xs" width="50">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
         </colgroup>
         <thead>
@@ -26,6 +27,7 @@
             <th class="hidden-xs">商户ID</th>
             <th class="hidden-xs">积分</th>
             <th class="hidden-xs">创建时间</th>
+            <th class="hidden-xs">更新时间</th>
         </tr>
         </thead>
         <tbody>
@@ -34,9 +36,9 @@
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['business_code']}}</td>
-                <td class="hidden-xs">{{$info['score']}}</td>
+                <td class="hidden-xs">{{$info['score']/100}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
-            d class="hidden-xs">{{$info['savetime']}}</td>
+                <td class="hidden-xs">{{$info['savetime']}}</td>
             </tr>
         @endforeach
         @if(!$list[0])

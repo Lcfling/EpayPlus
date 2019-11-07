@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Busbill extends Model
 {
-    protected $table='business_billflow';
+    protected $table;
     protected $primaryKey = 'id';
     public $timestamps = false;
 }

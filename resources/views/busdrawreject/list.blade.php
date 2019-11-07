@@ -47,7 +47,7 @@
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['business_code']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
-                <td class="hidden-xs">{{$info['money']}}</td>
+                <td class="hidden-xs">{{$info['money']/100}}</td>
                 <td class="hidden-xs">{{$info['name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>

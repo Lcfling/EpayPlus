@@ -21,22 +21,24 @@
         <input type="hidden" id="token" value="{{csrf_token()}}">
         <colgroup>
             <col class="hidden-xs" width="50">
-            <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="150">
-            <col>
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
-            <col width="200">
         </colgroup>
         <thead>
         <tr>
             <th class="hidden-xs">编号</th>
             <th class="hidden-xs">商户号</th>
-            <th class="hidden-xs">申请时间</th>
             <th class="hidden-xs">提现额度</th>
             <th class="hidden-xs">开户人</th>
             <th class="hidden-xs">开户行</th>
             <th class="hidden-xs">卡号</th>
+            <th class="hidden-xs">申请时间</th>
             <th class="hidden-xs">状态</th>
             <th>操作</th>
         </tr>
@@ -46,11 +48,11 @@
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['business_code']}}</td>
-                <td class="hidden-xs">{{$info['creatime']}}</td>
-                <td class="hidden-xs">{{$info['money']}}</td>
+                <td class="hidden-xs">{{$info['money']/100}}</td>
                 <td class="hidden-xs">{{$info['name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
+                <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">未结算</td>
                 <td>
                     <div class="layui-inline">

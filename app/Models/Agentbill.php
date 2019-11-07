@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Agentbill extends Model
 {
-    protected $table='agent_billflow';
+    protected $table;
     protected $primaryKey = 'id';
     public $timestamps = false;
 }

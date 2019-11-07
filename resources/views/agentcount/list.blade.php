@@ -1,4 +1,4 @@
-@section('title', '代理商账单')
+    @section('title', '代理商账单')
 @section('header')
     <div class="layui-inline">
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
@@ -40,10 +40,10 @@
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['agent_id']}}</td>
-                <td class="hidden-xs">{{$info['tol_sore']}}</td>
-                <td class="hidden-xs">{{$info['tol_brokerage']}}</td>
-                <td class="hidden-xs">{{$info['day_brokerage']}}</td>
-                <td class="hidden-xs">{{$info['freeze_money']}}</td>
+                <td class="hidden-xs">{{$info['tol_sore']/100}}</td>
+                <td class="hidden-xs">{{$info['tol_brokerage']/100}}</td>
+                <td class="hidden-xs">{{$info['day_brokerage']/100}}</td>
+                <td class="hidden-xs">{{$info['freeze_money']/100}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">{{$info['savetime']}}</td>
             </tr>

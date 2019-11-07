@@ -59,13 +59,13 @@
                 <td class="hidden-xs">{{$info['business_code']}}</td>
                 <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
-                <td class="hidden-xs">{{$info['sk_status']}}</td>
-                <td class="hidden-xs">{{$info['payType']}}</td>
-                <td class="hidden-xs">{{$info['payMoney']}}</td>
-                <td class="hidden-xs">{{$info['tradeMoney']}}</td>
-                <td class="hidden-xs">{{$info['status']}}</td>
-                <td class="hidden-xs">{{$info['callback_status']}}</td>
-                <td class="hidden-xs">{{$info['is_shoudong']}}</td>
+                <td class="hidden-xs">@if($info['sk_status']==0)未收款@elseif($info['sk_status']==1)手动收款@elseif($info['sk_status']==2)自动收款@endif</td>
+                <td class="hidden-xs">@if($info['payType']==0)默认@elseif($info['payType']==1)微信@elseif($info['payType']==2)支付宝@endif</td>
+                <td class="hidden-xs">{{$info['payMoney']/100}}</td>
+                <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
+                <td class="hidden-xs">@if($info['status']==0)未支付@elseif($info['status']==1)支付成功@elseif($info['status']==2)过期@elseif($info['status']==3)取消@endif</td>
+                <td class="hidden-xs">@if($info['callback_status']==1)推送成功@elseif($info['callback_status']==2)推送失败@endif</td>
+                <td class="hidden-xs">@if($info['is_shoudong']==0)非手动@elseif($info['callback_status']==1)是手动@endif</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">{{$info['out_order_sn']}}</td>
                 <td>

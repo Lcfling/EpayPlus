@@ -52,7 +52,7 @@
                 <td class="hidden-xs">{{$info['user_id']}}</td>
                 <td class="hidden-xs">{{$info['business_code']}}</td>
                 <td class="hidden-xs">{{$info['order_id']}}</td>
-                <td class="hidden-xs">{{$info['score']}}</td>
+                <td class="hidden-xs">{{$info['score']/100}}</td>
                 <td class="hidden-xs">{{$info['erweima_id']}}</td>
                 <td class="hidden-xs">{{$info['status']}}</td>
                 <td class="hidden-xs">{{$info['payType']}}</td>

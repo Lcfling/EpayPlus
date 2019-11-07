@@ -20,6 +20,7 @@ class CodedrawdoneController extends Controller
         $data = Codedraw::where($map)->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
+            $data[$key]['withdraw_time'] =date("Y-m-d H:i:s",$value["withdraw_time"]);
         }
         return view('codedrawdone.list',['list'=>$data,'input'=>$request->all()]);
 

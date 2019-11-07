@@ -101,7 +101,6 @@ class BusinessController extends Controller
         }else if($res2){
             return ['msg'=>'手机号已存在！'];
         }else{
-            $data['accessKey']=md5($data['accessKey']);
             $res=Business::where('business_code',$id)->update($data);
             if($res!==false){
                 return ['msg'=>'修改成功！','status'=>1];

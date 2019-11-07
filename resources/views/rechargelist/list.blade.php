@@ -38,7 +38,7 @@
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
                 <td class="hidden-xs">{{$info['name']}}</td>
-                <td class="hidden-xs">{{$info['score']}}</td>
+                <td class="hidden-xs">{{$info['score']/100}}</td>
                 <td>
                     <img src="{{$info['czimg']}}" width="50px" onclick="previewImg(this)">
                 </td>
