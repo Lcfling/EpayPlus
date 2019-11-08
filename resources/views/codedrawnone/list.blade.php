@@ -7,10 +7,7 @@
         <input type="text" value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入代理商编号号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="begin" placeholder="开始日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}">
-    </div>
-    <div class="layui-inline">
-        <input class="layui-input" name="begin" placeholder="结束日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['endtime'] or '' }}">
+        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}" autocomplete="off">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
@@ -30,7 +27,6 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
-            <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
         </colgroup>
@@ -46,7 +42,6 @@
             <th class="hidden-xs">开户行</th>
             <th class="hidden-xs">卡号</th>
             <th class="hidden-xs">申请时间</th>
-            <th class="hidden-xs">提现时间</th>
             <th class="hidden-xs">状态</th>
             <th>操作</th>
         </tr>
@@ -64,12 +59,11 @@
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
-                <td class="hidden-xs">{{$info['withdraw_time']}}</td>
                 <td class="hidden-xs">未结算</td>
                 <td>
                     <div class="layui-inline">
-                        <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['id']}}" data-desc="审核通过"><i class="layui-icon">&#xe605;</i></button>
-                        <button class="layui-btn layui-btn-small layui-btn-warm edits-btn2"  data-id="{{$info['id']}}" data-desc="驳回操作"><i class="layui-icon">&#x1006;</i></button>
+                        <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['id']}}" data-desc="审核通过">通过</button>
+                        <button class="layui-btn layui-btn-small layui-btn-warm edits-btn2"  data-id="{{$info['id']}}" data-desc="驳回操作">驳回</button>
                     </div>
                 </td>
             </tr>

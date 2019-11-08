@@ -15,13 +15,13 @@ class Codedraw extends Model
      * 通过
      */
     public static function pass($id){
-        return Codedraw::where('id',$id)->update(['status'=>1]);
+        return Codedraw::where('id',$id)->update(['status'=>1,'withdraw_time'=>time()]);
     }
 
     /**
      * 驳回
      */
     public static function reject($id){
-        return Codedraw::where('id',$id)->update(['status'=>2]);
+        return Codedraw::where('id',$id)->update(['status'=>2,'withdraw_time'=>time()]);
     }
 }

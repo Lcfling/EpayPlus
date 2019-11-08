@@ -10,6 +10,7 @@ use App\Http\Requests\StoreRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Codeuser;
 use Illuminate\Http\Request;
+use PragmaRX\Google2FA\Google2FA;
 
 class CodeuserController extends Controller
 {
@@ -47,6 +48,9 @@ class CodeuserController extends Controller
         unset($data['id']);
         $res=$this->add_unique($data['account']);
         if(!$res){
+            $google2fa = new Google2FA();
+            $secretKey=$google2fa->generateSecretKey();
+            $data['ggkey']=$secretKey;
             $pid=$data['pid']?$data['pid']:0;
             $data['mobile']=$data['account'];
             $data['pid']=intval($pid);

@@ -51,6 +51,8 @@ class BusdrawnoneController extends Controller
                 $this->unbuslock($id);
                 return ['msg'=>'通过失败！'];
             }
+        }else{
+            return ['msg'=>'请勿频繁操作！'];
         }
 
     }
@@ -61,14 +63,14 @@ class BusdrawnoneController extends Controller
         $id=$request->input('id');
         $key='business_lock_'.$id;
         $is=Redis::get($key);
-        if($is){
+        if(!empty($is)){
             return ['msg'=>'操作失败！'];
         }else{
             DB::beginTransaction();
             try{
                 $res=Busdraw::reject($id);
                 if($res){
-                    //提现驳回向驳回表中插入数据
+                    //提现驳回向驳回表中插入数据-sql
                     DB::commit();
                     return ['msg'=>'驳回成功！','status'=>1];
                 }else{
@@ -102,7 +104,7 @@ class BusdrawnoneController extends Controller
     }
     //redis解锁
     private function unbuslock($functions){
-        Redis::del("lock_".$functions);
+        Redis::del("business_lock_".$functions);
     }
 
 }

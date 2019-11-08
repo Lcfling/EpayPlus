@@ -15,13 +15,13 @@ class Agentdraw extends Model
      * 通过
      */
     public static function pass($id){
-        return Agentdraw::where('id',$id)->update(['status'=>1]);
+        return Agentdraw::where('id',$id)->update(['status'=>1,'endtime'=>time()]);
     }
 
     /**
      * 驳回
      */
     public static function reject($id){
-        return Agentdraw::where('id',$id)->update(['status'=>2]);
+        return Agentdraw::where('id',$id)->update(['status'=>2,'endtime'=>time()]);
     }
 }

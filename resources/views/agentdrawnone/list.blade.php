@@ -1,4 +1,4 @@
-@section('title', '代理商')
+@section('title', '代理商提现')
 @section('header')
     <div class="layui-inline">
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
@@ -7,10 +7,7 @@
         <input type="text" value="{{ $input['agent_id'] or '' }}" name="agent_id" placeholder="请输入代理商编号号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="begin" placeholder="开始日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}">
-    </div>
-    <div class="layui-inline">
-        <input class="layui-input" name="begin" placeholder="结束日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['endtime'] or '' }}">
+        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}" autocomplete="off">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
@@ -56,8 +53,8 @@
                 <td class="hidden-xs">未结算</td>
                 <td>
                     <div class="layui-inline">
-                        <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['id']}}" data-desc="审核通过"><i class="layui-icon">&#xe605;</i></button>
-                        <button class="layui-btn layui-btn-small layui-btn-warm edits-btn2"  data-id="{{$info['id']}}" data-desc="驳回操作"><i class="layui-icon">&#x1006;</i></button>
+                        <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['id']}}" data-desc="审核通过">通过</button>
+                        <button class="layui-btn layui-btn-small layui-btn-warm edits-btn2"  data-id="{{$info['id']}}" data-desc="驳回操作">驳回</button>
                     </div>
                 </td>
             </tr>

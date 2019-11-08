@@ -11,7 +11,7 @@ use App\Http\Requests\StoreRequest;
 use App\Models\Busbank;
 use App\Models\Business;
 use Illuminate\Support\Facades\DB;
-
+use PragmaRX\Google2FA\Google2FA;
 class BusinessController extends Controller
 {
     /**
@@ -59,12 +59,15 @@ class BusinessController extends Controller
         }else if($res2){
             return ['msg'=>'手机号已存在！'];
         }else{
+            $google2fa = new Google2FA();
+            $secretKey=$google2fa->generateSecretKey();
             $data['password']=bcrypt($data['password']);
             $data['remember_token']='';
             $data['paypassword']='';
             $unicode=$this->unicode();
             $accessKey=bcrypt(md5(md5($unicode)));
             $data['accessKey']=$accessKey;
+            $data['ggkey']=$secretKey;
             $data['creatime']=time();
             $data['updatetime']=time();
             $insertID=Business::insertGetId($data);

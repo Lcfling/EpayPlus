@@ -20,6 +20,7 @@ class AgentdrawdoneController extends Controller
         $data = Agentdraw::where($map)->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
+            $data[$key]['endtime'] =date("Y-m-d H:i:s",$value["endtime"]);
         }
         return view('agentdrawdone.list',['list'=>$data,'input'=>$request->all()]);
 

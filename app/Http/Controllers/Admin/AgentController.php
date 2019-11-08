@@ -10,6 +10,7 @@ use App\Models\Agentbank;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
+use PragmaRX\Google2FA\Google2FA;
 class AgentController extends Controller
 {
     /**
@@ -62,6 +63,9 @@ class AgentController extends Controller
         }else if($res2){
             return ['msg'=>'手机号已存在！'];
         }else{
+            $google2fa = new Google2FA();
+            $secretKey=$google2fa->generateSecretKey();
+            $data['ggkey']=$secretKey;
             $data['password']=bcrypt($data['password']);
             $data['creatime']=time();
             $res=Agent::insert($data);
