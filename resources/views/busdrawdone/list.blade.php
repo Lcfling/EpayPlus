@@ -27,6 +27,7 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
+            <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="100">
         </colgroup>
         <thead>
@@ -38,6 +39,7 @@
             <th class="hidden-xs">开户行</th>
             <th class="hidden-xs">卡号</th>
             <th class="hidden-xs">申请时间</th>
+            <th class="hidden-xs">审批时间</th>
             <th class="hidden-xs">状态</th>
 
         </tr>
@@ -52,6 +54,7 @@
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
+                <td class="hidden-xs">{{$info['endtime']}}</td>
                 <td class="hidden-xs">已通过</td>
 
             </tr>

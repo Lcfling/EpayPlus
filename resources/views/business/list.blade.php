@@ -26,6 +26,7 @@
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="300">
@@ -37,6 +38,7 @@
             <th class="hidden-xs">商户昵称</th>
             <th class="hidden-xs">联系电话</th>
             <th class="hidden-xs">费率</th>
+            <th class="hidden-xs">类型</th>
             <th class="hidden-xs">状态</th>
             <th class="hidden-xs">创建时间</th>
             <th class="hidden-xs">更新时间</th>
@@ -51,7 +53,8 @@
                 <td class="hidden-xs">{{$info['nickname']}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
                 <td class="hidden-xs">{{$info['fee']}}%</td>
-                <td class="hidden-xs">{{$info['status']}}</td>
+                <td class="hidden-xs">@if($info['paycode']==0)默认@elseif(($info['paycode']==1))微信@elseif(($info['paycode']==2))支付宝@endif</td>
+                <td class="hidden-xs">@if($info['status']==0)停止@elseif(($info['status']==1))激活@elseif(($info['status']==2))异常@endif</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">{{$info['updatetime']}}</td>
                 <td>

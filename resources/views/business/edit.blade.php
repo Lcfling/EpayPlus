@@ -35,6 +35,17 @@
             <input type="text" value="{{$info['mobile'] or ''}}" name="mobile" required lay-verify="tel" placeholder="请输入电话号码" autocomplete="off" class="layui-input">
         </div>
     </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="color: red">类型：</label>
+        <div class="layui-input-block">
+            <select name="paycode" lay-filter="status" lay-verify="status">
+                <option value="">请选择一个内容</option>
+                <option value="0" {{isset($info['paycode'])&&$info['paycode']=='0'?'selected':''}}>默认</option>
+                <option value="1" {{isset($info['paycode'])&&$info['paycode']=='1'?'selected':''}}>微信商户</option>
+                <option value="2" {{isset($info['paycode'])&&$info['paycode']=='2'?'selected':''}}>支付宝商户</option>
+            </select>
+        </div>
+    </div>
     @if($id==0)
     <div class="layui-form-item">
         <label class="layui-form-label" style="color: red">商户费率：</label>

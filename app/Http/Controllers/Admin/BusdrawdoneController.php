@@ -20,6 +20,7 @@ class BusdrawdoneController extends Controller
         $data = Busdraw::where($map)->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
+            $data[$key]['endtime'] =date("Y-m-d H:i:s",$value["endtime"]);
         }
         return view('busdrawdone.list',['list'=>$data,'input'=>$request->all()]);
 

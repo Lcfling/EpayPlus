@@ -18,17 +18,17 @@ if (!function_exists('is_config_id')) {
         return in_array($id, $ids);
     }
 }
-
 /**获取周
  * @param $date
  * @return float
  */
 function computeWeek($date,$status = 'true'){
+    date_default_timezone_set('PRC');
     if($status){
         $diff = strtotime($date);
     }else{
         $diff = $date;
     }
-    $res = ceil($diff/(24*60*60*7));
+    $res = ceil(($diff - 1564934399)/(24*60*60*7));
     return $res;
 }
