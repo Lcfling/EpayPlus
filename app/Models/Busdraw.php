@@ -14,14 +14,14 @@ class Busdraw extends Model
      * 通过
      */
     public static function pass($id){
-        return Busdraw::where('id',$id)->update(['status'=>1]);
+        return Busdraw::where('id',$id)->update(['status'=>1,'endtime'=>time()]);
     }
 
     /**
      * 驳回
      */
     public static function reject($id){
-        return Busdraw::where('id',$id)->update(['status'=>2]);
+        return Busdraw::where('id',$id)->update(['status'=>2,'endtime'=>time()]);
     }
 
 }
