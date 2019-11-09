@@ -39,6 +39,8 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapApiRoutes();
 
+        $this->mapCodeRoutes();
+
         $this->mapWebRoutes();
 
         //
@@ -74,6 +76,21 @@ class RouteServiceProvider extends ServiceProvider
     }
 
     /**
+     * Define the "code" routes for the application.
+     *
+     * These routes are typically stateless.
+     *
+     * @return void
+     */
+    protected function mapCodeRoutes()
+    {
+        Route::prefix('code')
+            ->middleware('code')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/code.php'));
+    }
+
+    /**
      * Define the "api" routes for the application.
      *
      * These routes are typically stateless.
@@ -87,4 +104,6 @@ class RouteServiceProvider extends ServiceProvider
             ->namespace($this->namespace)
             ->group(base_path('routes/admin.php'));
     }
+
+
 }

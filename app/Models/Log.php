@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Log extends Model
 {
     protected $table = 'admin_logs';
+    public $timestamps = false;
     public function user()
     {
         return $this->hasOne(config('auth.providers.users.model'), 'id', 'admin_id');
