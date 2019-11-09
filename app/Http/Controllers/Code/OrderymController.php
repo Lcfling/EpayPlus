@@ -83,7 +83,7 @@ class OrderymController extends Controller {
 
             ajaxReturn('error','签名错误!',0);
         }
-        $order_sn = getUniqueId_six($type,$business_code,$weeksuf);
+        $order_sn = getrequestId($type,$business_code,$weeksuf);
         $time = time();
         //保存商户订单记录
         $data =array(
