@@ -175,7 +175,24 @@ function getorderId_three(){
     return $order_id;
 }
 
-/**生成唯一订单号 第5种方法
+/**无缓存的唯一订单号
+ * @param $paycode 支付类型
+ * @param $business_code 商户id
+ * @param $tablesuf 订单表后缀
+ * @return string
+ */
+function getrequestId($paycode,$business_code,$tablesuf){
+
+    $requestId  =	date("Ymd").'e'.$tablesuf.'e'.$paycode .substr($business_code, -3).rand(11111111,99999999);
+
+    return $requestId;
+
+}
+
+/**有缓存的100%唯一订单号 第5种方法
+ * @param $paycode 支付类型
+ * @param $business_code 商户id
+ * @param $tablesuf 订单表后缀
  * @return string
  */
 function getUniqueId_six($paycode,$business_code,$tablesuf) {
@@ -217,3 +234,4 @@ function get_time_235959($time = '') {
     $time = empty($time) ? time() : intval($time);
     return strtotime(date('Y-m-d 00:00:00', $time+86400))-1;
 }
+
