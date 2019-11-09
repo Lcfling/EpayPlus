@@ -30,8 +30,15 @@ class IndexController extends Controller
 //        print_r($this->uid);
 //        Redis::set('aaa',123);
 
-        print_r(geoip('115.54.175.76')->toArray());
+//        print_r(geoip('115.54.175.76')->toArray());
 //        print_r(Redis::get('aaa'));
+
+        for ($i=0;$i<10000;$i++){
+            $res[] =getrequestId('1','300013','14');
+        }
+        $ress = FetchRepeatMemberInArray($res);
+//        print_r($res);
+        print_r($ress);
     }
 
     /**
