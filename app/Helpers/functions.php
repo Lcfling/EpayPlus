@@ -235,3 +235,15 @@ function get_time_235959($time = '') {
     return strtotime(date('Y-m-d 00:00:00', $time+86400))-1;
 }
 
+/**检测数组value值的重复
+ * @param $array
+ * @return array
+ */
+function FetchRepeatMemberInArray($array) {
+    // 获取去掉重复数据的数组
+    $unique_arr = array_unique ( $array );
+    // 获取重复数据的数组
+    $repeat_arr = array_diff_assoc ( $array, $unique_arr );
+    return $repeat_arr;
+}
+
