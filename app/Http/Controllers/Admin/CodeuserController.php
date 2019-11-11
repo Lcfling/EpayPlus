@@ -10,6 +10,7 @@ use App\Http\Requests\StoreRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Codeuser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use PragmaRX\Google2FA\Google2FA;
 
 class CodeuserController extends Controller
@@ -46,7 +47,7 @@ class CodeuserController extends Controller
         $data=$request->all();
         unset($data['_token']);
         unset($data['id']);
-        $res=$this->add_unique($data['account']);
+        $res=Codeuser::add_unique($data['account']);
         if(!$res){
             $google2fa = new Google2FA();
             $secretKey=$google2fa->generateSecretKey();
@@ -54,6 +55,7 @@ class CodeuserController extends Controller
             $pid=$data['pid']?$data['pid']:0;
             $data['mobile']=$data['account'];
             $data['pid']=intval($pid);
+            $data['password']=md5($data['password']);
             $data['shenfen']=intval($data['shenfen']);
             $data['rate']=floatval($data['rate']);
             $data['rates']=floatval($data['rates']);
@@ -78,10 +80,9 @@ class CodeuserController extends Controller
         unset($data['_token']);
         $id=$data['id'];
         unset($data['id']);
-        $res=$this->edit_unique($id,$data['account']);
+        $res=Codeuser::edit_unique($id,$data['account']);
         if(!$res){
             $pid=$data['pid']?$data['pid']:0;
-            $data['mobile']=$data['account'];
             $data['pid']=intval($pid);
             $data['shenfen']=intval($data['shenfen']);
             $data['rate']=floatval($data['rate']);
@@ -110,26 +111,135 @@ class CodeuserController extends Controller
     }
 
     /**
-     * 添加判断存在
+     * 登录
      */
-    private function add_unique($account){
-        $res=Codeuser::where(array('account'=>$account))->exists();
+    public function codeuser_isover(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        $is_over=$data['is_over'];
+        $res=Codeuser::where('user_id',$id)->update(array('is_over'=>$is_over));
         if($res){
-            return true;
+            return ['msg'=>'操作成功！','status'=>1];
         }else{
-            return false;
+            return ['msg'=>'操作失败！'];
         }
     }
-
     /**
-     * 编辑判断存在
+     * 增加二维码页面
      */
-    private function edit_unique($id,$account){
-        $res=Codeuser::where(array('account'=>$account))->whereNotIn('user_id',[$id])->exists();
-        if($res){
-            return true;
+    public function addqr($user_id){
+        $info = $user_id?Codeuser::find($user_id):[];
+        return view('codeuser.addqr',['id'=>$user_id,'info'=>$info]);
+    }
+    //修改二维码数量
+    public function codeaddqr(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        $res=Codeuser::where('user_id',$id)->update(array('imsi_num'=>intval($data['imsi_num'])));
+        if($res!==false){
+            return ['msg'=>'操作成功！','status'=>1];
         }else{
-            return false;
+            return ['msg'=>'操作失败！'];
+        }
+
+    }
+    //通知页面
+    public function tomsg($user_id){
+        $info = $user_id?Codeuser::find($user_id):[];
+        return view('codeuser.tomsg',['id'=>$user_id,'info'=>$info]);
+    }
+    //添加通知
+    public function codeputmsg(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        $msg=[
+            'ifread'=>0,
+            'title'=>$data['title'],
+            'content'=>$data['content'],
+            'creatime'=>time(),
+            'user_id'=>$id,
+            'remark'=>'消息通知',
+        ];
+        $insert=DB::table('message')->insert($msg);
+        if($insert){
+            return ['msg'=>'添加成功！','status'=>1];
+        }else{
+            return ['msg'=>'添加失败！'];
+        }
+    }
+    //费率页面
+    public function ownfee($user_id){
+        $info = $user_id?Codeuser::find($user_id):[];
+        return view('codeuser.ownfee',['id'=>$user_id,'info'=>$info]);
+    }
+    //更改费率
+    public function codeuserfee(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        $res=Codeuser::where('user_id',$id)->update(array('rate'=>floatval($data['rate']),'rates'=>floatval($data['rates'])));
+        if($res!==false){
+            return ['msg'=>'操作成功！','status'=>1];
+        }else{
+            return ['msg'=>'操作失败！'];
+        }
+    }
+    //登录密码页面
+    public function logpwd($user_id){
+        $info = $user_id?Codeuser::find($user_id):[];
+        return view('codeuser.logpwd',['id'=>$user_id,'info'=>$info]);
+    }
+    //修改登录密码
+    public function codenewpwd(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        $pwd=md5($data['password']);
+        $res=Codeuser::where('user_id',$id)->update(array('password'=>$pwd));
+        if($res!==false){
+            return ['msg'=>'修改成功！','status'=>1];
+        }else{
+            return ['msg'=>'修改失败！'];
+        }
+
+    }
+    //二级密码
+    public function secondpwd($user_id){
+        $info = $user_id?Codeuser::find($user_id):[];
+        return view('codeuser.secondpwd',['id'=>$user_id,'info'=>$info]);
+    }
+    //修改二级密码
+    public function codenewTwopwd(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        $pwd=md5($data['second_pwd']);
+        $res=Codeuser::where('user_id',$id)->update(array('second_pwd'=>$pwd));
+        if($res!==false){
+            return ['msg'=>'修改成功！','status'=>1];
+        }else{
+            return ['msg'=>'修改失败！'];
+        }
+    }
+    //支付密码
+    public function zfpwd($user_id){
+        $info = $user_id?Codeuser::find($user_id):[];
+        return view('codeuser.zfpwd',['id'=>$user_id,'info'=>$info]);
+    }
+    //修改支付密码
+    public function codenewpaypwd(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        $pwd=md5($data['zf_pwd']);
+        $res=Codeuser::where('user_id',$id)->update(array('zf_pwd'=>$pwd));
+        if($res!==false){
+            return ['msg'=>'修改成功！','status'=>1];
+        }else{
+            return ['msg'=>'修改失败！'];
         }
     }
 }

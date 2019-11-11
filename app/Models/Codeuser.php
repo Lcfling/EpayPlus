@@ -15,4 +15,27 @@ class Codeuser extends Model
     protected $codeUserInfo;
     public $timestamps = false;
 
+    /**
+     * 添加判断存在
+     */
+    public static function add_unique($account){
+        $res=Codeuser::where(array('account'=>$account))->exists();
+        if($res){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 编辑判断存在
+     */
+    public static function edit_unique($id,$account){
+        $res=Codeuser::where(array('account'=>$account))->whereNotIn('user_id',[$id])->exists();
+        if($res){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

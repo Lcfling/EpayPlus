@@ -82,6 +82,25 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/agentdrawreject', 'AgentdrawrejectController');
     Route::resource('/codeuser',        'CodeUserController');
     Route::post('/codeuserUpdate',      'CodeUserController@update');
+    Route::post('/codeuser_isover',     'CodeUserController@codeuser_isover');
+
+    Route::get('/codeuser/addqr/{id}',  'CodeUserController@addqr');
+    Route::post('/codeaddqr',           'CodeUserController@codeaddqr');
+    Route::get('/codeuser/tomsg/{id}',  'CodeUserController@tomsg');
+    Route::post('/codeputmsg',          'CodeUserController@codeputmsg');
+    Route::get('/codeuser/ownfee/{id}',  'CodeUserController@ownfee');
+    Route::post('/codeuserfee',          'CodeUserController@codeuserfee');
+    Route::get('/codeuser/logpwd/{id}',  'CodeUserController@logpwd');
+    Route::post('/codenewpwd',          'CodeUserController@codenewpwd');
+    Route::get('/codeuser/secondpwd/{id}', 'CodeUserController@secondpwd');
+    Route::post('/codenewTwopwd',         'CodeUserController@codenewTwopwd');
+    Route::get('/codeuser/zfpwd/{id}',  'CodeUserController@zfpwd');
+    Route::post('/codenewpaypwd',         'CodeUserController@codenewpaypwd');
+
+    Route::get('/codeownbill/own/{id}',  'CodeownbillController@own');
+    Route::resource('/codeownbill',      'CodeownbillController');
+
+
     Route::resource('/coderakemoney',   'CoderakemoneyController');
     Route::post('/coderakemoneyUpdate', 'CoderakemoneyController@update');
     Route::resource('/codedrawnone',    'CodedrawnoneController');
@@ -95,6 +114,9 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/rechargelist/enable', 'RechargelistController@enable');
     Route::resource('/billflow',        'BillflowController');
     Route::resource('/order',           'OrderController');
+    Route::post('/order/budan', 'OrderController@budan');
+    Route::post('/order/csbudan', 'OrderController@csbudan');
+    Route::post('/order/sfpushfirst','OrderController@sfpushfirst');
     Route::resource('/buscount',        'BuscountController');
     Route::resource('/busbill',         'BusbillController');
     Route::resource('/agentcount',      'AgentcountController');

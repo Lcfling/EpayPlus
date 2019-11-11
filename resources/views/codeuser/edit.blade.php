@@ -7,6 +7,7 @@
         </div>
     </div>
 
+    @if($id==0)
     <div class="layui-form-item">
         <label class="layui-form-label" style="width: 100px">密码：</label>
         <div class="layui-input-inline">
@@ -20,6 +21,7 @@
             <input type="password" required lay-verify="confirmPass" placeholder="请输入密码" autocomplete="off" class="layui-input">
         </div>
     </div>
+    @endif
 
     <div class="layui-form-item">
         <label class="layui-form-label" style="width: 100px">上级：</label>
