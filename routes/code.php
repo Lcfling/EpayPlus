@@ -20,6 +20,7 @@ Route::group(['namespace'  => "Code"], function () {
      * IndexController
      */
     Route::post('/index',                             'IndexController@index');
+    Route::post('/welcome',                           'IndexController@welcome');
     Route::post('/index/update',                      'IndexController@update');//检测更新
 
 
@@ -35,7 +36,7 @@ Route::group(['namespace'  => "Code"], function () {
     Route::post('/Mycenter/real_name',                'MycenterController@real_name');//实名认证
     Route::post('/Mycenter/withdraw_list',            'MycenterController@withdraw_list');//提现列表
     Route::post('/Mycenter/recharge_list',            'MycenterController@recharge_list');//充值列表
-    Route::post('/Mycenter/setpass',                  'MycenterController@setpass');//设置支付密码1
+    Route::post('/Mycenter/setpass',                  'MycenterController@setpass');//设置支付密码
     Route::post('/Mycenter/sendcode',                 'MycenterController@sendcode');//获取支付验证码
     Route::post('/Mycenter/verification',             'MycenterController@verification');//支付验证验证码
     Route::post('/Mycenter/logpasssendcode',          'MycenterController@logpasssendcode');//获取修改登录密码验证码
@@ -65,8 +66,8 @@ Route::group(['namespace'  => "Code"], function () {
     Route::post('/Timernotify/sfpushfirst',           'TimernotifyController@sfpushfirst');//第一次 异步回调
     Route::post('/Timernotify/sfpushsecond',          'TimernotifyController@sfpushfirst');//第二次 异步回调
     Route::post('/Timernotify/sfpushthird',           'TimernotifyController@sfpushfirst');//第三次 异步回调
-    Route::post('/Timernotify/setstale',              'TimernotifyController@setstale');//订单10分钟更改为过期
-    Route::post('/Timernotify/orderunfreeze',         'TimernotifyController@orderunfreeze');//过期订单解冻并返回跑分 更改订单为订单取消
+    Route::get('/Timernotify/setstale',              'TimernotifyController@setstale');//订单10分钟更改为过期
+    Route::get('/Timernotify/orderunfreeze',         'TimernotifyController@orderunfreeze');//过期订单解冻并返回跑分 更改订单为订单取消
 
     /**
      * OrderjdController
@@ -76,6 +77,7 @@ Route::group(['namespace'  => "Code"], function () {
     Route::post('/Orderjd/ordering',                'OrderjdController@ordering');//进行中的抢单
     Route::post('/orderjd/chongzhi',                'OrderjdController@chongzhi');//上传充值凭证
     Route::post('/orderjd/chongzhirecord',          'OrderjdController@chongzhirecord');//提交记录
+    Route::post('/orderjd/chongzhiinfo',            'OrderjdController@chongzhiinfo');//充值信息
 
     /**
      * ZfnoticeController
