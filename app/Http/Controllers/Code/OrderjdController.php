@@ -22,7 +22,13 @@ class OrderjdController extends CommonController {
     public function chongzhirecord(Request $request) {
         if($request->isMethod('post')) {
             $user_id = $this->uid;
-            $czrecord=Czrecord::where(array("user_id"=>$user_id))->get();
+            $lastid = $request->input('lastid');
+            if($lastid){
+                $where =[['user_id',$user_id],['id','<',$lastid]];
+            }else{
+                $where =array('user_id'=>$user_id);
+            }
+            $czrecord=Czrecord::where($where)->orderBy('creatime','desc')->limit(10)->get();
             foreach ($czrecord as &$v) {
                 $v['creatime']= date('Y/m/d H:i:s',$v['creatime']);
                 $v['score']=  $v['score']/100;
@@ -46,7 +52,7 @@ class OrderjdController extends CommonController {
     public function ordering(Request $request) {
         if($request->isMethod('post')) {
             $user_id =$this->uid;
-            $order_info=Orderrecord::where(array("user_id"=>$user_id,"status"=>0,"sk_status"=>0))->orderBy('creatime', 'desc')->get();
+            $order_info=Orderrecord::where(array("user_id"=>$user_id,"status"=>0,"sk_status"=>0))->orderBy('id', 'desc')->get();
             foreach ($order_info as &$v) {
                 $v['name'] = $this->getname($v['erweima_id']);
                 $v['creatime']= date('Y/m/d H:i:s',$v['creatime']);
@@ -62,8 +68,16 @@ class OrderjdController extends CommonController {
     public function orderjd_list(Request $request) {
         if($request->isMethod('post')) {
             $user_id =$this->uid;//用户id
-            $order = Order::getordertable();
-            $list=$order->where(array('user_id'=>$user_id))->orderBy('creatime', 'desc')->get();
+            $lastid = $request->input('lastid');
+            if($lastid){
+                $where =[['user_id',$user_id],['id','<',$lastid]];
+            }else{
+                $where =array('user_id'=>$user_id);
+            }
+            $bg_time = strtotime(date('Y-m-d'));
+            $recmoney =  Orderrecord::where([['user_id',$user_id],['creatime','>=',$bg_time]])->sum('tradeMoney');
+            $sucmoney =  Orderrecord::where([['user_id',$user_id],['status',1],['creatime','>=',$bg_time]])->sum('tradeMoney');
+            $list=Orderrecord::where($where)->limit(10)->orderBy('id', 'desc')->get();
             foreach ($list as $k =>&$v) {
                 $v['tradeMoney']= $v['tradeMoney']/100;
                 $v['payMoney']= $v['payMoney']/100;
@@ -71,6 +85,8 @@ class OrderjdController extends CommonController {
                 $v['name'] = $this->getname($v['erweima_id']);
             }
             $data = array(
+                'recmoney'=>$recmoney/100,
+                'sucmoney'=>$sucmoney/100,
                 'list'=>$list
             );
             ajaxReturn($data,'请求成功!',1);
@@ -84,11 +100,11 @@ class OrderjdController extends CommonController {
     public function savesk_status(Request $request) {
         if($request->isMethod('post')) {
             $user_id =$this->uid;//用户id
-            $order_sn =(int)$_POST['order_sn'];
+            $order_sn =$_POST['order_sn'];
             $skmoney=(int)$_POST['skmoney'];
             $order_info=Orderrecord::where(array('user_id'=>$user_id,'order_sn'=>$order_sn,'sk_status'=>0))->first();
             if(empty($order_info)) {
-                ajaxReturn(null,'订单不存在!',0);
+                ajaxReturn(null,'订单已处理!',0);
             }
             if(Orderrecord::where(array('user_id'=>$user_id,'order_sn'=>$order_sn,'sk_status'=>2))->first()) {
                 ajaxReturn(null,'系统回调成功,您已收款成功,请刷新当前页面!',0);
@@ -147,7 +163,7 @@ class OrderjdController extends CommonController {
         $order = Order::getordersntable($order_sn);
         // 修改订单状态
         $order->where(array("order_sn"=>$order_sn))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
-        Orderrecord::where(array("order_sn"=>$order_sn))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
+        Orderrecord::where(array("order_sn"=>$order_sn))->update(array("status"=>1,"dj_status"=>2,"pay_time"=>time()));
 //        $this->sfpushfirst($order_sn_info['order_sn']);
     }
     private function csbudan($order_sn_info,$order_sn) {
@@ -168,7 +184,7 @@ class OrderjdController extends CommonController {
         $order = Order::getordersntable($order_sn);
         // 修改订单状态
         $order->where(array("order_sn"=>$order_sn))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
-        Orderrecord::where(array("order_sn"=>$order_sn))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
+        Orderrecord::where(array("order_sn"=>$order_sn))->update(array("status"=>1,"dj_status"=>2,"pay_time"=>time()));
 //        $this->sfpushfirst($order_sn_info['order_sn']);
     }
     /**

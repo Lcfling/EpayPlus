@@ -69,6 +69,7 @@ class MycenterController extends CommonController {
         if($request->isMethod('post')) {
             $user_id = $this->uid;
             $scoreinfo = Userscount::gettolscore($user_id);
+            $balance = $scoreinfo['balance'];//余额
             $tolscore = $scoreinfo['tol_sore'];//总分
             $tolbrokerage = $scoreinfo['tol_brokerage'];//总利润
             $daybrokerage = $scoreinfo['day_brokerage'];//当天利润
@@ -76,6 +77,7 @@ class MycenterController extends CommonController {
             $wxQRnum =Erweima::where(array('user_id'=>$user_id,'status'=>0,'type'=>1))->count();
             $zfbQRnum =Erweima::where(array('user_id'=>$user_id,'status'=>0,'type'=>2))->count();
             $data =array(
+                'balance'=>$balance/100,
                 'tolscore'=>$tolscore/100,
                 'tolbrokerage'=>$tolbrokerage/100,
                 'daybrokerage'=>$daybrokerage/100,
@@ -108,7 +110,7 @@ class MycenterController extends CommonController {
                 $where =array('user_id'=>$user_id,'status'=>1);
             }
             $daytable = Accountlog::getdaytable();
-            $list =$daytable->where($where)->orderBy('creatime',"desc")->select('id','score','status','creatime')->limit(10)->get();
+            $list =$daytable->where($where)->orderBy('id',"desc")->select('id','score','status','creatime')->limit(10)->get();
             foreach ($list as $k=>&$v) {
                 $v['money'] = $v['score']/100;
                 $v['creatime']= date('Y/m/d H:i:s',$v['creatime']);
@@ -207,7 +209,7 @@ class MycenterController extends CommonController {
             }else{
                 $where =array('user_id'=>$user_id);
             }
-            $list = Withdraw::where($where)->orderBy('creatime','desc')->limit(10)->get();
+            $list = Withdraw::where($where)->orderBy('id','desc')->limit(10)->get();
             foreach ($list as $k=>&$v) {
                 $v['money']=$v['money']/100;
                 $v['creatime']= date('Y/m/d H:i:s',$v['creatime']);

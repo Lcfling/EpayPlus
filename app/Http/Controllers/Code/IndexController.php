@@ -7,6 +7,9 @@
  */
 namespace App\Http\Controllers\Code;
 
+use App\Models\Czrecord;
+use App\Models\Userscount;
+use App\Models\Withdraw;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -32,13 +35,37 @@ class IndexController extends Controller
 
 //        print_r(geoip('115.54.175.76')->toArray());
 //        print_r(Redis::get('aaa'));
-
-        for ($i=0;$i<10000;$i++){
-            $res[] =getrequestId('1','300013','14');
-        }
-        $ress = FetchRepeatMemberInArray($res);
+//
+//        for ($i=0;$i<10000;$i++){
+//            $res[] =getrequestId('1','300013','14');
+//        }
+//        $ress = FetchRepeatMemberInArray($res);
 //        print_r($res);
-        print_r($ress);
+//        print_r($ress);
+
+//        $data = array(
+//            'user_id'=>1,
+//            'order_no'=>getrequestId('1','300013','14'),
+//            'money'=>10000,
+//            'creatime'=>time(),
+//            'status'=>1
+//        );
+//        $data = array(
+//            'user_id'=>1,
+//            'name'=>111,
+//            'score'=>10000,
+//            'czimg'=>getrequestId('1','300013','14'),
+//            'creatime'=>time(),
+//            'status'=>1
+//        );
+//        for ($i=0;$i<10000;$i++){
+//            Czrecord::insert($data);
+//        }
+//        $type = 2;
+//        $user_id=1;
+//        $id =2;
+//        Redis::rPush('erweimas'.$type.$user_id,$id);
+        Userscount::onWriteConnect()->where('user_id',1)->value('balance');
     }
 
     /**

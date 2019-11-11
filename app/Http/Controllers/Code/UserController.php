@@ -46,7 +46,7 @@ class UserController extends CommonController {
             }
             //查询用户二维码
             $erweima=Erweima::where(array("user_id"=>$user_id))->first();
-            if ($erweima) {
+            if (!$erweima) {
                 ajaxReturn(null,"请先上传收款码!",0);
             }
             //用户入接单队列
@@ -65,6 +65,7 @@ class UserController extends CommonController {
             $user_id=$this->uid;
             //用户
             $order_sn=$_POST['order_sn'];
+
             //订单号
             //加锁
             $nostr=time().uniqid();
@@ -72,18 +73,13 @@ class UserController extends CommonController {
                 ajaxReturn(null,"订单已被抢,正在处理中!",0);
             }
             //获取订单信息
-            $order_info=Orderrecord::where([['order_sn',$order_sn],['status','!=',0]])->first();
+            $order_info=Orderrecord::where([['order_sn',$order_sn],['status',0]])->first();
             if(!$order_info){
                 $this->openOrdersnLock($order_sn);
                 ajaxReturn(null,"订单已不存在,请刷新当前页面!",0);
             }
-            // 查看用户积分余额
-            $balance = Userscount::where('user_id',$user_id)->value('balance');
-            $yue=bcsub($balance/100,1000,2);
-            if ($yue<$order_info['tradeMoney']/100) {
-                $this->openOrdersnLock($order_sn);
-                ajaxReturn(null,"用户金额不足!",0);
-            }
+            $tradeMoney = $order_info['tradeMoney'];
+
             $userinfo=Users::where(array("user_id"=>$user_id))->first();
             if ($userinfo['take_status'] == 0) {
                 $this->openOrdersnLock($order_sn);
@@ -118,17 +114,27 @@ class UserController extends CommonController {
                 $this->openOrdersnLock($order_sn);
                 ajaxReturn(null,"订单已被抢!",0);
             }
-            $status=Users::insert(
+            DB::beginTransaction();
+            // 查看用户积分余额
+            $balance =DB::table('users_count')->where('user_id',$user_id)->value('balance');
+            $yue=bcsub($balance/100,1000,2);
+            if ($yue<$tradeMoney/100) {
+                $this->openOrdersnLock($order_sn);
+                ajaxReturn(null,"用户金额不足!",0);
+            }
+            DB::table('users_count')->where('user_id',$user_id)->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
+            DB::commit();
+            $counttable = Accountlog::getcounttable($order_sn);
+            $status=$counttable->insert(
                 array(
                     'user_id'=>$user_id,
                     'order_sn'=>$order_sn,
-                    'score'=>-$order_info["tradeMoney"],
+                    'score'=>-$tradeMoney,
                     'erweima_id'=>$erweima_id,
                     'business_code'=>$order_info['business_code'],
-                    'out_uid'=>$order_info["out_uid"],
                     'status'=>3,
                     'payType'=>$order_info["payType"],
-                    'remark'=>'冻结中',
+                    'remark'=>'资金冻结',
                     'creatime'=>time()
                 )
             );
@@ -145,9 +151,9 @@ class UserController extends CommonController {
                 //发送被抢订单信息
                 $this->sendnotify($order_info,2);
                 //发送被抢订单信息
-                $ourdercount=Order::where(array("user_id"=>$user_id,"status"=>0))->count();
+                $ourdercount=Orderrecord::where(array("user_id"=>$user_id,"status"=>0,"sk_status"=>0))->count();
                 //获取订单信息
-                $order_infos=Order::where(array("id"=>$order_id))->first();
+                $order_infos=$order->where(array("id"=>$order_id))->first();
                 $this->senduidnotify($order_infos,3,$ourdercount);
                 //返回信息
                 ajaxReturn(null,"抢单成功!");
@@ -218,7 +224,7 @@ class UserController extends CommonController {
      * 发送数据
      */
     private function sendnotify($orderinfo,$type) {
-        Gateway::$registerAddress = '172.18.20.112:1236';
+        Gateway::$registerAddress = '127.0.0.1:1236';
         $data=array(
             'ordercount'=>1,
             'type'=>$type,

@@ -146,7 +146,7 @@ class OrderymController extends Controller {
                         "gptime"=>$order_info['creatime']+600,
                         "type"=>$order_info['payType'],
                         "business_code"=>$order_info['business_code'],
-                        "payMoney"=>$order_info['payMoney']/100
+                        "tradeMoney"=>$order_info['tradeMoney']/100
                     );
                     ajaxReturn($data,"订单详情!",1);
                 }else{
