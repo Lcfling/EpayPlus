@@ -153,10 +153,6 @@ class MycenterController extends CommonController {
             $userinfo =$this->member;
             $money = (int)($_POST['money'] * 100);
             $zf_pwd = md5($_POST['zf_pwd']);
-            $scoreinfo = Userscount::gettolscore($user_id);
-            if($money > $scoreinfo['tol_sore']) {
-                ajaxReturn('','提现金额大于总金额!',0);
-            }
             if($money<0) {
                 ajaxReturn('','提现金额有误,请重新输入!',0);
             }
@@ -169,6 +165,14 @@ class MycenterController extends CommonController {
             if($userinfo['zf_pwd'] != $zf_pwd) {
                 ajaxReturn('','密码错误,请重新输入!',0);
             }
+            DB::beginTransaction();
+            // 查看用户积分余额
+            $balance =DB::table('users_count')->where('user_id',$user_id)->value('balance');
+            if($money > $balance) {
+                ajaxReturn('','提现金额大于总金额!',0);
+            }
+            DB::table('users_count')->where('user_id',$user_id)->decrement('balance',$money);
+            DB::commit();
             $data =array(
                 'user_id'=>$user_id,
                 'order_no'=>getorderId_three(),
