@@ -38,9 +38,9 @@ Route::group(['namespace'  => "Code"], function () {
     Route::post('/Mycenter/recharge_list',            'MycenterController@recharge_list');//充值列表
     Route::post('/Mycenter/setpass',                  'MycenterController@setpass');//设置支付密码
     Route::post('/Mycenter/sendcode',                 'MycenterController@sendcode');//获取支付验证码
-    Route::post('/Mycenter/verification',             'MycenterController@verification');//支付验证验证码
+//    Route::post('/Mycenter/verification',             'MycenterController@verification');//支付验证验证码
     Route::post('/Mycenter/logpasssendcode',          'MycenterController@logpasssendcode');//获取修改登录密码验证码
-    Route::post('/Mycenter/logpassverify',            'MycenterController@logpassverify');//登录密码验证验证码
+//    Route::post('/Mycenter/logpassverify',            'MycenterController@logpassverify');//登录密码验证验证码
     Route::post('/Mycenter/setlogpass',               'MycenterController@setlogpass');//设置登录密码
     Route::post('/Mycenter/setsecondpwd',             'MycenterController@setsecondpwd');//设置二级登录密码
     Route::post('/Mycenter/createcode',               'MycenterController@createcode');//生成推广码
@@ -56,6 +56,8 @@ Route::group(['namespace'  => "Code"], function () {
     Route::post('/Mycenter/home',                     'MycenterController@home');//城市选择
     Route::post('/Mycenter/qrcodes',                  'MycenterController@qrcodes');//二维码删除列表
     Route::post('/Mycenter/saveuserinfo',             'MycenterController@saveuserinfo');//修改银行卡信息
+    Route::post('/Mycenter/getGoogle2FA',             'MycenterController@getGoogle2FA');//获取谷歌秘钥和绑定二维码地址
+    Route::post('/Mycenter/Google2FAsendcode',        'MycenterController@Google2FAsendcode');//获取查看谷歌验证的手机验证码
 
     Route::post('/orderym/kfnotifyurl',               'OrderymController@kfnotifyurl');//app支付成功回调
     Route::post('/orderym/kuaifupay',                 'OrderymController@kuaifupay');//第三方调取支付
