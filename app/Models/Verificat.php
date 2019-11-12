@@ -9,14 +9,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
+use Request;
 class Verificat extends Model {
     protected  $table = 'verificat';
     public $timestamps = false;
 
 
-    public function dxbsend($mobile,$code){
-
-        $ip=getip();
+    public static function dxbsend($mobile,$code,$ip){
         $status=Redis::get('sendsms_lock_'.$ip);
         if($status==1){
             return 123;
@@ -33,7 +32,7 @@ class Verificat extends Model {
 
         $data=json_encode($data);
         //   print_r($data);
-        $res = $this->https_post_kf($url,$data);
+        $res = Verificat::https_post_kf($url,$data);
 
         $res=json_decode($res,true);
 
@@ -44,7 +43,7 @@ class Verificat extends Model {
         }
         return $res;
     }
-    public function dxbsends($mobile,$code){
+    public static function dxbsends($mobile,$code){
 
         $ip=getip();
         $status=Cac()->get('sendsms_lock_'.$ip);
@@ -65,13 +64,33 @@ class Verificat extends Model {
         return $res;
         //return false;
     }
+    /**存储手机验证码发送记录
+     * @param $code
+     * @param $mobile
+     * @param $type
+     * @param $ip
+     * @param $status
+     * @param $sendmsg
+     */
+    public static function insertsendcode($code,$mobile,$type,$ip,$status,$sendmsg) {
+        $data=array(
+            'code'=>$code,
+            'phone'=>$mobile,
+            'type'=>$type,
+            'sendip'=>$ip,
+            'status'=>$status,
+            'sendmsg'=>$sendmsg,
+            'creatime'=>time()
+        );
+        Verificat::insert($data);
+    }
 
     /**发送请求
      * @param $url
      * @param $data
      * @return mixed|string
      */
-    private function https_post_kf($url, $data)
+    private static function https_post_kf($url, $data)
     {
         $headers = array(
             "Content-type: application/json;charset='utf-8'",
