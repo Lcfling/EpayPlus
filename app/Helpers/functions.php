@@ -191,16 +191,16 @@ function getrequestId($paycode,$business_code,$tablesuf){
 
 }
 
-
+/**谷歌验证
+ * @param $secret 动态码
+ * @param $ggkey ggkey
+ * @return bool
+ * @throws \PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException
+ * @throws \PragmaRX\Google2FA\Exceptions\InvalidCharactersException
+ * @throws \PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException
+ */
 function verifyGooglex($secret,$ggkey){
-    /**谷歌验证
-     * @param $secret 动态码
-     * @param $ggkey ggkey
-     * @return bool
-     * @throws \PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException
-     * @throws \PragmaRX\Google2FA\Exceptions\InvalidCharactersException
-     * @throws \PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException
-     */
+
     $google2fa = new Google2FA();
     if($google2fa->verifyKey($ggkey, $secret)){
         return true;
