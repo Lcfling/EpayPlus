@@ -1,5 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Redis;
+use PragmaRX\Google2FA\Google2FA;
+
 /**
  * 判断是否为不可操作id
  *
@@ -187,6 +189,24 @@ function getrequestId($paycode,$business_code,$tablesuf){
 
     return $requestId;
 
+}
+
+
+function verifyGooglex($secret,$ggkey){
+    /**谷歌验证
+     * @param $secret 动态码
+     * @param $ggkey ggkey
+     * @return bool
+     * @throws \PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException
+     * @throws \PragmaRX\Google2FA\Exceptions\InvalidCharactersException
+     * @throws \PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException
+     */
+    $google2fa = new Google2FA();
+    if($google2fa->verifyKey($ggkey, $secret)){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 /**有缓存的100%唯一订单号 第5种方法
