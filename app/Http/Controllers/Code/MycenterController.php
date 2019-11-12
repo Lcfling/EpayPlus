@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use App\Models\Erweima;
 use App\Models\Withdraw;
+use PragmaRX\Google2FA\Google2FA;
 class MycenterController extends CommonController {
 
     /**
@@ -62,6 +63,64 @@ class MycenterController extends CommonController {
             ajaxReturn('','设置失败!',0);
         }
     }
+
+
+    /**获取谷歌秘钥和绑定二维码地址
+     * @param Request $request
+     */
+    public function getGoogle2FA(Request $request){
+        if($request->isMethod('post')) {
+            $userinfo =$this->member;
+            $user_id = $this->uid;
+            $ggkey = $userinfo['ggkey'];
+            $google2fa = new Google2FA();
+            if(!$ggkey){
+                $ggkey=$google2fa->generateSecretKey();
+                $status =Users::where('user_id',$user_id)->update(array('ggkey'=>$ggkey));
+                if($status){
+                    ajaxReturn(null,'创建成功!',1);
+                }else{
+                    ajaxReturn(null,'创建失败!',0);
+                }
+            }
+            if($request->has('code')){
+                $code=(int)$_POST['code'];
+            }else{
+                ajaxReturn(null,'请输入手机验证码!',0);
+            }
+            //验证码
+            $mobile = htmlspecialchars($userinfo['account']);
+            $verifycatstatus =$this->verifycat($mobile,'getgoogle_code_',$code);
+            if(!$verifycatstatus){
+                ajaxReturn(null,'手机验证码失败!',0);
+            }
+
+            $qrCodeUrl = $google2fa->getQRCodeUrl(
+                "EPP",//名称后台获取
+                $userinfo['account'],
+                $ggkey
+            );
+            $data = array(
+                'account'=>$userinfo['account'],
+                'secretKey'=>$ggkey,
+                'qrCodeUrl'=>$qrCodeUrl
+            );
+            ajaxReturn($data,'请求成功!',1);
+        } else {
+            ajaxReturn('','请求数据异常!',0);
+        }
+    }
+
+    /**
+     * 获取查看谷歌验证的手机验证码
+     */
+    public function Google2FAsendcode(Request $request) {
+        $useinfo =$this->member;
+        $mobile = htmlspecialchars($useinfo['account']);
+        $ip =$request->getClientIp();
+        $this->csendcode($mobile,'getgoogle_code_',3,$ip);
+    }
+
     /**
      *我的账户
      */
@@ -230,7 +289,23 @@ class MycenterController extends CommonController {
     public function setpass(Request $request) {
         if($request->isMethod('post')) {
             $user_id = $this->uid;
-            $pass = md5($_POST['pass']);
+            $userinfo =$this->member;
+            if($request->has('pass')){
+                $pass = md5($_POST['pass']);
+            }else{
+                ajaxReturn(null,'请输入要更改的支付密码!',0);
+            }
+            if($request->has('code')){
+                $code=(int)$_POST['code'];
+            }else{
+                ajaxReturn(null,'请输入手机验证码!',0);
+            }
+            //验证码
+            $mobile = htmlspecialchars($userinfo['account']);
+            $verifycatstatus =$this->verifycat($mobile,'zfpass_code_',$code);
+            if(!$verifycatstatus){
+                ajaxReturn(null,'手机验证码输入错误,请重新输入!',0);
+            }
             $savestatus = Users::where(array('user_id'=>$user_id))->update(array('zf_pwd'=>$pass));
             if($savestatus) {
                 ajaxReturn('','设置成功!',1);
@@ -247,8 +322,23 @@ class MycenterController extends CommonController {
     public function setlogpass(Request $request) {
         if($request->isMethod('post')) {
             $user_id = $this->uid;
-            $logpass=$_POST['second_pwd'];
-            $logpass = md5($logpass);
+            $userinfo =$this->member;
+            if($request->has('second_pwd')){
+                $logpass = md5($_POST['second_pwd']);
+            }else{
+                ajaxReturn(null,'请输入要更改的登录密码!',0);
+            }
+            if($request->has('code')){
+                $code=(int)$_POST['code'];
+            }else{
+                ajaxReturn(null,'请输入手机验证码!',0);
+            }
+            //验证码
+            $mobile = htmlspecialchars($userinfo['account']);
+            $verifycatstatus =$this->verifycat($mobile,'logpass_code_',$code);
+            if(!$verifycatstatus){
+                ajaxReturn(null,'手机验证码输入错误,请重新输入!',0);
+            }
             $savestatus = Users::where(array('user_id'=>$user_id))->save(array('password'=>$logpass));
             if($savestatus) {
                 ajaxReturn('','设置成功!',1);
@@ -374,40 +464,22 @@ class MycenterController extends CommonController {
         }
     }
     /**
-     * 设置 更改支付密码  验证手机验证码
-     */
-    public function verification() {
-        $code=(int)$_POST['code'];
-        //验证码
-        $useinfo =$this->member;
-        $mobile = htmlspecialchars($useinfo['account']);
-        $this->verifycat($mobile,'zfpass_code_',$code);
-    }
-    /**
      * 发送 更改支付密码验证码
      */
-    public function sendcode() {
+    public function sendcode(Request $request) {
         $useinfo =$this->member;
         $mobile = htmlspecialchars($useinfo['account']);
-        $this->csendcode($mobile,'zfpass_code_',1);
-    }
-    /**
-     * 设置登录密码 验证手机验证码
-     */
-    public function logpassverify() {
-        $code=(int)$_POST['code'];
-        //验证码
-        $useinfo =$this->member;
-        $mobile = htmlspecialchars($useinfo['account']);
-        $this->verifycat($mobile,'logpass_code_',$code);
+        $ip =$request->getClientIp();
+        $this->csendcode($mobile,'zfpass_code_',1,$ip);
     }
     /**
      * 设置登录密码 发送验证码
      */
-    public function logpasssendcode() {
+    public function logpasssendcode(Request $request) {
         $useinfo =$this->member;
         $mobile = htmlspecialchars($useinfo['account']);
-        $this->csendcode($mobile,'logpass_code_',2);
+        $ip =$request->getClientIp();
+        $this->csendcode($mobile,'logpass_code_',2,$ip);
     }
     /**
      * 创建邀请码
@@ -711,40 +783,35 @@ class MycenterController extends CommonController {
         }
         $Cachecode=Redis::get($key.$mobile);
         if($code==$Cachecode) {
-            ajaxReturn('','验证成功!',1);
+            return true;
         } else {
-            ajaxReturn('','验证码错误!',0);
+            return false;
         }
     }
     /**
      * 发送验证码
      */
-    private function csendcode($mobile,$key,$type) {
+    private function csendcode($mobile,$key,$type,$ip) {
         if(!isMobile($mobile)) {
             ajaxReturn('','手机号码格式错误!',0);
         }
         $code=rand_string(6,1);
         Redis::set($key.$mobile,$code,300);
         //todo 发送短信
-        $res=Verificat::dxbsend($mobile,$code);
+        $res=Verificat::dxbsend($mobile,$code,$ip);
         if($res=="0") {
-            $this->storecode($code,$mobile,$type);
+            Verificat::insertsendcode($code,$mobile,$type,$ip,1,'发送成功!');
             ajaxReturn('','发送成功!',1);
         } elseif($res=="123") {
+            Verificat::insertsendcode($code,$mobile,$type,$ip,0,'一分钟只能发送一条!');
             ajaxReturn('faild','一分钟只能发送一条!',0);
         } else {
-            ajaxReturn('faild','失败！请联系管理员:'.$res,0);
+            Verificat::insertsendcode($code,$mobile,$type,$ip,0,$res);
+            ajaxReturn('faild','发送失败',0);
         }
     }
-    private function storecode($code,$mobile,$type) {
-        $data=array(
-            'code'=>$code,
-            'phone'=>$mobile,
-            'type'=>$type,
-            'creatime'=>time()
-        );
-        Verificat::insert($data);
-    }
+
+
 
     //修改二级密码
     public function setsecondpwd() {

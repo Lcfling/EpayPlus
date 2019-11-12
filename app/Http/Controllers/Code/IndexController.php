@@ -15,6 +15,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use GatewayClient\Gateway;
+use PragmaRX\Google2FA\Google2FA;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
+
 
 
 class IndexController extends Controller
@@ -65,7 +71,17 @@ class IndexController extends Controller
 //        $user_id=1;
 //        $id =2;
 //        Redis::rPush('erweimas'.$type.$user_id,$id);
-        Userscount::onWriteConnect()->where('user_id',1)->value('balance');
+        $google2fa = new Google2FA();
+        $secretKey=$google2fa->generateSecretKey();
+        $qrCodeUrl = $google2fa->getQRCodeUrl(
+            "EPayPlus",//名称后台获取
+            13632470525,
+            $secretKey
+        );
+//       $code = "<img src='{$qrCodeUrl}'>";
+//        echo $code;
+        print_r($secretKey);
+
     }
 
     /**
