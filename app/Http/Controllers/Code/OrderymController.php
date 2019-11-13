@@ -137,7 +137,7 @@ class OrderymController extends Controller {
             if($order_info= $order->where(array("id"=>$order_id,'status'=>0))->first()){
                 if($order_info['is_send']==1){
                     if ( !$order_info['user_id']>0 || empty($order_info['user_id'])) {
-                        ajaxReturn(null,'暂无人接单!',0);
+                        ajaxReturn(null,'暂无人接单!',2);
                     }
                     $erweima_info=Erweima::where(array("id"=>$order_info['erweima_id']))->first();
                     $data=array(

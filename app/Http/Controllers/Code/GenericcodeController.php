@@ -97,19 +97,24 @@ class GenericcodeController extends CommonController {
         $userinfo = $this->member;
         //查询激活信息
         $jhmoney=Jhmoney::first();
-        // 查看用户积分
-        $balance = Userscount::where(array('user_id'=>$user_id))->value('balance');
-        if ($balance<$jhmoney['jhmoney']) {
-            ajaxReturn($balance,"账户余额不足!",0);
-        }
+
         if ($userinfo['jh_status'] == 1) {
             ajaxReturn($userinfo,"账号已激活!",0);
         }
+        DB::beginTransaction();
+        // 查看用户积分余额
+        $balance =DB::table('users_count')->where('user_id',$user_id)->value('balance');
+        if ($balance<$jhmoney['jhmoney']) {
+            ajaxReturn($balance,"账户余额不足!",0);
+        }
+        DB::table('users_count')->where('user_id',$user_id)->decrement('balance',$jhmoney['jhmoney']);
+        DB::commit();
+        $daytable =Accountlog::getdaytable();
         // 积分扣除
-        $status=Accountlog::insert(
+        $status=$daytable->insert(
             array(
                 'user_id'=>$user_id,
-                'score'=>-$jhmoney->jhmoney,
+                'score'=>-$jhmoney['jhmoney'],
                 'status'=>7,
                 'remark'=>'账户激活',
                 'creatime'=>time()

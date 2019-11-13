@@ -68,16 +68,18 @@ class IndexController extends Controller
 //        $user_id=1;
 //        $id =2;
 //        Redis::rPush('erweimas'.$type.$user_id,$id);
-        $google2fa = new Google2FA();
-        $secretKey=$google2fa->generateSecretKey();
-        $qrCodeUrl = $google2fa->getQRCodeUrl(
-            "EPayPlus",//名称后台获取
-            13632470525,
-            $secretKey
-        );
+//        $google2fa = new Google2FA();
+//        $secretKey=$google2fa->generateSecretKey();
+//        $qrCodeUrl = $google2fa->getQRCodeUrl(
+//            "EPayPlus",//名称后台获取
+//            13632470525,
+//            $secretKey
+//        );
 //       $code = "<img src='{$qrCodeUrl}'>";
 //        echo $code;
-        print_r($secretKey);
+//        print_r($secretKey);
+        $tradeMoney =10000;
+        Userscount::where('user_id',1)->increment('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money - $tradeMoney"),'tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
 
     }
 

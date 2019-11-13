@@ -120,7 +120,7 @@ class UserController extends CommonController {
             $yue=bcsub($balance/100,1000,2);
             if ($yue<$tradeMoney/100) {
                 $this->openOrdersnLock($order_sn);
-                ajaxReturn(null,"用户金额不足!",0);
+                ajaxReturn(null,"账户余额不足!",0);
             }
             DB::table('users_count')->where('user_id',$user_id)->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
             DB::commit();

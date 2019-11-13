@@ -95,6 +95,53 @@ class OrderjdController extends CommonController {
             ajaxReturn('','请求数据异常!',0);
         }
     }
+
+    /**获取订单详细信息
+     * freezenum 冻结金额
+     * unfreezenum 解冻金额
+     * deductnum 扣除金额
+     * brokerage 佣金
+     * erweima 二维码
+     * @param Request $request
+     */
+    public function orderjd_listinfo(Request $request) {
+        if($request->isMethod('post')) {
+            $user_id =$this->uid;//用户id
+            $order_sn = $request->input('order_sn');
+            $orderinfo = Orderrecord::where([['user_id',$user_id],['order_sn',$order_sn]])->select('erweima_id','dj_status')->first();
+            if(!$orderinfo){
+                ajaxReturn(null,'无此订单信息!',1);
+            }
+            $counttable = Accountlog::getcounttable($order_sn);
+            $freezenum=  $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',3]])->value('score') /100;
+            if($orderinfo['dj_status']==1){
+                $unfreezenum =  $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',4]])->value('score') /100;
+                $deductnum =  '未扣除';
+            }elseif($orderinfo['dj_status']==2){
+                $unfreezenum =  $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',4]])->value('score') /100;
+                $deductnum =  $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',2]])->value('score');
+            }else{
+                $unfreezenum =  '未解冻';
+                $deductnum =  '未扣除';
+            }
+            if(Rebate::where([['user_id',$user_id],['order_sn',$order_sn],['user_is_fy',1]])->first()){
+                $brokerage = $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',5]])->value('score') /100;
+            }else{
+                $brokerage ='未返佣';
+            }
+            $erweima =Erweima::where([['user_id',$user_id],['id',$orderinfo['erweima_id']]])->value('erweima');
+            $data = array(
+                'freezenum'=>$freezenum,//冻结金额
+                'unfreezenum'=>$unfreezenum,//解冻金额
+                'deductnum'=>$deductnum,//扣除金额
+                'brokerage'=>$brokerage,//佣金
+                'erweima'=>$erweima//二维码
+            );
+            ajaxReturn($data,'请求成功!',1);
+        } else {
+            ajaxReturn('','请求数据异常!',0);
+        }
+    }
     /**
      * 码商手动收款
      */
