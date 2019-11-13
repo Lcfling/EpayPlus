@@ -16,9 +16,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use GatewayClient\Gateway;
 use PragmaRX\Google2FA\Google2FA;
-use BaconQrCode\Renderer\ImageRenderer;
-use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
-use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 
 

@@ -92,7 +92,7 @@ class MycenterController extends CommonController {
             $mobile = htmlspecialchars($userinfo['account']);
             $verifycatstatus =$this->verifycat($mobile,'getgoogle_code_',$code);
             if(!$verifycatstatus){
-                ajaxReturn(null,'手机验证码失败!',0);
+                ajaxReturn(null,'手机验证码已过期,请重新获取验证码!',0);
             }
 
             $qrCodeUrl = $google2fa->getQRCodeUrl(
@@ -105,7 +105,7 @@ class MycenterController extends CommonController {
                 'secretKey'=>$ggkey,
                 'qrCodeUrl'=>$qrCodeUrl
             );
-            ajaxReturn($data,'请求成功!',1);
+            ajaxReturn($data,'验证成功!',1);
         } else {
             ajaxReturn('','请求数据异常!',0);
         }
@@ -304,7 +304,7 @@ class MycenterController extends CommonController {
             $mobile = htmlspecialchars($userinfo['account']);
             $verifycatstatus =$this->verifycat($mobile,'zfpass_code_',$code);
             if(!$verifycatstatus){
-                ajaxReturn(null,'手机验证码输入错误,请重新输入!',0);
+                ajaxReturn(null,'手机验证码已过期,请重新获取验证码!',0);
             }
             $savestatus = Users::where(array('user_id'=>$user_id))->update(array('zf_pwd'=>$pass));
             if($savestatus) {
@@ -323,8 +323,8 @@ class MycenterController extends CommonController {
         if($request->isMethod('post')) {
             $user_id = $this->uid;
             $userinfo =$this->member;
-            if($request->has('second_pwd')){
-                $logpass = md5($_POST['second_pwd']);
+            if($request->has('logpass')){
+                $logpass = md5($_POST['logpass']);
             }else{
                 ajaxReturn(null,'请输入要更改的登录密码!',0);
             }
@@ -337,9 +337,9 @@ class MycenterController extends CommonController {
             $mobile = htmlspecialchars($userinfo['account']);
             $verifycatstatus =$this->verifycat($mobile,'logpass_code_',$code);
             if(!$verifycatstatus){
-                ajaxReturn(null,'手机验证码输入错误,请重新输入!',0);
+                ajaxReturn(null,'手机验证码已过期,请重新获取验证码!',0);
             }
-            $savestatus = Users::where(array('user_id'=>$user_id))->save(array('password'=>$logpass));
+            $savestatus = Users::where(array('user_id'=>$user_id))->update(array('password'=>$logpass));
             if($savestatus) {
                 ajaxReturn('','设置成功!',1);
             } else {
@@ -464,6 +464,21 @@ class MycenterController extends CommonController {
         }
     }
     /**
+     * 设置 更改支付密码  验证手机验证码
+     */
+    public function verification() {
+        $code=(int)$_POST['code'];
+        //验证码
+        $useinfo =$this->member;
+        $mobile = htmlspecialchars($useinfo['account']);
+        $zfstatus = $this->verifycat($mobile,'zfpass_code_',$code);
+        if($zfstatus){
+            ajaxReturn('','验证成功!',1);
+        }else{
+            ajaxReturn('','验证失败!',0);
+        }
+    }
+    /**
      * 发送 更改支付密码验证码
      */
     public function sendcode(Request $request) {
@@ -472,6 +487,22 @@ class MycenterController extends CommonController {
         $ip =$request->getClientIp();
         $this->csendcode($mobile,'zfpass_code_',1,$ip);
     }
+    /**
+     * 设置登录密码 验证手机验证码
+     */
+    public function logpassverify() {
+        $code=(int)$_POST['code'];
+        //验证码
+        $useinfo =$this->member;
+        $mobile = htmlspecialchars($useinfo['account']);
+        $logstatus = $this->verifycat($mobile,'logpass_code_',$code);
+        if($logstatus){
+            ajaxReturn('','验证成功!',1);
+        }else{
+            ajaxReturn('','验证失败!',0);
+        }
+    }
+
     /**
      * 设置登录密码 发送验证码
      */

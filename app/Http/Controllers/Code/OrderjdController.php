@@ -13,6 +13,7 @@ use App\Models\Czrecord;
 use App\Models\Erweima;
 use App\Models\Order;
 use App\Models\Orderrecord;
+use App\Models\Rebate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 class OrderjdController extends CommonController {
@@ -128,6 +129,7 @@ class OrderjdController extends CommonController {
                     //超时
                     $this->csbudan($order_info,$order_sn);
                 }
+                $this->insertrebatte($user_id,$order_info['bussiness_code'],$order_sn,$skmoney);
                 ajaxReturn(null,'手动收款成功!',1);
             } else {
                 ajaxReturn(null,'手动收款失败!',0);
@@ -186,6 +188,17 @@ class OrderjdController extends CommonController {
         $order->where(array("order_sn"=>$order_sn))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
         Orderrecord::where(array("order_sn"=>$order_sn))->update(array("status"=>1,"dj_status"=>2,"pay_time"=>time()));
 //        $this->sfpushfirst($order_sn_info['order_sn']);
+    }
+    private function insertrebatte($user_id,$bussiness_code,$order_sn,$skmoney){
+        $data=array(
+            'user_id'=>$user_id,
+            'bussiness_code'=>$bussiness_code,
+            'order_sn'=>$order_sn,
+            'tradeMoney'=>$skmoney,
+            'creatime'=>time()
+        );
+        //插入佣金表
+        Rebate::insert($data);
     }
     /**
      *第一次 异步回调

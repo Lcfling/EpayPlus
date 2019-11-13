@@ -105,6 +105,7 @@ class OrderymController extends Controller {
             //保存商户订单记录
             $recorddata =array(
                 'order_sn'=>$order_sn,
+                'business_code'=>$business_code,
                 'payType'=>$datas["payType"],
                 'tradeMoney'=>$datas["tradeMoney"],
                 'submeter_name'=>'order_'.$weeksuf,

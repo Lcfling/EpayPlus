@@ -17,9 +17,9 @@ class Verificat extends Model {
 
     public static function dxbsend($mobile,$code,$ip){
         $status=Redis::get('sendsms_lock_'.$ip);
-        if($status==1){
-            return 123;
-        }
+//        if($status==1){
+//            return 123;
+//        }
 
         Redis::set('sendsms_lock_'.$ip,1,60);
 
