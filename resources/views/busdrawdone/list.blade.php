@@ -55,7 +55,7 @@
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">{{$info['endtime']}}</td>
-                <td class="hidden-xs">已通过</td>
+                <td class="hidden-xs">已打款</td>
 
             </tr>
         @endforeach

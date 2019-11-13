@@ -63,7 +63,7 @@
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">{{$info['withdraw_time']}}</td>
-                <td class="hidden-xs">已结算</td>
+                <td class="hidden-xs">已打款</td>
 
             </tr>
         @endforeach

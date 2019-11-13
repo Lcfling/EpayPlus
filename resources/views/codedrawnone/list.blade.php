@@ -62,8 +62,8 @@
                 <td class="hidden-xs">未结算</td>
                 <td>
                     <div class="layui-inline">
-                        <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['id']}}" data-desc="审核通过">通过</button>
-                        <button class="layui-btn layui-btn-small layui-btn-warm edits-btn2"  data-id="{{$info['id']}}" data-desc="驳回操作">驳回</button>
+                        <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['id']}}" data-desc="确认收款">确认收款</button>
+{{--                        <button class="layui-btn layui-btn-small layui-btn-warm edits-btn2"  data-id="{{$info['id']}}" data-desc="驳回操作">驳回</button>--}}
                     </div>
                 </td>
             </tr>
@@ -117,33 +117,33 @@
                 );
             });
             //驳回
-            $('.edits-btn2').click(function () {
-                var that = $(this);
-                var id=$(this).attr('data-id');
-                layer.confirm('确定要驳回吗？',{title:'提示'},function (index) {
-                        $.ajax({
-                            headers: {
-                                'X-CSRF-TOKEN': $('#token').val()
-                            },
-                            url:"{{url('/admin/codedrawnone/reject')}}",
-                            data:{
-                                "id":id,
-                            },
-                            type:"post",
-                            dataType:"json",
-                            success:function (res) {
-                                if(res.status==1){
-                                    layer.msg(res.msg,{icon:6});
-                                    location.reload();
-                                }else{
-                                    layer.msg(res.msg,{shift: 6,icon:5});
-                                    location.reload();
-                                }
-                            }
-                        });
-                    }
-                );
-            });
+            {{--$('.edits-btn2').click(function () {--}}
+            {{--    var that = $(this);--}}
+            {{--    var id=$(this).attr('data-id');--}}
+            {{--    layer.confirm('确定要驳回吗？',{title:'提示'},function (index) {--}}
+            {{--            $.ajax({--}}
+            {{--                headers: {--}}
+            {{--                    'X-CSRF-TOKEN': $('#token').val()--}}
+            {{--                },--}}
+            {{--                url:"{{url('/admin/codedrawnone/reject')}}",--}}
+            {{--                data:{--}}
+            {{--                    "id":id,--}}
+            {{--                },--}}
+            {{--                type:"post",--}}
+            {{--                dataType:"json",--}}
+            {{--                success:function (res) {--}}
+            {{--                    if(res.status==1){--}}
+            {{--                        layer.msg(res.msg,{icon:6});--}}
+            {{--                        location.reload();--}}
+            {{--                    }else{--}}
+            {{--                        layer.msg(res.msg,{shift: 6,icon:5});--}}
+            {{--                        location.reload();--}}
+            {{--                    }--}}
+            {{--                }--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    );--}}
+            {{--});--}}
         });
     </script>
 @endsection

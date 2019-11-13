@@ -57,32 +57,32 @@ class AgentdrawnoneController extends Controller
     /**
      * 驳回
      */
-    public function reject(StoreRequest $request){
-        $id=$request->input('id');
-        $key='agent_lock_'.$id;
-        $is=Redis::get($key);
-        if(!empty($is)){
-            return ['msg'=>'操作失败！'];
-        }else{
-            DB::beginTransaction();
-            try{
-                $res=Agentdraw::reject($id);
-                if($res){
-                    //提现驳回向驳回表中插入数据-sql
-                    DB::commit();
-                    return ['msg'=>'驳回成功！','status'=>1];
-                }else{
-                    DB::rollBack();
-                    return ['msg'=>'驳回失败！'];
-                }
-            }catch (Exception $e){
-                DB::rollBack();
-                return ['msg'=>'发生异常！事物进行回滚！'];
-            }
-
-        }
-
-    }
+//    public function reject(StoreRequest $request){
+//        $id=$request->input('id');
+//        $key='agent_lock_'.$id;
+//        $is=Redis::get($key);
+//        if(!empty($is)){
+//            return ['msg'=>'操作失败！'];
+//        }else{
+//            DB::beginTransaction();
+//            try{
+//                $res=Agentdraw::reject($id);
+//                if($res){
+//                    //提现驳回向驳回表中插入数据-sql
+//                    DB::commit();
+//                    return ['msg'=>'驳回成功！','status'=>1];
+//                }else{
+//                    DB::rollBack();
+//                    return ['msg'=>'驳回失败！'];
+//                }
+//            }catch (Exception $e){
+//                DB::rollBack();
+//                return ['msg'=>'发生异常！事物进行回滚！'];
+//            }
+//
+//        }
+//
+//    }
 
     //redis加锁
     private function agentlock($functions){
