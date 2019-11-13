@@ -68,8 +68,11 @@ Route::group(['namespace'  => "Code"], function () {
     Route::post('/Timernotify/sfpushfirst',           'TimernotifyController@sfpushfirst');//第一次 异步回调
     Route::post('/Timernotify/sfpushsecond',          'TimernotifyController@sfpushfirst');//第二次 异步回调
     Route::post('/Timernotify/sfpushthird',           'TimernotifyController@sfpushfirst');//第三次 异步回调
-    Route::get('/Timernotify/setstale',              'TimernotifyController@setstale');//订单10分钟更改为过期
-    Route::get('/Timernotify/orderunfreeze',         'TimernotifyController@orderunfreeze');//过期订单解冻并返回跑分 更改订单为订单取消
+    Route::get('/Timernotify/setstale',               'TimernotifyController@setstale');//订单10分钟更改为过期
+    Route::get('/Timernotify/orderunfreeze',          'TimernotifyController@orderunfreeze');//过期订单解冻并返回跑分 更改订单为订单取消
+    Route::get('/Timernotify/bussiness_fy',           'TimernotifyController@bussiness_fy');//商户返佣
+    Route::get('/Timernotify/user_fy',                'TimernotifyController@user_fy');//码商返佣
+
 
     /**
      * OrderjdController
