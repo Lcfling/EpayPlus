@@ -77,9 +77,7 @@ class MycenterController extends CommonController {
             if(!$ggkey){
                 $ggkey=$google2fa->generateSecretKey();
                 $status =Users::where('user_id',$user_id)->update(array('ggkey'=>$ggkey));
-                if($status){
-                    ajaxReturn(null,'创建成功!',1);
-                }else{
+                if(!$status){
                     ajaxReturn(null,'创建失败!',0);
                 }
             }
@@ -105,7 +103,7 @@ class MycenterController extends CommonController {
                 'secretKey'=>$ggkey,
                 'qrCodeUrl'=>$qrCodeUrl
             );
-            ajaxReturn($data,'验证成功!',1);
+            ajaxReturn($data,'操作成功!',1);
         } else {
             ajaxReturn('','请求数据异常!',0);
         }

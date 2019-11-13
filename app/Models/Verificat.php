@@ -14,15 +14,19 @@ class Verificat extends Model {
     protected  $table = 'verificat';
     public $timestamps = false;
 
-
+    /**云通信发送短信
+     * @param $mobile
+     * @param $code
+     * @param $ip
+     * @return bool|int|mixed|string
+     */
     public static function dxbsend($mobile,$code,$ip){
         $status=Redis::get('sendsms_lock_'.$ip);
-//        if($status==1){
-//            return 123;
-//        }
+        if($status==2){
+            return 123;
+        }
 
-        Redis::set('sendsms_lock_'.$ip,1,60);
-
+        Redis::setex('sendsms_lock_'.$ip,60,2);
         $data['username']='fjnphy';
         $data["password"] = md5(md5("Uj41oPwQ").time());//密码
         $data["mobile"] = $mobile;//手机号
