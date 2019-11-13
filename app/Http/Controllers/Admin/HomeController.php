@@ -8,6 +8,7 @@
  */
 namespace App\Http\Controllers\Admin;
 use App\Models\Admin;
+use App\Models\Orderrecord;
 use Gregwar\Captcha\CaptchaBuilder;
 use Gregwar\Captcha\PhraseBuilder;
 use Illuminate\Http\Request;
@@ -42,7 +43,62 @@ class HomeController extends BaseController
      * 欢迎首页
      */
     public function welcome(){
-        return view('admin.welcome',['sysinfo'=>$this->getSysInfo()]);
+
+
+        $start= strtotime(date('Y-m-d'));
+        $end=strtotime('+1day',$start);
+
+        //header
+        $total=Orderrecord::whereBetween('creatime',[$start,$end])->count('order_sn');//今日全部订单
+        $done=Orderrecord::whereBetween('creatime',[$start,$end])->where('status','=',1)->count('order_sn');//今日成功订单
+        $none=Orderrecord::whereBetween('creatime',[$start,$end])->where('status','=',0)->count('order_sn');//今日未支付订单
+
+        $done_money=Orderrecord::whereBetween('creatime',[$start,$end])->where('status','=',1)->sum('sk_money');//今日成交金额
+        $all_done_money=Orderrecord::where('status','=',1)->sum('sk_money');//累计成交金额
+
+        $data['total']=$total;
+        $data['done']=$done;
+        $data['none']=$none;
+        $data['done_money']=$done_money/100;
+        $data['all_done_money']=$all_done_money/100;
+        if($total==0){
+            $data['done_rate']=0;
+        }else{
+            $data['done_rate']=round($done/$total*100,2);
+        }
+
+        //chart
+        //x轴近七天
+        $week=$this->get_weeks(time(),"m-d");
+        $x=array_values($week);
+        $data['x']=json_encode($x);
+        //近七天数组
+        $date=$this->get_weeks(time(),'Y-m-d');
+        for ($i=1; $i<=7; $i++){
+            $date[$i] = strtotime($date[$i]);
+        }
+        //y1全部订单
+        $all_order[1]=Orderrecord::whereBetween('creatime',[$date[1],$date[2]])->count('order_sn');
+        $all_order[2]=Orderrecord::whereBetween('creatime',[$date[2],$date[3]])->count('order_sn');
+        $all_order[3]=Orderrecord::whereBetween('creatime',[$date[3],$date[4]])->count('order_sn');
+        $all_order[4]=Orderrecord::whereBetween('creatime',[$date[4],$date[5]])->count('order_sn');
+        $all_order[5]=Orderrecord::whereBetween('creatime',[$date[5],$date[6]])->count('order_sn');
+        $all_order[6]=Orderrecord::whereBetween('creatime',[$date[6],$date[7]])->count('order_sn');
+        $all_order[7]=$total;
+        $y1=array_values($all_order);
+        $data['y1']=json_encode($y1);
+        //y2成功订单
+        $done_order[1]=Orderrecord::whereBetween('creatime',[$date[1],$date[2]])->where('status','=',1)->count('order_sn');
+        $done_order[2]=Orderrecord::whereBetween('creatime',[$date[2],$date[3]])->where('status','=',1)->count('order_sn');
+        $done_order[3]=Orderrecord::whereBetween('creatime',[$date[3],$date[4]])->where('status','=',1)->count('order_sn');
+        $done_order[4]=Orderrecord::whereBetween('creatime',[$date[4],$date[5]])->where('status','=',1)->count('order_sn');
+        $done_order[5]=Orderrecord::whereBetween('creatime',[$date[5],$date[6]])->where('status','=',1)->count('order_sn');
+        $done_order[6]=Orderrecord::whereBetween('creatime',[$date[6],$date[7]])->where('status','=',1)->count('order_sn');
+        $done_order[7]=$done;
+        $y2=array_values($done_order);
+        $data['y2']=json_encode($y2);
+        $sysinfo=$this->getSysInfo();
+        return view('admin.welcome',['data'=>$data,'sysinfo'=>$sysinfo]);
     }
     /**
      * 排序
@@ -69,5 +125,17 @@ class HomeController extends BaseController
         $mysqlinfo = DB::select("SELECT VERSION() as version");
         $sys_info['mysql_version']  = $mysqlinfo[0]->version;
         return $sys_info;
+    }
+    /**
+     * 今日之前7日
+     */
+    public function get_weeks($time, $format){
+        $time = $time != '' ? $time : time();
+        //组合数据
+        $date = [];
+        for ($i=1; $i<=7; $i++){
+            $date[$i] = date($format ,strtotime( '+' . $i-7 .' days', $time));
+        }
+        return $date;
     }
 }
