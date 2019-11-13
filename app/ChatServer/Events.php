@@ -40,6 +40,13 @@ class Events
             file_get_contents($hostUrl . "code/Timernotify/orderunfreeze");
         });
 
+        Timer::add(2, function () use ($hostUrl) {
+            // 商户返佣：
+            file_get_contents($hostUrl . "code/Timernotify/bussiness_fy");
+            // 码商返佣
+            file_get_contents($hostUrl . "code/Timernotify/user_fy");
+        });
+
     }
 
         /**
