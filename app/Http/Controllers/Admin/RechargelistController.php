@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
+use App\Models\Billflow;
+use App\Models\Codecount;
 use App\Models\Recharge;
 use App\Models\Rechargelist;
 use Illuminate\Http\Request;
@@ -31,11 +33,18 @@ class RechargelistController extends Controller
         $id = $request->input('id');
         $status = $request->input('status');
         $info =$id?Rechargelist::find($id):[];
+
+        $tablepfe=date('Ymd');
+        $account =new Billflow;
+        $account->setTable('account_'.$tablepfe);
+        $score=intval($info['score']);
+        $user_id=$info['user_id'];
         if($status==1){
             //开启事物
             DB::beginTransaction();
             try{
-                DB::table('account_log')->insert(['user_id'=>$info['user_id'],'score'=>$info['score'],'status'=>$status,'remark'=>'自动充值','creatime'=>time()]);
+                $account->insert(['user_id'=>$user_id,'score'=>$score,'status'=>$status,'remark'=>'自动充值','creatime'=>time()]);
+                DB::table('users_count')->where('user_id','=',$user_id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score")]);
                 $count = Rechargelist::where('id',$request->input('id'))->update(['status'=>$status]);
                 if($count){
                     DB::commit();

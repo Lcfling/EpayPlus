@@ -1,7 +1,7 @@
 @section('title', '在线充值列表')
 @section('header')
     <div class="layui-inline">
-    <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-desc="添加充值信息" data-url="{{url('/admin/recharge/0/edit')}}"><i class="layui-icon">&#xe654;</i></button>
+{{--    <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-desc="添加充值信息" data-url="{{url('/admin/recharge/0/edit')}}"><i class="layui-icon">&#xe654;</i></button>--}}
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
 @endsection
@@ -28,7 +28,7 @@
             <th class="hidden-xs">收款卡号</th>
             <th class="hidden-xs">收款银行</th>
             <th class="hidden-xs">充值状态</th>
-            <th class="hidden-xs">完成时间</th>
+            <th class="hidden-xs">申请时间</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -50,8 +50,8 @@
                 <td>
                     <div class="layui-inline">
                         @if($info['status']==0)
-                            <button class="layui-btn layui-btn-small layui-btn-normal edits-btn" data-id="{{$info['id']}}" data-key="1" data-desc="通过"><i class="layui-icon">&#xe605;</i></button>
-                            <button class="layui-btn layui-btn-small layui-btn-danger edits-btn" data-id="{{$info['id']}}" data-key="2" data-desc="驳回"><i class="layui-icon">&#x1006;</i></button>
+                            <button class="layui-btn layui-btn-small layui-btn-normal edits-btn" data-id="{{$info['id']}}" data-key="1" data-desc="通过">通过</button>
+                            <button class="layui-btn layui-btn-small layui-btn-danger edits-btn" data-id="{{$info['id']}}" data-key="2" data-desc="驳回">驳回</button>
                         @endif
                     </div>
                 </td>
