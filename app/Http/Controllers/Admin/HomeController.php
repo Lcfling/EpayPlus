@@ -43,12 +43,11 @@ class HomeController extends BaseController
      * 欢迎首页
      */
     public function welcome(){
-
-
+        //今天
         $start= strtotime(date('Y-m-d'));
         $end=strtotime('+1day',$start);
 
-        //header
+        //top-count
         $total=Orderrecord::whereBetween('creatime',[$start,$end])->count('order_sn');//今日全部订单
         $done=Orderrecord::whereBetween('creatime',[$start,$end])->where('status','=',1)->count('order_sn');//今日成功订单
         $none=Orderrecord::whereBetween('creatime',[$start,$end])->where('status','=',0)->count('order_sn');//今日未支付订单
@@ -68,11 +67,13 @@ class HomeController extends BaseController
         }
 
         //chart
-        //x轴近七天
+
+        //x轴-近七天
         $week=$this->get_weeks(time(),"m-d");
         $x=array_values($week);
         $data['x']=json_encode($x);
-        //近七天数组
+
+        //近七天时间戳数组
         $date=$this->get_weeks(time(),'Y-m-d');
         for ($i=1; $i<=7; $i++){
             $date[$i] = strtotime($date[$i]);
@@ -127,7 +128,7 @@ class HomeController extends BaseController
         return $sys_info;
     }
     /**
-     * 今日之前7日
+     * 最近7日
      */
     public function get_weeks($time, $format){
         $time = $time != '' ? $time : time();
