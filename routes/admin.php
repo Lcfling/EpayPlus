@@ -126,6 +126,7 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/busbank',         'BusbankController');
     Route::resource('/agentbank',       'AgentbankController');
     Route::resource('/qrcode',          'QrcodeController');
+    Route::resource('/datacount',       'DatacountController');
 });
 
 Route::get('/phpinfo',function (Request $request){
