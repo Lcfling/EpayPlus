@@ -15,14 +15,20 @@ class NoticeController extends Controller
      */
     public function index(StoreRequest $request)
     {
-        $map=array();
+        $notice=Notice::query();
         if(true==$request->has('title')){
-            $map[]=['title','like','%'.$request->input('title').'%'];
+            $notice->where('title','like','%'.$request->input('title').'%');
         }
         if(true==$request->has('content')){
-            $map[]=['content','like','%'.$request->input('content').'%'];
+            $notice->where('content','like','%'.$request->input('content').'%');
         }
-        $data=Notice::where($map)->paginate(10)->appends($request->all());
+        if(true==$request->has('creattime')){
+            $creatime=$request->input('creattime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $notice->whereBetween('creattime',[$start,$end]);
+        }
+        $data=$notice->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creattime']=date("Y-m-d H:i:s",$value["creattime"]);
         }
