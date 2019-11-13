@@ -114,9 +114,9 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/rechargelist/enable', 'RechargelistController@enable');
     Route::resource('/billflow',        'BillflowController');
     Route::resource('/order',           'OrderController');
-    Route::post('/order/budan', 'OrderController@budan');
-    Route::post('/order/csbudan', 'OrderController@csbudan');
-    Route::post('/order/sfpushfirst','OrderController@sfpushfirst');
+    Route::post('/order/budan',         'OrderController@budan');
+    Route::post('/order/csbudan',       'OrderController@csbudan');
+    Route::post('/order/sfpushfirst',   'OrderController@sfpushfirst');
     Route::resource('/buscount',        'BuscountController');
     Route::resource('/busbill',         'BusbillController');
     Route::resource('/agentcount',      'AgentcountController');
@@ -125,6 +125,7 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/codebill',        'BillflowController');
     Route::resource('/busbank',         'BusbankController');
     Route::resource('/agentbank',       'AgentbankController');
+    Route::resource('/qrcode',          'QrcodeController');
 });
 
 Route::get('/phpinfo',function (Request $request){

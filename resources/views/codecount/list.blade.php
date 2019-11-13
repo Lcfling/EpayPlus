@@ -27,6 +27,7 @@
         <tr>
             <th class="hidden-xs">ID</th>
             <th class="hidden-xs">码商ID</th>
+            <th class="hidden-xs">剩余金额</th>
             <th class="hidden-xs">总分</th>
             <th class="hidden-xs">总佣金</th>
             <th class="hidden-xs">当天利润</th>
@@ -40,10 +41,11 @@
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
-                <td class="hidden-xs">{{$info['tol_sore']}}</td>
-                <td class="hidden-xs">{{$info['tol_brokerage']}}</td>
-                <td class="hidden-xs">{{$info['day_brokerage']}}</td>
-                <td class="hidden-xs">{{$info['freeze_money']}}</td>
+                <td class="hidden-xs">{{$info['balance']/100}}</td>
+                <td class="hidden-xs">{{$info['tol_sore']/100}}</td>
+                <td class="hidden-xs">{{$info['tol_brokerage']/100}}</td>
+                <td class="hidden-xs">{{$info['day_brokerage']/100}}</td>
+                <td class="hidden-xs">{{$info['freeze_money']/100}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">{{$info['savetime']}}</td>
             </tr>

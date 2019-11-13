@@ -29,7 +29,8 @@ class CodeuserController extends Controller
 
         }
 
-        $data = Codeuser::where($map)->paginate(10)->appends($request->all());
+        $data = Codeuser::where($map)->leftJoin('users_count','users.user_id','=','users_count.user_id')->select('users.*','users_count.balance','users_count.tol_brokerage')->paginate(10)->appends($request->all());
+
         return view('codeuser.list',['pager'=>$data,'input'=>$request->all()]);
     }
     /**

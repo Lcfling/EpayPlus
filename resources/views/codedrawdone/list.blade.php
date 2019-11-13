@@ -56,8 +56,8 @@
                 <td class="hidden-xs">{{$info['user_id']}}</td>
                 <td class="hidden-xs">{{$info['order_no']}}</td>
                 <td class="hidden-xs">{{$info['money']/100}}</td>
-                <td class="hidden-xs">{{$info['mobile']/100}}</td>
-                <td class="hidden-xs">{{$info['wx_name']/100}}</td>
+                <td class="hidden-xs">{{$info['mobile']}}</td>
+                <td class="hidden-xs">{{$info['wx_name']}}</td>
                 <td class="hidden-xs">{{$info['name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>

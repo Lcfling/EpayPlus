@@ -58,12 +58,12 @@
                 <td class="hidden-xs">{{$info['mobile']}}</td>
                 <td class="hidden-xs">{{$info['pid']}}</td>
                 <td class="hidden-xs">{{$info['shenfen']}}</td>
-                <td class="hidden-xs"></td>
+                <td class="hidden-xs">{{$info['balance']/100}}</td>
                 <td class="hidden-xs">{{$info['rate']}}%</td>
                 <td class="hidden-xs">{{$info['rates']}}%</td>
                 <td class="hidden-xs">@if($info['take_status']==0)未接单@elseif($info['take_status']==1)已接单@endif</td>
                 <td class="hidden-xs">@if($info['jh_status']==0)未激活@elseif($info['take_status']==1)已激活@endif</td>
-                <td class="hidden-xs"></td>
+                <td class="hidden-xs">{{$info['tol_brokerage']/100}}</td>
                 <td class="hidden-xs">{{$info['imsi_num']}}</td>
                 <td class="hidden-xs">
                     <input type="checkbox" name="status" value="{{$info['user_id']}}" lay-skin="switch" lay-text="开启|封禁" lay-filter="status" {{ $info['is_over'] == 0 ? 'checked' : '' }}>
@@ -78,7 +78,7 @@
                         <a class="layui-btn layui-btn-small layui-btn-normal" href="{{url('admin/codeownbill/own',['id'=>$info['user_id']])}}">流水</a>
                         <a class="layui-btn layui-btn-small layui-btn-danger " onclick="ownfee({{$info['user_id']}})">费率</a>
                         <a class="layui-btn layui-btn-small layui-btn-danger" onclick="logpwd({{$info['user_id']}})">登录密码</a>
-                        <a class="layui-btn layui-btn-small layui-btn-primary" onclick="secondpwd({{$info['user_id']}})">二级密码</a>
+{{--                        <a class="layui-btn layui-btn-small layui-btn-primary" onclick="secondpwd({{$info['user_id']}})">二级密码</a>--}}
                         <a class="layui-btn layui-btn-small layui-btn-warm" onclick="zfpwd({{$info['user_id']}})">支付密码</a>
                     </div>
                 </td>
@@ -199,20 +199,20 @@
                 }
             });
         }
-        function secondpwd(id) {
-            var id=id;
-            layer.open({
-                type: 2,
-                title: '更改二级密码',
-                closeBtn: 1,
-                area: ['500px','500px'],
-                shadeClose: false, //点击遮罩关闭
-                content: ['/admin/codeuser/secondpwd/'+id],
-                end:function(){
-
-                }
-            });
-        }
+        // function secondpwd(id) {
+        //     var id=id;
+        //     layer.open({
+        //         type: 2,
+        //         title: '更改二级密码',
+        //         closeBtn: 1,
+        //         area: ['500px','500px'],
+        //         shadeClose: false, //点击遮罩关闭
+        //         content: ['/admin/codeuser/secondpwd/'+id],
+        //         end:function(){
+        //
+        //         }
+        //     });
+        // }
         function zfpwd(id) {
             var id=id;
             layer.open({

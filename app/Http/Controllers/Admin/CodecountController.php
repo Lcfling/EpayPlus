@@ -21,7 +21,7 @@ class CodecountController extends Controller
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['savetime'] =date("Y-m-d H:i:s",$value["savetime"]);
         }
-        return view('agentcount.list',['list'=>$data,'input'=>$request->all()]);
+        return view('codecount.list',['list'=>$data,'input'=>$request->all()]);
 
     }
 }
