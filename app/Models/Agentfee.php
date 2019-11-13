@@ -7,6 +7,7 @@
  */
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 class Agentfee extends Model {
     protected  $table = 'agent_fee';
     public $timestamps = false;
@@ -19,12 +20,15 @@ class Agentfee extends Model {
      */
     public static function bussiness_fy($tradeMoney,$bussiness_code,$order_sn,$paycode){
         if($busfee = Business::where('bussiness_code',$bussiness_code)->value('fee')){
+            $brokerage= $tradeMoney * bcsub(1,$busfee,2);
+            //修改商户账户信息
+            Businesscount::where('bussiness_code',$bussiness_code)->increment('balance',$brokerage,['tol_sore'=>DB::raw("tol_sore + $brokerage")]);
            $agentfeeinfo = Agentfee::where('bussiness_code',$bussiness_code)->first();
            if($agentfeeinfo['agent1_id']){
-               $feecha = $busfee * 100 - $agentfeeinfo['agent1_fee'] * 100;
+               $feecha = bcsub($busfee,$agentfeeinfo['agent1_fee'],2);
                $agentbftable=Agentbillflow::getagentbftable($order_sn);
                if($feecha>0){
-                    $score = $tradeMoney * $feecha /100;
+                    $score = $tradeMoney * $feecha;
                     $data =array(
                         'agent_id'=>$agentfeeinfo['agent1_id'],
                         'order_sn'=>$order_sn,
@@ -36,13 +40,15 @@ class Agentfee extends Model {
                         'creatime'=>time()
                     );
                     $agentbftable->insert($data);
+                   //修改代理商账户信息
+                    Agentcount::where('agent_id',$agentfeeinfo['agent1_id'])->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score"),'tol_brokerage'=>DB::raw("tol_brokerage + $score")]);
                 }
 
                 if($agentfeeinfo['agent2_id']){
 
-                    $feecha2 = $agentfeeinfo['agent1_fee'] * 100 - $agentfeeinfo['agent2_fee'] * 100;
+                    $feecha2 =bcsub($agentfeeinfo['agent1_fee'],$agentfeeinfo['agent2_fee'],2);
                     if($feecha2>0){
-                        $score2 = $tradeMoney * $feecha2 /100;
+                        $score2 = $tradeMoney * $feecha2;
                         $data2 =array(
                             'agent_id'=>$agentfeeinfo['agent2_id'],
                             'order_sn'=>$order_sn,
@@ -54,6 +60,8 @@ class Agentfee extends Model {
                             'creatime'=>time()
                         );
                         $agentbftable->insert($data2);
+                        //修改代理商账户信息
+                        Agentcount::where('agent_id',$agentfeeinfo['agent1_id'])->increment('balance',$score2,['tol_sore'=>DB::raw("tol_sore + $score2"),'tol_brokerage'=>DB::raw("tol_brokerage + $score2")]);
                     }
                 }else{
                     ajaxReturn('','无一级代理商!',0);
@@ -107,6 +115,8 @@ class Agentfee extends Model {
         file_put_contents('./userRebate.txt',"~~~~~~~~~~~~~~~第三方码商支付成功佣金发放~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
         file_put_contents('./userRebate.txt',print_r($data,true).PHP_EOL,FILE_APPEND);
         $counttable->insert($data);
+        //修改码商账户信息
+        Userscount::where('user_id',$user_id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score"),'tol_brokerage'=>DB::raw("tol_brokerage + $score")]);
         $i++;
         if (empty($userinfo['pid'])) {
             return false;
