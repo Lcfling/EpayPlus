@@ -1,11 +1,19 @@
 @section('title', '角色列表')
 @section('header')
     <div class="layui-inline">
-{{--    <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-desc="添加充值信息" data-url="{{url('/admin/recharge/0/edit')}}"><i class="layui-icon">&#xe654;</i></button>--}}
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
         <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户ID" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['name'] or '' }}" name="name" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['deposit_card'] or '' }}" name="deposit_card" placeholder="请输入银行卡号" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
@@ -13,7 +21,6 @@
 @endsection
 @section('table')
     <table class="layui-table" lay-even lay-skin="nob">
-{{--        <input type="hidden" id="token" value="{{csrf_token()}}">--}}
         <colgroup>
             <col class="hidden-xs" width="50">
             <col class="hidden-xs" width="150">
@@ -22,18 +29,16 @@
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="200">
-{{--            <col width="200">--}}
         </colgroup>
         <thead>
         <tr>
             <th class="hidden-xs">ID</th>
             <th class="hidden-xs">商户ID</th>
-            <th class="hidden-xs">收款姓名</th>
-            <th class="hidden-xs">收款卡号</th>
-            <th class="hidden-xs">收款银行</th>
+            <th class="hidden-xs">姓名</th>
+            <th class="hidden-xs">开户银行</th>
+            <th class="hidden-xs">银行卡号</th>
             <th class="hidden-xs">状态</th>
             <th class="hidden-xs">添加时间</th>
-{{--            <th>操作</th>--}}
         </tr>
         </thead>
         <tbody>
@@ -42,15 +47,10 @@
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['business_code']}}</td>
                 <td class="hidden-xs">{{$info['name']}}</td>
-                <td class="hidden-xs">{{$info['deposit_card']}}</td>
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
+                <td class="hidden-xs">{{$info['deposit_card']}}</td>
                 <td class="hidden-xs">@if($info['status']==0)正常@elseif($info['status']==1)不正常@endif</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
-{{--                <td>--}}
-{{--                    <div class="layui-inline">--}}
-{{--                        <button class="layui-btn layui-btn-small layui-btn-normal edit-btn" data-id="{{$info['id']}}" data-desc="编辑代理商" data-url="{{url('/admin/busbank/'. $info['id'] .'/edit')}}">查看</button>--}}
-{{--                    </div>--}}
-{{--                </td>--}}
             </tr>
         @endforeach
         @if(!$list[0])
@@ -68,8 +68,8 @@
             var form = layui.form(),
                 $ = layui.jquery,
                 laydate = layui.laydate,
-                layer = layui.layer
-            ;
+                layer = layui.layer;
+            laydate({istoday: true});
             form.render();
             form.on('submit(formDemo)', function(data) {
             });

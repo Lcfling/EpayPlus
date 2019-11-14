@@ -1,8 +1,19 @@
 @section('title', '在线充值列表')
 @section('header')
     <div class="layui-inline">
-{{--    <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-desc="添加充值信息" data-url="{{url('/admin/recharge/0/edit')}}"><i class="layui-icon">&#xe654;</i></button>--}}
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="码商ID" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['name'] or '' }}" name="name" placeholder="充值姓名" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="申请时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
     </div>
 @endsection
 @section('table')
@@ -20,8 +31,8 @@
         <thead>
         <tr>
             <th class="hidden-xs">ID</th>
-            <th class="hidden-xs">用户id</th>
-            <th class="hidden-xs">名称</th>
+            <th class="hidden-xs">码商ID</th>
+            <th class="hidden-xs">姓名</th>
             <th class="hidden-xs">金额</th>
             <th class="hidden-xs">充值凭证</th>
             <th class="hidden-xs">收款姓名</th>
@@ -29,7 +40,7 @@
             <th class="hidden-xs">收款银行</th>
             <th class="hidden-xs">充值状态</th>
             <th class="hidden-xs">申请时间</th>
-            <th>操作</th>
+            <th style="text-align: center">操作</th>
         </tr>
         </thead>
         <tbody>
@@ -47,7 +58,7 @@
                 <td class="hidden-xs">{{$info['sk_bankname']}}</td>
                 <td class="hidden-xs">@if($info['status']==0)待审核@elseif($info['status']==1)成功@elseif($info['status']==2)驳回@endif</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
-                <td>
+                <td style="text-align: center">
                     <div class="layui-inline">
                         @if($info['status']==0)
                             <button class="layui-btn layui-btn-small layui-btn-normal edits-btn" data-id="{{$info['id']}}" data-key="1" data-desc="通过">通过</button>
@@ -72,8 +83,8 @@
             var form = layui.form(),
                 $ = layui.jquery,
                 laydate = layui.laydate,
-                layer = layui.layer
-            ;
+                layer = layui.layer;
+
             laydate({istoday: true});
             form.render();
             form.on('submit(formDemo)', function(data) {

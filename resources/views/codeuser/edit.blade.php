@@ -3,7 +3,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label" style="width: 100px">手机号：</label>
         <div class="layui-input-inline">
-            <input type="text" value="{{$info['mobile'] or ''}}" name="account" required lay-verify="tel" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+            <input type="text" value="{{$info['mobile'] or ''}}" name="account" required lay-verify="tel" placeholder="请输入手机号"  autocomplete="off" class="layui-input" @if($id!=0) disabled @endif>
         </div>
     </div>
 
@@ -36,6 +36,7 @@
             <input type="number" value="{{$info['shenfen'] or ''}}" name="shenfen" lay-verify="shenfen" placeholder="请输入身份(正整数)" autocomplete="off" class="layui-input">
         </div>
     </div>
+    @if($id==0)
     <div class="layui-form-item">
         <label class="layui-form-label" style="width: 100px">微信费率：</label>
         <div class="layui-input-inline">
@@ -48,7 +49,7 @@
             <input type="text" value="{{$info['rates'] or ''}}" name="rates" lay-verify="alifee" placeholder="请输入支付宝费率" autocomplete="off" class="layui-input">
         </div>
     </div>
-
+    @endif
 @endsection
 @section('id',$id)
 @section('js')

@@ -5,10 +5,16 @@
         <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
+        <input type="text"  value="{{ $input['id'] or '' }}" name="id" placeholder="请输入客服ID" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
         <input type="text"  value="{{ $input['content'] or '' }}" name="content" placeholder="请输入客服昵称" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
     </div>
 @endsection
 @section('table')
@@ -23,25 +29,25 @@
         <thead>
         <tr>
             <th class="hidden-xs">ID</th>
-            <th class="hidden-xs">名字</th>
-            <th>客服二维码</th>
-            <th>创建时间</th>
-            <th>操作</th>
+            <th class="hidden-xs" style="text-align: center">客服昵称</th>
+            <th class="hidden-xs" style="text-align: center">客服二维码</th>
+            <th class="hidden-xs" style="text-align: center">创建时间</th>
+            <th class="hidden-xs" style="text-align: center">操作</th>
         </tr>
         </thead>
         <tbody>
         @foreach($pager as $info)
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
-                <td class="hidden-xs">{{$info['content']}}</td>
-                <td>
+                <td class="hidden-xs" style="text-align: center">{{$info['content']}}</td>
+                <td style="text-align: center">
                     <img src="{{$info['url']}}" width="50px" onclick="previewImg(this)">
                 </td>
-                <td>{{$info['creatime']}}</td>
-                <td>
+                <td style="text-align: center">{{$info['creatime']}}</td>
+                <td style="text-align: center">
                     <div class="layui-inline">
-                        <button class="layui-btn layui-btn-small layui-btn-normal edit-btn" data-id="{{$info['id']}}" data-desc="修改客服" data-url="{{url('/admin/callcenter/'. $info['id'] .'/edit')}}"><i class="layui-icon">&#xe642;</i></button>
-                        <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="{{$info['id']}}" data-url="{{url('/admin/callcenter/'.$info['id'])}}"><i class="layui-icon">&#xe640;</i></button>
+                        <button class="layui-btn layui-btn-small layui-btn-normal edit-btn" data-id="{{$info['id']}}" data-desc="修改客服" data-url="{{url('/admin/callcenter/'. $info['id'] .'/edit')}}">编辑</button>
+                        <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="{{$info['id']}}" data-url="{{url('/admin/callcenter/'.$info['id'])}}">删除</button>
                     </div>
                 </td>
             </tr>
@@ -57,11 +63,12 @@
 @endsection
 @section('js')
     <script>
-        layui.use(['form', 'jquery', 'layer'], function() {
+        layui.use(['form', 'jquery', 'layer','laydate'], function() {
             var form = layui.form(),
                 $ = layui.jquery,
+                laydate=layui.laydate,
                 layer = layui.layer;
-
+            laydate({istoday: true});
             form.render();
             form.on('submit(formDemo)', function(data) {
                 console.log(data);

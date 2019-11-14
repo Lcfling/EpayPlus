@@ -60,9 +60,15 @@ class CodeuserController extends Controller
             $data['shenfen']=intval($data['shenfen']);
             $data['rate']=floatval($data['rate']);
             $data['rates']=floatval($data['rates']);
-            $insert=Codeuser::insert($data);
-            if($insert){
-                return ['msg'=>'添加成功！','status'=>1];
+            $user_id=Codeuser::insertGetId($data);
+            if($user_id){
+                $res=DB::table('users_count')->insert(array('user_id'=>$user_id,'creatime'=>time()));
+                if($res){
+                    return ['msg'=>'添加成功！','status'=>1];
+                }else{
+                    return ['msg'=>'添加失败！'];
+                }
+
             }else{
                 return ['msg'=>'添加失败！'];
             }

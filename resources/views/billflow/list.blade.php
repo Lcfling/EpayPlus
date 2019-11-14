@@ -16,7 +16,10 @@
         <input type="text"  value="{{ $input['erweima_id'] or '' }}" name="erweima_id" placeholder="请输入二维码号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
     </div>
 @endsection
 @section('table')
@@ -76,7 +79,7 @@
                 $ = layui.jquery,
                 laydate = layui.laydate,
                 layer = layui.layer;
-
+            laydate({istoday: true});
             form.render();
             form.on('submit(formDemo)', function(data) {
             });

@@ -1,4 +1,4 @@
-@section('title', '商户')
+@section('title', '商户管理')
 @section('header')
     <div class="layui-inline">
     <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-desc="添加商户" data-url="{{url('/admin/business/0/edit')}}"><i class="layui-icon">&#xe654;</i></button>
@@ -11,7 +11,13 @@
         <input type="text"  value="{{ $input['account'] or '' }}" name="account" placeholder="请输入商户账号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
+        <input type="text"  value="{{ $input['mobile'] or '' }}" name="mobile" placeholder="请输入商户手机" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
         <input type="text"  value="{{ $input['nickname'] or '' }}" name="nickname" placeholder="请输入商户昵称" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
@@ -85,7 +91,7 @@
                 $ = layui.jquery,
                 laydate = layui.laydate,
                 layer = layui.layer;
-
+            laydate({istoday: true});
             form.render();
             form.on('submit(formDemo)', function(data) {
             });

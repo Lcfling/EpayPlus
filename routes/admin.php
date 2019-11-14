@@ -46,27 +46,27 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/saveinfo/{type}',     'UserController@saveInfo');
     Route::resource('/roles',           'RoleController');
     Route::resource('/permissions',     'PermissionController');
-    Route::resource('/options',         'OptionController');
+    Route::resource('/options',         'OptionController');//系统设置
     Route::post('/optionsUpdate',       'OptionController@update');
-    Route::resource('/notices',         'NoticeController');
+    Route::resource('/notices',         'NoticeController');//公告
     Route::post('/noticesUpdate',       'NoticeController@update');
-    Route::resource('/callcenter',      'CallcenterController');
+    Route::resource('/callcenter',      'CallcenterController');//客服
     Route::post('/callcenterUpdate',    'CallcenterController@update');
-    Route::resource('/business',        'BusinessController');
-    Route::get('/business/bankinfo/{id}', 'BusinessController@bankinfo');
-    Route::get('/business/buspwd/{id}', 'BusinessController@buspwd');
+    Route::resource('/business',        'BusinessController');//商户
+    Route::get('/business/bankinfo/{id}', 'BusinessController@bankinfo');//商户银行信息
+    Route::get('/business/buspwd/{id}', 'BusinessController@buspwd');//商户登录密码
     Route::post('/busnewpwd',           'BusinessController@busnewpwd');
-    Route::get('/business/buspayword/{id}','BusinessController@buspayword');
+    Route::get('/business/buspayword/{id}','BusinessController@buspayword');//商户支付密码
     Route::post('/busnewpayword',       'BusinessController@busnewpayword');
-    Route::get('/business/busfee/{id}', 'BusinessController@busfee');
+    Route::get('/business/busfee/{id}', 'BusinessController@busfee');//商户费率
     Route::post('/busnewfee',           'BusinessController@busnewfee');
     Route::post('/businessUpdate',      'BusinessController@update');
-    Route::resource('/busdrawnone',     'BusdrawnoneController');
+    Route::resource('/busdrawnone',     'BusdrawnoneController');//商户提现-审核
     Route::post('/busdrawnone/pass',    'BusdrawnoneController@pass');
     Route::post('/busdrawnone/reject',  'BusdrawnoneController@reject');
-    Route::resource('/busdrawdone',     'BusdrawdoneController');
+    Route::resource('/busdrawdone',     'BusdrawdoneController');//通过列表
     Route::resource('/busdrawreject',   'BusdrawrejectController');
-    Route::resource('/agent',           'AgentController');
+    Route::resource('/agent',           'AgentController');//代理商
     Route::get('/agent/agentbankinfo/{id}', 'AgentController@agentbankinfo');
     Route::get('/agent/editpwd/{id}',   'AgentController@editpwd');
     Route::post('/changepwd',           'AgentController@changepwd');

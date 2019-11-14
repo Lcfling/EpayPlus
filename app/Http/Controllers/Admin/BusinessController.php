@@ -18,17 +18,27 @@ class BusinessController extends Controller
      * 数据列表
      */
     public function index(StoreRequest $request){
-        $map=array();
+        $business=Business::query();
+
         if(true==$request->has('business_code')){
-            $map['business_code']=$request->input('business_code');
+            $business->where('business_code','=',$request->input('business_code'));
         }
         if(true==$request->has('account')){
-            $map[]=['account','like','%'.$request->input('account').'%'];
+            $business->where('account','like','%'.$request->input('account').'%');
         }
         if(true==$request->has('nickname')){
-            $map[]=['nickname','like','%'.$request->input('nickname').'%'];
+            $business->where('nickname','like','%'.$request->input('nickname').'%');
         }
-        $data = Business::where($map)->paginate(10)->appends($request->all());
+        if(true==$request->has('mobile')){
+            $business->where('mobile','=',$request->input('mobile'));
+        }
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $business->whereBetween('creatime',[$start,$end]);
+        }
+        $data = $business->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['updatetime']=date("Y-m-d H:i:s",$value["updatetime"]);
@@ -75,6 +85,7 @@ class BusinessController extends Controller
                 $agent['business_code']=$insertID;
                 $agent['creatime']=time();
                 $res3=DB::table('agent_fee')->insert($agent);
+                DB::table('business_count')->insert(array('business_id'=>$insertID,'creatime'=>time()));
                 if($res3){
                     return ['msg'=>'添加成功！','status'=>1];
                 }else{

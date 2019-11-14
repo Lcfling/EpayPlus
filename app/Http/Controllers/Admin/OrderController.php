@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\StoreRequest;
 use App\Models\Business;
 use App\Models\Order;
+use App\Models\Orderrecord;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Billflow;
@@ -16,22 +17,26 @@ class OrderController extends Controller
      * 数据列表
      */
     public function index(StoreRequest $request){
-        $map=array();
-        //$weeksuf = computeWeek(time(),false);
-        $order =new Order();
-        $order->setTable('order_record');
 
-        if(true==$request->has('user_id')){
-            $map['user_id']=$request->input('user_id');
-        }
+        $order = Orderrecord::query();
+
         if(true==$request->has('business_code')){
-            $map['business_code']=$request->input('business_code');
+            $order->where('business_code','=',$request->input('business_code'));
         }
         if(true==$request->has('order_sn')){
-            $map['order_sn']=$request->input('order_sn');
+            $order->where('order_sn','=',$request->input('order_sn'));
+        }
+        if(true==$request->has('user_id')){
+            $order->where('user_id','=',$request->input('user_id'));
         }
 
-        $data=$order->where($map)->paginate(10)->appends($request->all());
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $order->whereBetween('creatime',[$start,$end]);
+        }
+        $data=$order->paginate(10)->appends($request->all());
         foreach ($data as $key=>$value){
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
         }

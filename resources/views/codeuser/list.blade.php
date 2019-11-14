@@ -8,10 +8,10 @@
         <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
+        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
     </div>
     <div class="layui-inline">
-        <button class="layui-btn layui-btn-warm" lay-submit name="excel" value="is" lay-filter="formDemo2">导出Excel</button>
+        <button class="layui-btn layui-btn-warm" lay-submit name="excel" value="is" lay-filter="formDemo">导出Excel</button>
     </div>
 @endsection
 @section('table')

@@ -19,8 +19,21 @@ class RechargelistController extends Controller
      * 数据列表
      */
     public function index(Request $request){
-        $map = array();
-        $data = Rechargelist::where($map)->paginate(10)->appends($request->all());
+        $czrecord=Rechargelist::query();
+
+        if(true==$request->has('user_id')){
+            $czrecord->where('user_id','=',$request->input('user_id'));
+        }
+        if(true==$request->has('name')){
+            $czrecord->where('name','like','%'.$request->input('name').'%');
+        }
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $czrecord->whereBetween('creatime',[$start,$end]);
+        }
+        $data = $czrecord->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
         }

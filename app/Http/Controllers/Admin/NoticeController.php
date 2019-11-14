@@ -8,6 +8,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\StoreRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Notice;
+use PragmaRX\Google2FA\Google2FA;
+
 class NoticeController extends Controller
 {
     /**
@@ -15,6 +17,13 @@ class NoticeController extends Controller
      */
     public function index(StoreRequest $request)
     {
+//        $google2fa = new Google2FA();
+//        $qrCodeUrl = $google2fa->getQRCodeUrl(
+//            "EPP",//名称后台获取
+//            '13213211321',
+//            'QN7CXF4BSB2SIGTJ'
+//        );
+//        dump($qrCodeUrl);die;
         $notice=Notice::query();
         if(true==$request->has('title')){
             $notice->where('title','like','%'.$request->input('title').'%');

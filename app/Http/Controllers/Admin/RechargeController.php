@@ -3,7 +3,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
 use App\Models\Recharge;
@@ -15,8 +14,17 @@ class RechargeController extends Controller
      * 数据列表
      */
     public function index(Request $request){
-        $map=array();
-        $data = Recharge::where($map)->paginate(10)->appends($request->all());
+        $recharge=Recharge::query();
+        if(true==$request->has('sk_name')){
+            $recharge->where('sk_name','like','%'.$request->input('sk_name').'%');
+        }
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $recharge->whereBetween('creatime',[$start,$end]);
+        }
+        $data = $recharge->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
         }

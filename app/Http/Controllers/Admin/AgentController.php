@@ -10,6 +10,7 @@ use App\Models\Agentbank;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
+use Illuminate\Support\Facades\DB;
 use PragmaRX\Google2FA\Google2FA;
 class AgentController extends Controller
 {
@@ -68,9 +69,14 @@ class AgentController extends Controller
             $data['ggkey']=$secretKey;
             $data['password']=bcrypt($data['password']);
             $data['creatime']=time();
-            $res=Agent::insert($data);
-            if($res){
-                return ['msg'=>'添加成功！','status'=>1];
+            $agent_id=Agent::insertGetId($data);
+            if($agent_id){
+                $res=DB::table('agent_count')->insert(array('agent_count'=>$agent_id,'creatime'=>time()));
+                if($res){
+                    return ['msg'=>'添加成功！','status'=>1];
+                }else{
+                    return ['msg'=>'添加失败！'];
+                }
             }else{
                 return ['msg'=>'添加失败！'];
             }

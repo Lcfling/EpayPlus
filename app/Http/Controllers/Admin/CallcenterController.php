@@ -14,13 +14,23 @@ class CallcenterController extends Controller
     /**
      * 客服列表
      */
-    public function index(StoreRequest $request)
-    {
-        $map=array();
-        if(true==$request->has('content')){
-            $map[]=['content','like','%'.$request->input('content').'%'];
+    public function index(StoreRequest $request){
+
+        $kefu=Callcenter::query();
+
+        if(true==$request->has('id')){
+            $kefu->where('id','=',$request->input('id'));
         }
-        $data=Callcenter::where($map)->paginate(10)->appends($request->all());
+        if(true==$request->has('content')){
+            $kefu->where('content','like','%'.$request->input('content').'%');
+        }
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $kefu->whereBetween('creatime',[$start,$end]);
+        }
+        $data=$kefu->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['url']='http://'.$_SERVER['HTTP_HOST'].'/storage'.$value["url"];
