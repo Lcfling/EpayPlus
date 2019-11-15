@@ -224,11 +224,11 @@ class MycenterController extends CommonController {
             }
             DB::beginTransaction();
             // 查看用户积分余额
-            $balance =DB::table('users_count')->where('user_id',$user_id)->value('balance');
+            $balance =Userscount::onWriteConnection()->where('user_id',$user_id)->value('balance');
             if($money > $balance) {
                 ajaxReturn('','提现金额大于总金额!',0);
             }
-            DB::table('users_count')->where('user_id',$user_id)->decrement('balance',$money);
+            Userscount::where('user_id',$user_id)->decrement('balance',$money);
             DB::commit();
             $data =array(
                 'user_id'=>$user_id,

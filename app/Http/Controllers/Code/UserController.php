@@ -40,7 +40,7 @@ class UserController extends CommonController {
                 ajaxReturn(null,"关闭接单!");
             }
             // 查看用户积分余额
-            $balance = Userscount::where('user_id',$user_id)->value('balance');
+            $balance = Userscount::onWriteConnection()->where('user_id',$user_id)->value('balance');
             if ($balance <=100000) {
                 ajaxReturn($balance,"额度没有这么多啦!",0);
             }
@@ -116,13 +116,13 @@ class UserController extends CommonController {
             }
             DB::beginTransaction();
             // 查看用户积分余额
-            $balance =DB::table('users_count')->where('user_id',$user_id)->value('balance');
+            $balance =Userscount::onWriteConnection()->where('user_id',$user_id)->value('balance');
             $yue=bcsub($balance/100,1000,2);
             if ($yue<$tradeMoney/100) {
                 $this->openOrdersnLock($order_sn);
                 ajaxReturn(null,"账户余额不足!",0);
             }
-            DB::table('users_count')->where('user_id',$user_id)->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
+            Userscount::where('user_id',$user_id)->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
             DB::commit();
             $counttable = Accountlog::getcounttable($order_sn);
             $status=$counttable->insert(

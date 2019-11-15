@@ -80,10 +80,14 @@ class IndexController extends Controller
 //        print_r($secretKey);
 //        $tradeMoney =10000;
 //        Userscount::where('user_id',1)->increment('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money - $tradeMoney"),'tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
-        header("content-type:text/html;charset=utf-8");
-        $str = "'123456'     ";
-         // 转换双引号和单引号
-        echo  preg_replace('/\'/', '', str_replace(" ",'',htmlspecialchars($str)));
+//        header("content-type:text/html;charset=utf-8");
+//        $str = "'123456'     ";
+//         // 转换双引号和单引号
+//        echo  preg_replace('/\'/', '', str_replace(" ",'',htmlspecialchars($str)));
+        print_r($balance = Userscount::onWriteConnection()->where('user_id',1)->value('balance'));
+        $tradeMoney =100;
+        Userscount::onWriteConnection()->where('user_id',1)->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
+
     }
 
     /**
