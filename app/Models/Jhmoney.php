@@ -20,6 +20,7 @@ class Jhmoney extends Model {
         if ($i >10) {
             return false;
         }
+
         if ( !($user_id >0)) {
             return false;
         }

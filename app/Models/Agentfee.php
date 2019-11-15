@@ -19,11 +19,11 @@ class Agentfee extends Model {
      * @param $paycode 支付类型   1 微信  2支付宝
      */
     public static function bussiness_fy($tradeMoney,$bussiness_code,$order_sn,$paycode){
-        if($busfee = Business::where('bussiness_code',$bussiness_code)->value('fee')){
+        if($busfee = Business::where('business_code',$bussiness_code)->value('fee')){
             $brokerage= $tradeMoney * bcsub(1,$busfee,2);
             //修改商户账户信息
-            Businesscount::where('bussiness_code',$bussiness_code)->increment('balance',$brokerage,['tol_sore'=>DB::raw("tol_sore + $brokerage")]);
-           $agentfeeinfo = Agentfee::where('bussiness_code',$bussiness_code)->first();
+            Businesscount::where('business_id',$bussiness_code)->increment('balance',$brokerage,['tol_sore'=>DB::raw("tol_sore + $brokerage")]);
+           $agentfeeinfo = Agentfee::where('business_code',$bussiness_code)->first();
            if($agentfeeinfo['agent1_id']){
                $feecha = bcsub($busfee,$agentfeeinfo['agent1_fee'],2);
                $agentbftable=Agentbillflow::getagentbftable($order_sn);
@@ -91,12 +91,13 @@ class Agentfee extends Model {
         }
         //自己的信息
         $userinfo=Users::where(array("user_id"=>$user_id))->first();
-        $userrate = $userinfo['rate'];
+        $userrate = $userinfo['rate'];//微信费率
+        $userrates = $userinfo['rates'];//支付宝费率
         if ($paycode == 1) {
             //微信费率
             $score= bcsub($userrate,$rate,4)*$tradeMoney;
         } else {
-            $score= bcsub($userrate,$rate,4)*$tradeMoney;
+            $score= bcsub($userrates,$rate,4)*$tradeMoney;
         }
         if($score<0 || $score==0) {
             return false;
@@ -108,7 +109,7 @@ class Agentfee extends Model {
             'score'=>$score,
             'business_code'=>$bussiness_code,
             'status'=>5,
-            'paycode'=>$paycode,
+            'payType'=>$paycode,//
             'remark'=>'支付返佣',
             'creatime'=>time()
         );
