@@ -78,9 +78,12 @@ class IndexController extends Controller
 //       $code = "<img src='{$qrCodeUrl}'>";
 //        echo $code;
 //        print_r($secretKey);
-        $tradeMoney =10000;
-        Userscount::where('user_id',1)->increment('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money - $tradeMoney"),'tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
-
+//        $tradeMoney =10000;
+//        Userscount::where('user_id',1)->increment('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money - $tradeMoney"),'tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
+        header("content-type:text/html;charset=utf-8");
+        $str = "'123456'     ";
+         // 转换双引号和单引号
+        echo  preg_replace('/\'/', '', str_replace(" ",'',htmlspecialchars($str)));
     }
 
     /**
