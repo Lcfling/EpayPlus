@@ -143,6 +143,9 @@ function isMobile($phone_number){
     return false;
 
 }
+function htmlformat($str){
+    return  preg_replace('/\'/', '', str_replace(" ",'',htmlspecialchars($str)));
+}
 
 /**生成唯一订单号
  * @return string
