@@ -22,10 +22,11 @@ class Agentfee extends Model {
         if($busfee = Business::where('business_code',$bussiness_code)->value('fee')){
             $brokerage= $tradeMoney * bcsub(1,$busfee,2);
             //修改商户账户信息
-            Businesscount::where('business_id',$bussiness_code)->increment('balance',$brokerage,['tol_sore'=>DB::raw("tol_sore + $brokerage")]);
+            Businesscount::where('business_code',$bussiness_code)->increment('balance',$brokerage,['tol_sore'=>DB::raw("tol_sore + $brokerage"),'savetime'=>time()]);
            $agentfeeinfo = Agentfee::where('business_code',$bussiness_code)->first();
            if($agentfeeinfo['agent1_id']){
                $feecha = bcsub($busfee,$agentfeeinfo['agent1_fee'],2);
+               print_r($feecha);echo"<pre>";
                $agentbftable=Agentbillflow::getagentbftable($order_sn);
                if($feecha>0){
                     $score = $tradeMoney * $feecha;
@@ -41,12 +42,13 @@ class Agentfee extends Model {
                     );
                     $agentbftable->insert($data);
                    //修改代理商账户信息
-                    Agentcount::where('agent_id',$agentfeeinfo['agent1_id'])->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score"),'tol_brokerage'=>DB::raw("tol_brokerage + $score")]);
+                    Agentcount::where('agent_id',$agentfeeinfo['agent1_id'])->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score"),'tol_brokerage'=>DB::raw("tol_brokerage + $score"),'savetime'=>time()]);
                 }
 
                 if($agentfeeinfo['agent2_id']){
 
                     $feecha2 =bcsub($agentfeeinfo['agent1_fee'],$agentfeeinfo['agent2_fee'],2);
+                    print_r($feecha2);echo"<pre>";
                     if($feecha2>0){
                         $score2 = $tradeMoney * $feecha2;
                         $data2 =array(
@@ -61,7 +63,7 @@ class Agentfee extends Model {
                         );
                         $agentbftable->insert($data2);
                         //修改代理商账户信息
-                        Agentcount::where('agent_id',$agentfeeinfo['agent1_id'])->increment('balance',$score2,['tol_sore'=>DB::raw("tol_sore + $score2"),'tol_brokerage'=>DB::raw("tol_brokerage + $score2")]);
+                        Agentcount::where('agent_id',$agentfeeinfo['agent2_id'])->increment('balance',$score2,['tol_sore'=>DB::raw("tol_sore + $score2"),'tol_brokerage'=>DB::raw("tol_brokerage + $score2"),'savetime'=>time()]);
                     }
                 }else{
                     ajaxReturn('','无一级代理商!',0);
@@ -117,7 +119,7 @@ class Agentfee extends Model {
         file_put_contents('./userRebate.txt',print_r($data,true).PHP_EOL,FILE_APPEND);
         $counttable->insert($data);
         //修改码商账户信息
-        Userscount::where('user_id',$user_id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score"),'tol_brokerage'=>DB::raw("tol_brokerage + $score")]);
+        Userscount::where('user_id',$user_id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score"),'tol_brokerage'=>DB::raw("tol_brokerage + $score"),'savetime'=>time()]);
         $i++;
         if (empty($userinfo['pid'])) {
             return false;

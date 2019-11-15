@@ -7,6 +7,7 @@
  */
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 class Jhmoney extends Model {
     protected  $table = 'jhmoney';
     public $timestamps = false;
@@ -26,7 +27,7 @@ class Jhmoney extends Model {
         }
         $jhmoney=Jhmoney::where(array('id'=>1))->first();
         $jhfy="fymoney".$i;
-        if(!$accounttable){
+        if(empty($accounttable)){
             $accounttable=Accountlog::getdaytable();
         }
         $data['user_id']=$user_id;
@@ -35,6 +36,7 @@ class Jhmoney extends Model {
         $data['remark']="激活佣金";
         $data['creatime']=time();
         $accounttable->insert($data);
+        Userscount::where(array("user_id"=>$user_id))->increment('balance',$jhmoney[$jhfy],['tol_sore'=>DB::raw("tol_sore + $jhmoney[$jhfy]"),'tol_brokerage'=>DB::raw("tol_brokerage + $jhmoney[$jhfy]")]);
         $userinfo=Users::where(array("user_id"=>$user_id))->first();
         if ($userinfo['pid']>0) {
             $i++;
