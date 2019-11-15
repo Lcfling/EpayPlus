@@ -42,7 +42,7 @@ class Events
 
         Timer::add(2, function () use ($hostUrl) {
             // 商户返佣：
-            file_get_contents($hostUrl . "code/Timernotify/bussiness_fy");
+            file_get_contents($hostUrl . "code/Timernotify/bussiness_fy");//workerman报错，暂时注释
             // 码商返佣
             file_get_contents($hostUrl . "code/Timernotify/user_fy");
         });
