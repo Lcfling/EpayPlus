@@ -20,13 +20,13 @@ class Agentfee extends Model {
      */
     public static function bussiness_fy($tradeMoney,$bussiness_code,$order_sn,$paycode){
         if($busfee = Business::where('business_code',$bussiness_code)->value('fee')){
-            $brokerage= $tradeMoney * bcsub(1,$busfee,2);
+            $brokerage= $tradeMoney * bcsub(1,$busfee,4);
+            Agentfee::setbusbillflow($tradeMoney,$brokerage,$bussiness_code,$order_sn,$paycode);
             //修改商户账户信息
             Businesscount::where('business_code',$bussiness_code)->increment('balance',$brokerage,['tol_sore'=>DB::raw("tol_sore + $brokerage"),'savetime'=>time()]);
            $agentfeeinfo = Agentfee::where('business_code',$bussiness_code)->first();
            if($agentfeeinfo['agent1_id']){
-               $feecha = bcsub($busfee,$agentfeeinfo['agent1_fee'],2);
-               print_r($feecha);echo"<pre>";
+               $feecha = bcsub($busfee,$agentfeeinfo['agent1_fee'],4);
                $agentbftable=Agentbillflow::getagentbftable($order_sn);
                if($feecha>0){
                     $score = $tradeMoney * $feecha;
@@ -47,8 +47,7 @@ class Agentfee extends Model {
 
                 if($agentfeeinfo['agent2_id']){
 
-                    $feecha2 =bcsub($agentfeeinfo['agent1_fee'],$agentfeeinfo['agent2_fee'],2);
-                    print_r($feecha2);echo"<pre>";
+                    $feecha2 =bcsub($agentfeeinfo['agent1_fee'],$agentfeeinfo['agent2_fee'],4);
                     if($feecha2>0){
                         $score2 = $tradeMoney * $feecha2;
                         $data2 =array(
@@ -93,13 +92,13 @@ class Agentfee extends Model {
         }
         //自己的信息
         $userinfo=Users::where(array("user_id"=>$user_id))->first();
-        $userrate = $userinfo['rate'];//微信费率
-        $userrates = $userinfo['rates'];//支付宝费率
         if ($paycode == 1) {
+            $userrate = $userinfo['rate'];//微信费率
             //微信费率
             $score= bcsub($userrate,$rate,4)*$tradeMoney;
         } else {
-            $score= bcsub($userrates,$rate,4)*$tradeMoney;
+            $userrate = $userinfo['rates'];//支付宝费率
+            $score= bcsub($userrate,$rate,4)*$tradeMoney;
         }
         if($score<0 || $score==0) {
             return false;
@@ -128,6 +127,28 @@ class Agentfee extends Model {
         return $data;
     }
 
+    /**商户支付流水插入
+     * @param $tradeMoney
+     * @param $brokerage
+     * @param $bussiness_code
+     * @param $order_sn
+     * @param $paycode
+     */
+    private function setbusbillflow($tradeMoney,$brokerage,$bussiness_code,$order_sn,$paycode){
+
+        $data =array(
+            'order_sn'=>$order_sn,
+            'score'=>$brokerage,
+            'tradeMoney'=>$tradeMoney,
+            'business_code'=>$bussiness_code,
+            'status'=>1,
+            'payType'=>$paycode,
+            'remark'=>'支付',
+            'creatime'=>time()
+        );
+        $busbftable = Businessbillflow::getbusbftable($order_sn);
+        $busbftable->insert($data);
+    }
 
 
 
