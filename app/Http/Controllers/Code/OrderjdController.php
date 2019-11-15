@@ -176,7 +176,7 @@ class OrderjdController extends CommonController {
                     //超时
                     $this->csbudan($order_info,$order_sn);
                 }
-                $this->insertrebatte($user_id,$order_info['bussiness_code'],$order_sn,$skmoney);
+                $this->insertrebatte($user_id,$order_info['business_code'],$order_sn,$skmoney,$order_info['payType']);//缺少paycode字段
                 ajaxReturn(null,'手动收款成功!',1);
             } else {
                 ajaxReturn(null,'手动收款失败!',0);
@@ -236,12 +236,13 @@ class OrderjdController extends CommonController {
         Orderrecord::where(array("order_sn"=>$order_sn))->update(array("status"=>1,"dj_status"=>2,"pay_time"=>time()));
 //        $this->sfpushfirst($order_sn_info['order_sn']);
     }
-    private function insertrebatte($user_id,$bussiness_code,$order_sn,$skmoney){
+    private function insertrebatte($user_id,$bussiness_code,$order_sn,$skmoney,$payType){
         $data=array(
             'user_id'=>$user_id,
             'bussiness_code'=>$bussiness_code,
             'order_sn'=>$order_sn,
             'tradeMoney'=>$skmoney,
+            'payType'=>$payType,//添加paycode
             'creatime'=>time()
         );
         //插入佣金表
