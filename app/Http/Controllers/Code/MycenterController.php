@@ -842,6 +842,7 @@ class MycenterController extends CommonController {
 
 
 
+
     //修改二级密码
     public function setsecondpwd() {
         $user_id = $this->uid;

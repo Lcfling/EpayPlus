@@ -119,7 +119,7 @@ class OrderjdController extends CommonController {
                 $deductnum =  '未扣除';
             }elseif($orderinfo['dj_status']==2){
                 $unfreezenum =  $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',4]])->value('score') /100;
-                $deductnum =  $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',2]])->value('score');
+                $deductnum =  $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',2]])->value('score') /100;
             }else{
                 $unfreezenum =  '未解冻';
                 $deductnum =  '未扣除';
@@ -131,9 +131,9 @@ class OrderjdController extends CommonController {
             }
             $erweima =Erweima::where([['user_id',$user_id],['id',$orderinfo['erweima_id']]])->value('erweima');
             $data = array(
-                'freezenum'=>$freezenum,//冻结金额
+                'freezenum'=>-$freezenum,//冻结金额
                 'unfreezenum'=>$unfreezenum,//解冻金额
-                'deductnum'=>$deductnum,//扣除金额
+                'deductnum'=>-$deductnum,//扣除金额
                 'brokerage'=>$brokerage,//佣金
                 'erweima'=>$erweima//二维码
             );
@@ -176,7 +176,7 @@ class OrderjdController extends CommonController {
                     //超时
                     $this->csbudan($order_info,$order_sn);
                 }
-                $this->insertrebatte($user_id,$order_info['business_code'],$order_sn,$skmoney,$order_info['payType']);//缺少paycode字段
+                $this->insertrebatte($user_id,$order_info['business_code'],$order_sn,$skmoney * 100,$order_info['payType']);//缺少paycode字段
                 ajaxReturn(null,'手动收款成功!',1);
             } else {
                 ajaxReturn(null,'手动收款失败!',0);
@@ -236,13 +236,21 @@ class OrderjdController extends CommonController {
         Orderrecord::where(array("order_sn"=>$order_sn))->update(array("status"=>1,"dj_status"=>2,"pay_time"=>time()));
 //        $this->sfpushfirst($order_sn_info['order_sn']);
     }
+
+    /**返佣数据插入
+     * @param $user_id
+     * @param $bussiness_code
+     * @param $order_sn
+     * @param $skmoney
+     * @param $payType
+     */
     private function insertrebatte($user_id,$bussiness_code,$order_sn,$skmoney,$payType){
         $data=array(
             'user_id'=>$user_id,
-            'bussiness_code'=>$bussiness_code,
+            'business_code'=>$bussiness_code,
             'order_sn'=>$order_sn,
             'tradeMoney'=>$skmoney,
-            'payType'=>$payType,//添加paycode
+            'payType'=>$payType,
             'creatime'=>time()
         );
         //插入佣金表
