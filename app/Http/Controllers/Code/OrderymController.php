@@ -101,7 +101,7 @@ class OrderymController extends Controller {
             $data['id']=$order_id;
             //订单入队
             Redis::set('order_sn_'.$order_id,$order_sn);
-            Redis::set('order_id_'.$order_sn,$order_id);
+            Redis::rPush('order_id_'.$order_sn,$order_id);
             //保存商户订单记录
             $recorddata =array(
                 'order_sn'=>$order_sn,
