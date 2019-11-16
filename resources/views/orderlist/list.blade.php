@@ -1,7 +1,7 @@
 @section('title', '订单管理')
 @section('header')
     <div class="layui-inline">
-    <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
+        <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
         <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户号" autocomplete="off" class="layui-input">
@@ -49,8 +49,8 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="200">
-            <col class="hidden-xs" width="200">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="250">
             <col class="hidden-xs" width="250">
         </colgroup>
         <thead>
@@ -69,7 +69,6 @@
             <th class="hidden-xs">回调状态</th>
             <th class="hidden-xs">创建时间</th>
             <th class="hidden-xs">支付时间</th>
-            <th class="hidden-xs" style="text-align: center">操作</th>
         </tr>
         </thead>
         <tbody>
@@ -89,13 +88,6 @@
                 <td class="hidden-xs">@if($info['callback_status']==0)<span class="layui-btn layui-btn-small layui-btn-primary">未处理</span>@elseif($info['callback_status']==1)<span span class="layui-btn layui-btn-small layui-btn-warm">推送成功</span>@elseif($info['callback_status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">推送失败</span>@endif</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">@if($info['status']==1){{$info['paytime']}}@endif</td>
-                <td style="text-align: center">
-                    <div class="layui-inline">
-                        <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['order_sn']}}" data-desc="补单">补单</button>
-                        <button class="layui-btn layui-btn-small layui-btn-warm edits-btn2"  data-id="{{$info['order_sn']}}" data-desc="超时补单">超时补单</button>
-                        <button class="layui-btn layui-btn-small layui-btn-default edits-btn3"  data-id="{{$info['order_sn']}}" data-desc="手动回调">手动回调</button>
-                    </div>
-                </td>
             </tr>
         @endforeach
         @if(!$list[0])
@@ -126,94 +118,6 @@
                 $("input[name='creatime']").val('');
                 $("select[name='status']").val('');
                 $('form').submit();
-            });
-            //补单
-            $('.edits-btn1').click(function () {
-                var that = $(this);
-                var order_sn=$(this).attr('data-id');
-                //'console.log(id);
-                layer.confirm('确定要补单吗？',{title:'提示'},function (index) {
-                        $.ajax({
-                            headers: {
-                                'X-CSRF-TOKEN': $('#token').val()
-                            },
-                            url:"{{url('/admin/order/budan')}}",
-                            data:{
-                                "order_sn":order_sn,
-                            },
-                            type:"post",
-                            dataType:"json",
-                            success:function (res) {
-                                if(res.status==1){
-                                    layer.msg(res.msg,{icon:6});
-                                    location.reload();
-                                }else{
-                                    layer.msg(res.msg,{shift: 6,icon:5});
-                                    location.reload();
-                                }
-                            }
-                        });
-                    }
-                );
-            });
-
-
-            //超时补单
-            $('.edits-btn2').click(function () {
-                var that = $(this);
-                var order_sn=$(this).attr('data-id');
-                layer.confirm('确定要超时补单吗？',{title:'提示'},function (index) {
-                        $.ajax({
-                            headers: {
-                                'X-CSRF-TOKEN': $('#token').val()
-                            },
-                            url:"{{url('/admin/order/csbudan')}}",
-                            data:{
-                                "order_sn":order_sn,
-                            },
-                            type:"post",
-                            dataType:"json",
-                            success:function (res) {
-                                if(res.status==1){
-                                    layer.msg(res.msg,{icon:6});
-                                    location.reload();
-                                }else{
-                                    layer.msg(res.msg,{shift: 6,icon:5});
-                                    location.reload();
-                                }
-                            }
-                        });
-                    }
-                );
-            });
-
-            //手动回调
-            $('.edits-btn3').click(function () {
-                var that = $(this);
-                var order_sn=$(this).attr('data-id');
-                layer.confirm('确定要手动回调吗？',{title:'提示'},function (index) {
-                        $.ajax({
-                            headers: {
-                                'X-CSRF-TOKEN': $('#token').val()
-                            },
-                            url:"{{url('/admin/order/sfpushfirst')}}",
-                            data:{
-                                "order_sn":order_sn,
-                            },
-                            type:"post",
-                            dataType:"json",
-                            success:function (res) {
-                                if(res.status==1){
-                                    layer.msg(res.msg,{icon:6});
-                                    location.reload();
-                                }else{
-                                    layer.msg(res.msg,{shift: 6,icon:5});
-                                    location.reload();
-                                }
-                            }
-                        });
-                    }
-                );
             });
         });
     </script>

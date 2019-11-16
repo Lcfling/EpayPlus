@@ -116,10 +116,11 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/rechargelist',    'RechargelistController');//充值列表管理审核
     Route::post('/rechargelist/enable', 'RechargelistController@enable');
     Route::resource('/billflow',        'BillflowController');//码商流水
-    Route::resource('/order',           'OrderController');//订单列表
+    Route::resource('/order',           'OrderController');//订单处理
     Route::post('/order/budan',         'OrderController@budan');//订单补单
     Route::post('/order/csbudan',       'OrderController@csbudan');//订单超时补单
     Route::post('/order/sfpushfirst',   'OrderController@sfpushfirst');//订单手动补单
+    Route::resource('/orderlist',       'OrderlistController');//订单处理
     Route::resource('/buscount',        'BuscountController');//商户账单
     Route::resource('/busbill',         'BusbillController');//商户流水
     Route::resource('/agentcount',      'AgentcountController');//代理账单
@@ -128,7 +129,7 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/codebill',        'BillflowController');//码商流水
     Route::resource('/busbank',         'BusbankController');//商户银行
     Route::resource('/agentbank',       'AgentbankController');//代理银行
-    Route::resource('/qrcode',          'QrcodeController');//码商-二维码列表
+    Route::resource('/qrcode',          'QrcodeController');//码商--二维码列表
     Route::resource('/datacount',       'DatacountController');//平台数据统计
 });
 

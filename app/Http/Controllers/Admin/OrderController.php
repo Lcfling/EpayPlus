@@ -26,10 +26,15 @@ class OrderController extends Controller
         if(true==$request->has('order_sn')){
             $order->where('order_sn','=',$request->input('order_sn'));
         }
+        if(true==$request->has('order_sn')){
+            $order->where('order_sn','=',$request->input('order_sn'));
+        }
         if(true==$request->has('user_id')){
             $order->where('user_id','=',$request->input('user_id'));
         }
-
+        if(true==$request->has('status')){
+            $order->where('status','=',$request->input('status'));
+        }
         if(true==$request->has('creatime')){
             $creatime=$request->input('creatime');
             $start=strtotime($creatime);
@@ -50,9 +55,10 @@ class OrderController extends Controller
             }
             exportExcel($head,$excel,'订单记录'.date('YmdHis',time()),'',true);
         }else{
-            $data=$order->paginate(10)->appends($request->all());
+            $data=$order->orderBy('creatime','desc')->paginate(10)->appends($request->all());
             foreach ($data as $key=>$value){
                 $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
+                $data[$key]['paytime']=date("Y-m-d H:i:s",$value["paytime"]);
             }
         }
         return view('order.list',['list'=>$data,'input'=>$request->all()]);
