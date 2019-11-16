@@ -16,8 +16,11 @@ class OptionController extends Controller
      */
     public function index(StoreRequest $request){
         $option=Option::query();
-        if(true==$request->has('content')){
-            $option->where('content','like','%'.$request->input('content').'%');
+        if(true==$request->has('key')){
+            $option->where('key','like','%'.$request->input('key').'%');
+        }
+        if(true==$request->has('value')){
+            $option->where('value','like','%'.$request->input('value').'%');
         }
         if(true==$request->has('creatime')){
             $creatime=$request->input('creatime');
@@ -25,7 +28,7 @@ class OptionController extends Controller
             $end=strtotime('+1day',$start);
             $option->whereBetween('creatime',[$start,$end]);
         }
-        $data=$option->paginate(10)->appends($request->all());
+        $data=$option->orderBy('creatime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
         }
@@ -52,8 +55,8 @@ class OptionController extends Controller
             $data['creatime']=time();
             $insert=Option::insert($data);
             if($insert){
-                $key=$data['key'].'_'.$data['value'];
-                $value=$data['content'];
+                $key='option_'.$data['key'];
+                $value=$data['value'];
                 Redis::set($key,$value);
                 return ['msg'=>'添加成功！','status'=>1];
             }else{
@@ -76,14 +79,14 @@ class OptionController extends Controller
         unset($data['_token']);
         unset($data['id']);
         $info = Option::find($id);
-        $key=$info['key'].'_'.$info['value'];
+        $key='option_'.$info['key'];
         Redis::del($key);
         $res=$this->edit_unique($id,$data['key'],$data['value']);
         if(!$res){
             $update=Option::where('id',$id)->update($data);
             if($update!==false){
-                $k=$data['key'].'_'.$data['value'];
-                $v=$data['content'];
+                $k='option_'.$data['key'];
+                $v=$data['value'];
                 Redis::set($k,$v);
                 return ['msg'=>'修改成功！','status'=>1];
             }else{

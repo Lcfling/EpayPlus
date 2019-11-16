@@ -9,19 +9,10 @@
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">value：</label>
-        <div class="layui-input-inline">
+        <div class="layui-input-block">
             <input type="text" value="{{$info['value'] or ''}}" name="value"  placeholder="请填写value值" lay-verify="required" lay-reqText="请填写value值" autocomplete="off" class="layui-input">
         </div>
     </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">内容：</label>
-        <div class="layui-input-inline">
-            <input type="text" value="{{$info['content'] or ''}}" name="content" placeholder="请填写内容" lay-verify="required" lay-reqText="请填写内容" autocomplete="off" class="layui-input">
-        </div>
-    </div>
-
-
 @endsection
 @section('id',$id)
 @section('js')

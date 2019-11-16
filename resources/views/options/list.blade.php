@@ -5,7 +5,10 @@
         <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['content'] or '' }}" name="content" placeholder="请输入内容" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['key'] or '' }}" name="key" placeholder="请输入key" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['value'] or '' }}" name="value" placeholder="请输入value" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
@@ -21,15 +24,13 @@
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="150">
             <col width="200">
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">key</th>
             <th class="hidden-xs">value</th>
-            <th>内容</th>
             <th>创建时间</th>
             <th>操作</th>
         </tr>
@@ -40,7 +41,6 @@
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['key']}}</td>
                 <td class="hidden-xs">{{$info['value']}}</td>
-                <td>{{$info['content']}}</td>
                 <td>{{$info['creatime']}}</td>
                 <td>
                     <div class="layui-inline">
