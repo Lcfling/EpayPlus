@@ -16,9 +16,10 @@ class Agentbillflow extends Model {
      * @return Businessbillflow
      */
     public static function getagentbftable($order_sn){
-        $orderarr = explode('e',$order_sn);
+        $nyr = substr($order_sn,0,6);
+        $weeksuf = computeWeek($nyr);
         $agentbillflow =new Agentbillflow;
-        $agentbillflow->setTable('agent_billflow_'.$orderarr[1]);
+        $agentbillflow->setTable('agent_billflow_'.$weeksuf);
         return  $agentbillflow;
     }
 

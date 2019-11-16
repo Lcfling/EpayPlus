@@ -39,9 +39,9 @@ class Accountlog extends Model {
      * @return Accountlog
      */
     public static function getcounttable($order_sn){
-        $orderarr = explode('e',$order_sn);
+        $tablesuf = $order_sn.substr(0,6);
         $Accountlog =new Accountlog;
-        $Accountlog->setTable('account_'.$orderarr[0]);
+        $Accountlog->setTable('account_'.$tablesuf);
         return $Accountlog;
     }
 
