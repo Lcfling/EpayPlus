@@ -110,7 +110,11 @@ class UserController extends CommonController {
                 if ($yue<$tradeMoney/100) {
                     ajaxReturn(null,"账户余额不足!",0);
                 }
-                Userscount::where('user_id',$user_id)->lockForUpdate()->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
+                $moneystatus =Userscount::where('user_id',$user_id)->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
+                if(!$moneystatus){
+                    DB::rollBack();
+                    ajaxReturn(null,"抢单失败!",0);
+                }
                 $counttable = Accountlog::getcounttable($order_sn);
                 $status=$counttable->insert(
                     array(
