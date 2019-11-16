@@ -188,7 +188,7 @@ function getorderId_three(){
  */
 function getrequestId($paycode,$business_code,$tablesuf){
 
-    $requestId  =	date("Ymd").'e'.$tablesuf.'e'.$paycode .substr($business_code, -3).rand(11111111,99999999);
+    $requestId  =	date("Ymd").'e'.$tablesuf.'e'.$paycode .substr($business_code, -3).date('His').rand(11111111,99999999);
 
     return $requestId;
 
@@ -220,7 +220,7 @@ function verifyGooglex($secret,$ggkey){
  */
 function getUniqueId_six($paycode,$business_code,$tablesuf) {
     $uniqueid =incr_num('UniqueId',1,5);
-    $order_no = date('Ymd').'e'.$tablesuf.'e'.$paycode .substr($business_code, -3).$uniqueid;
+    $order_no = date('Ymd').'e'.$tablesuf.'e'.$paycode .date('His').substr($business_code, -3).$uniqueid;
     return $order_no;
 }
 
