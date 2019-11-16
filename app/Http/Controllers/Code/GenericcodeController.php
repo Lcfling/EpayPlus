@@ -106,34 +106,7 @@ class GenericcodeController extends CommonController {
         }
     }
 
-    /**上传图片
-     * @param Request $request
-     * @return array
-     */
-    public function upload_img(Request $request)
-    {
-        if ($request->isMethod('POST')) { //判断文件是否是 POST的方式上传
-            $tmp = $request->file('file');
-            $path = '/erweima'; //public下的article
-            $rule = ['jpg', 'png','jpeg'];
-            if ($tmp->isValid()) { //判断文件上传是否有效
-                $FileType = $tmp->getClientOriginalExtension(); //获取文件后缀
-                if (!in_array($FileType, $rule)) {
-                    ajaxReturn("","图片格式为jpg,png,jpeg",0);
-                }
-                $FilePath = $tmp->getRealPath(); //获取文件临时存放位置
 
-                $FileName = date('Y-m-d') . uniqid() . '.' . $FileType; //定义文件名
-
-                Storage::disk('erweima')->put($FileName, file_get_contents($FilePath)); //存储文件
-
-                return $data = [
-                    'status' => 0,
-                    'path' => $path . '/' . $FileName //文件路径
-                ];
-            }
-        }
-    }
     /**
      * 账号激活
      */

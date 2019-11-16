@@ -63,102 +63,95 @@ class UserController extends CommonController {
     public function qiangdan(Request $request) {
         if($request->isMethod('post')) {
             $user_id=$this->uid;
+            $userinfo =$this->member;
             //用户
             $order_sn=$_POST['order_sn'];
-
             //订单号
-            //加锁
-            $nostr=time().uniqid();
-            if(!$this->OrdersnLock($order_sn,$nostr)){
-                ajaxReturn(null,"订单已被抢,正在处理中!",0);
-            }
-
-            //获取订单信息
-            $order_info=Orderrecord::where([['order_sn',$order_sn],['status',0]])->first();
-            if(!$order_info){
-                $this->openOrdersnLock($order_sn);
-                ajaxReturn(null,"订单已不存在,请刷新当前页面!",0);
-            }
-            $tradeMoney = $order_info['tradeMoney'];
-
-            $userinfo=Users::where(array("user_id"=>$user_id))->first();
             if ($userinfo['take_status'] == 0) {
-                $this->openOrdersnLock($order_sn);
                 ajaxReturn(null,"请先开启接单状态!",0);
-            }
-            // 取出队列二维码
-            $erweima_id=Redis::LPOP("erweimas".$order_info['payType'].$user_id);
-            if(!$erweima_id) {
-                $this->openOrdersnLock($order_sn);
-                ajaxReturn('error40004','没有此类型支付码!'.$erweima_id,0);
-            }
-
-            //二维码归队
-            Users::Genericlist($user_id,$order_info['payType'],$erweima_id);
-            $order_time=Redis::get("ordertime_".$erweima_id.$order_info['tradeMoney']);
-            if ( !empty($order_time) &&$order_time+600>time()){
-                $this->ajaxReturn(null,"",0);
-            }
-
-            if($erweimainfo=Erweima::where(array("user_id"=>$user_id,"id"=>$erweima_id,"type"=>$order_info['payType'],'status'=>1))->first()) {
-                Redis::lRem("erweimas".$order_info['payType'].$user_id,$erweima_id,0);
-                $this->openOrdersnLock($order_sn);
-                ajaxReturn('error40004','支付码已被删除!'.$erweima_id,0);
-            }
-            if($erweimainfo['code_status'] == 1) {
-                $this->openOrdersnLock($order_sn);
-                ajaxReturn('error40004','支付码关闭中!'.$erweima_id,0);
             }
             //取出订单队列
             $order_id=Redis::LPOP("order_id_".$order_sn);
             if (!$order_id>0 || empty($order_id)) {
-                $this->openOrdersnLock($order_sn);
                 ajaxReturn(null,"订单已被抢!",0);
             }
+            //获取订单信息
+            $order_info=Orderrecord::where([['order_sn',$order_sn],['status',0]])->first();
+            if(!$order_info){
+                ajaxReturn(null,"订单已不存在,请刷新当前页面!",0);
+            }
+            $tradeMoney = $order_info['tradeMoney'];
+
+            // 取出队列二维码
+            $erweima_id=Redis::LPOP("erweimas".$order_info['payType'].$user_id);
+            if(!$erweima_id) {
+                ajaxReturn('error40004','没有此类型支付码!'.$erweima_id,0);
+            }
+            //二维码归队
+            Users::Genericlist($user_id,$order_info['payType'],$erweima_id);
+            $order_time=Redis::get("ordertime_".$erweima_id.$order_info['tradeMoney']);
+            if ( !empty($order_time) &&$order_time+600>time()){
+                ajaxReturn(null,"",0);
+            }
+
+            if($erweimainfo=Erweima::where(array("user_id"=>$user_id,"id"=>$erweima_id,"type"=>$order_info['payType'],'status'=>1))->first()) {
+                Redis::lRem("erweimas".$order_info['payType'].$user_id,$erweima_id,0);
+                ajaxReturn('error40004','支付码已被删除!'.$erweima_id,0);
+            }
+            if($erweimainfo['code_status'] == 1) {
+                ajaxReturn('error40004','支付码关闭中!'.$erweima_id,0);
+            }
+
             DB::beginTransaction();
-            // 查看用户积分余额
-            $balance =Userscount::onWriteConnection()->where('user_id',$user_id)->value('balance');
-            $yue=bcsub($balance/100,1000,2);
-            if ($yue<$tradeMoney/100) {
-                $this->openOrdersnLock($order_sn);
-                ajaxReturn(null,"账户余额不足!",0);
+            try {
+                // 查看用户积分余额
+                $balance =Userscount::onWriteConnection()->where('user_id',$user_id)->lockForUpdate()->value('balance');
+                $yue=bcsub($balance/100,1000,2);
+                if ($yue<$tradeMoney/100) {
+                    ajaxReturn(null,"账户余额不足!",0);
+                }
+                Userscount::where('user_id',$user_id)->lockForUpdate()->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
+                $counttable = Accountlog::getcounttable($order_sn);
+                $status=$counttable->insert(
+                    array(
+                        'user_id'=>$user_id,
+                        'order_sn'=>$order_sn,
+                        'score'=>-$tradeMoney,
+                        'erweima_id'=>$erweima_id,
+                        'business_code'=>$order_info['business_code'],
+                        'status'=>3,
+                        'payType'=>$order_info["payType"],
+                        'remark'=>'资金冻结',
+                        'creatime'=>time()
+                    )
+                );
+                if (!$status) {
+                    DB::rollBack();
+                    ajaxReturn(null,"抢单失败!",0);
+                }else{
+                    $order =Order::getordersntable($order_sn);
+                    //  更改订单状态
+                    $order->where(array("order_sn"=>$order_sn))->update(array("user_id"=>$user_id,"erweima_id"=>$erweima_id));
+                    Orderrecord::where(array("order_sn"=>$order_sn))->update(array("user_id"=>$user_id,"erweima_id"=>$erweima_id));
+                    DB::commit();
+                    Redis::set("ordertime_".$erweima_id.$order_info['tradeMoney'],time());
+                    //发送被抢订单信息
+                    $this->sendnotify($order_info,2);
+                    //发送被抢订单信息
+                    $ourdercount=Orderrecord::where(array("user_id"=>$user_id,"status"=>0,"sk_status"=>0))->count();
+                    //获取订单信息
+                    $order_infos=$order->where(array("id"=>$order_id))->first();
+                    $this->senduidnotify($order_infos,3,$ourdercount);
+                    //返回信息
+                    ajaxReturn(null,"抢单成功!");
+                }
             }
-            Userscount::where('user_id',$user_id)->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
-            DB::commit();
-            $counttable = Accountlog::getcounttable($order_sn);
-            $status=$counttable->insert(
-                array(
-                    'user_id'=>$user_id,
-                    'order_sn'=>$order_sn,
-                    'score'=>-$tradeMoney,
-                    'erweima_id'=>$erweima_id,
-                    'business_code'=>$order_info['business_code'],
-                    'status'=>3,
-                    'payType'=>$order_info["payType"],
-                    'remark'=>'资金冻结',
-                    'creatime'=>time()
-                )
-            );
-            if (!$status) {
-                $this->openOrdersnLock($order_sn);
+            catch (Exception $e) {
+                // 数据回滚, 当try中的语句抛出异常。
+                DB::rollBack();
                 ajaxReturn(null,"抢单失败!",0);
-            }else{
-                $order =Order::getordersntable($order_sn);
-                //  更改订单状态
-                $order->where(array("order_sn"=>$order_sn))->update(array("user_id"=>$user_id,"erweima_id"=>$erweima_id));
-                Orderrecord::where(array("order_sn"=>$order_sn))->update(array("user_id"=>$user_id,"erweima_id"=>$erweima_id));
-                $this->openOrdersnLock($order_sn);
-                Redis::set("ordertime_".$erweima_id.$order_info['tradeMoney'],time());
-                //发送被抢订单信息
-                $this->sendnotify($order_info,2);
-                //发送被抢订单信息
-                $ourdercount=Orderrecord::where(array("user_id"=>$user_id,"status"=>0,"sk_status"=>0))->count();
-                //获取订单信息
-                $order_infos=$order->where(array("id"=>$order_id))->first();
-                $this->senduidnotify($order_infos,3,$ourdercount);
-                //返回信息
-                ajaxReturn(null,"抢单成功!");
             }
+
         } else {
             ajaxReturn('','请求数据异常!',0);
         }
