@@ -15,11 +15,20 @@ class QrcodeController extends Controller
      * 二维码列表
      */
     public function index(StoreRequest $request){
-        $map=array();
+        $erweima=Qrcode::query();
         if(true==$request->has('user_id')){
-            $map['user_id']=$request->input('user_id');
+            $erweima->where('user_id','=',$request->input('user_id'));
         }
-        $data = Qrcode::where($map)->paginate(10)->appends($request->all());
+        if(true==$request->has('nickname')){
+            $erweima->where('nickname','like','%'.$request->input('nickname').'%');
+        }
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $erweima->whereBetween('creatime',[$start,$end]);
+        }
+        $data = $erweima->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['erweima']='http://'.$_SERVER['HTTP_HOST'].'/storage'.$value["erweima"];

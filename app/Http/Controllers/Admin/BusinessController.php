@@ -78,6 +78,7 @@ class BusinessController extends Controller
             $accessKey=bcrypt(md5(md5($unicode)));
             $data['accessKey']=$accessKey;
             $data['ggkey']=$secretKey;
+            $data['fee']=$data['fee']/100;
             $data['creatime']=time();
             $data['updatetime']=time();
             $insertID=Business::insertGetId($data);
@@ -85,7 +86,7 @@ class BusinessController extends Controller
                 $agent['business_code']=$insertID;
                 $agent['creatime']=time();
                 $res3=DB::table('agent_fee')->insert($agent);
-                DB::table('business_count')->insert(array('business_id'=>$insertID,'creatime'=>time()));
+                DB::table('business_count')->insert(array('business_code'=>$insertID,'creatime'=>time()));
                 if($res3){
                     return ['msg'=>'添加成功！','status'=>1];
                 }else{
@@ -137,8 +138,11 @@ class BusinessController extends Controller
      */
     public function busfee($bussiness_code){
         $info = $bussiness_code?Business::find($bussiness_code):[];
+        $info['fee']=$info['fee']*100;
         $fee=DB::table('agent_fee')->where('business_code','=',$bussiness_code)->first();
         $fee=get_object_vars($fee);
+        $fee['agent1_fee']=$fee['agent1_fee']*100;
+        $fee['agent2_fee']=$fee['agent2_fee']*100;
         return view('business.editfee',['id'=>$bussiness_code,'info'=>$info,'fee'=>$fee]);
     }
     /**
@@ -149,12 +153,12 @@ class BusinessController extends Controller
         $id=$data['id'];
         unset($data['_token']);
         unset($data['id']);
-        $fee=floatval($data['fee']);
+        $fee=$data['fee']/100;
         $busfee=Business::where('business_code','=',$id)->update(array('fee'=>$fee));
         $agent1_id=$data['agent1_id'];
-        $agent1_fee=$data['agent1_fee'];
+        $agent1_fee=$data['agent1_fee']/100;
         $agent2_id=$data['agent2_id'];
-        $agent2_fee=$data['agent2_fee'];
+        $agent2_fee=$data['agent2_fee']/100;
         if($agent1_id!=null&&$agent2_id!=null){
             if($agent1_id==$agent2_id){
                 return ['msg'=>'一、二级代理商不可相同！'];

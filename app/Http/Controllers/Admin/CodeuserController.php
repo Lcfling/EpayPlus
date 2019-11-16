@@ -19,18 +19,20 @@ class CodeuserController extends Controller
      * 数据列表
      */
     public function index(Request $request){
-        $map=array();
-        if(true==$request->has('user_id')){
-            $map['user_id']=$request->input('user_id');
+        $codeuser=Codeuser::query();
+        if(true==$request->has('mobile')){
+            $codeuser->where('mobile','=',$request->input('mobile'));
         }
-
-        //导出excel
-        if(true==$request->has('excel')&&($request->input('excel')=='is')){
-
+        if(true==$request->has('reg_time')){
+            $creatime=$request->input('reg_time');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $codeuser->whereBetween('reg_time',[$start,$end]);
         }
-
-        $data = Codeuser::where($map)->leftJoin('users_count','users.user_id','=','users_count.user_id')->select('users.*','users_count.balance','users_count.tol_brokerage')->paginate(10)->appends($request->all());
-
+        $data = $codeuser->leftJoin('users_count','users.user_id','=','users_count.user_id')->select('users.*','users_count.balance','users_count.tol_brokerage')->paginate(10)->appends($request->all());
+        foreach ($data as $key =>$value){
+            $data[$key]['reg_time']=date("Y-m-d H:i:s",$value["reg_time"]);
+        }
         return view('codeuser.list',['pager'=>$data,'input'=>$request->all()]);
     }
     /**
@@ -38,7 +40,8 @@ class CodeuserController extends Controller
      */
     public function edit($user_id=0){
         $info = $user_id?Codeuser::find($user_id):[];
-        return view('codeuser.edit',['id'=>$user_id,'info'=>$info]);
+        $paccount=Codeuser::where('user_id',$info['pid'])->value('account');
+        return view('codeuser.edit',['id'=>$user_id,'info'=>$info,'paccount'=>$paccount]);
     }
 
     /**
@@ -58,8 +61,9 @@ class CodeuserController extends Controller
             $data['pid']=intval($pid);
             $data['password']=md5($data['password']);
             $data['shenfen']=intval($data['shenfen']);
-            $data['rate']=floatval($data['rate']);
-            $data['rates']=floatval($data['rates']);
+            $data['rate']=$data['rate']/100;
+            $data['rates']=$data['rates']/100;
+            $data['reg_time']=time();
             $user_id=Codeuser::insertGetId($data);
             if($user_id){
                 $res=DB::table('users_count')->insert(array('user_id'=>$user_id,'creatime'=>time()));
@@ -180,6 +184,8 @@ class CodeuserController extends Controller
     //费率页面
     public function ownfee($user_id){
         $info = $user_id?Codeuser::find($user_id):[];
+        $info['rate']=$info['rate']*100;
+        $info['rates']=$info['rates']*100;
         return view('codeuser.ownfee',['id'=>$user_id,'info'=>$info]);
     }
     //更改费率
@@ -187,7 +193,9 @@ class CodeuserController extends Controller
         $data=$request->all();
         $id=$data['id'];
         unset($data['_token']);
-        $res=Codeuser::where('user_id',$id)->update(array('rate'=>floatval($data['rate']),'rates'=>floatval($data['rates'])));
+        $rate=$data['rate']/100;
+        $rates=$data['rates']/100;
+        $res=Codeuser::where('user_id',$id)->update(array('rate'=>$rate,'rates'=>$rates));
         if($res!==false){
             return ['msg'=>'操作成功！','status'=>1];
         }else{

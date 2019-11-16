@@ -58,7 +58,7 @@
                 <td class="hidden-xs">{{$info['account']}}</td>
                 <td class="hidden-xs">{{$info['nickname']}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
-                <td class="hidden-xs">{{$info['fee']}}%</td>
+                <td class="hidden-xs">{{$info['fee']*100}}%</td>
                 <td class="hidden-xs">@if($info['paycode']==0)默认@elseif(($info['paycode']==1))微信@elseif(($info['paycode']==2))支付宝@endif</td>
                 <td class="hidden-xs">@if($info['status']==0)停止@elseif(($info['status']==1))激活@elseif(($info['status']==2))异常@endif</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>

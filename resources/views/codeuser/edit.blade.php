@@ -21,19 +21,18 @@
             <input type="password" required lay-verify="confirmPass" placeholder="请输入密码" autocomplete="off" class="layui-input">
         </div>
     </div>
-    @endif
-
     <div class="layui-form-item">
         <label class="layui-form-label" style="width: 100px">上级：</label>
         <div class="layui-input-inline">
             <input type="text" value="{{$info['pid'] or ''}}" name="pid" autocomplete="off" placeholder="请输入上级" class="layui-input">
         </div>
     </div>
+    @endif
 
     <div class="layui-form-item">
         <label class="layui-form-label" style="width: 100px">身份：</label>
         <div class="layui-input-inline">
-            <input type="number" value="{{$info['shenfen'] or ''}}" name="shenfen" lay-verify="shenfen" placeholder="请输入身份(正整数)" autocomplete="off" class="layui-input">
+            <input type="number" value="{{$info['shenfen'] or ''}}" name="shenfen" lay-verify="shenfen" placeholder="请输入身份(正整数)" autocomplete="off" class="layui-input" @if($id!=0) disabled @endif>
         </div>
     </div>
     @if($id==0)

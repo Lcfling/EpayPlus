@@ -1,17 +1,20 @@
-@section('title', '码商')
+@section('title', '码商列表')
 @section('header')
     <div class="layui-inline">
     <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-desc="添加码商" data-url="{{url('/admin/codeuser/0/edit')}}"><i class="layui-icon">&#xe654;</i></button>
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
+{{--    <div class="layui-inline">--}}
+{{--        <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商ID" autocomplete="off" class="layui-input">--}}
+{{--    </div>--}}
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商号" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['mobile'] or '' }}" name="mobile" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['reg_time'] or '' }}" name="reg_time" placeholder="注册时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
-    </div>
-    <div class="layui-inline">
-        <button class="layui-btn layui-btn-warm" lay-submit name="excel" value="is" lay-filter="formDemo">导出Excel</button>
     </div>
 @endsection
 @section('table')
@@ -28,16 +31,15 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="300">
         </colgroup>
         <thead>
         <tr>
             <th class="hidden-xs">ID</th>
-            <th class="hidden-xs">账号</th>
-            <th class="hidden-xs">联系电话</th>
-            <th class="hidden-xs">上级</th>
+            <th class="hidden-xs">手机号</th>
+            <th class="hidden-xs">上级ID</th>
             <th class="hidden-xs">身份</th>
             <th class="hidden-xs">剩余分数</th>
             <th class="hidden-xs">微信费率</th>
@@ -46,6 +48,7 @@
             <th class="hidden-xs">账号状态</th>
             <th class="hidden-xs">佣金总额</th>
             <th class="hidden-xs">二维码个数</th>
+            <th class="hidden-xs">注册时间</th>
             <th class="hidden-xs">状态</th>
             <th>操作</th>
         </tr>
@@ -54,17 +57,17 @@
         @foreach($pager as $info)
             <tr>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
-                <td class="hidden-xs">{{$info['account']}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
                 <td class="hidden-xs">{{$info['pid']}}</td>
                 <td class="hidden-xs">{{$info['shenfen']}}</td>
                 <td class="hidden-xs">{{$info['balance']/100}}</td>
-                <td class="hidden-xs">{{$info['rate']}}%</td>
-                <td class="hidden-xs">{{$info['rates']}}%</td>
+                <td class="hidden-xs">{{$info['rate']*100}}%</td>
+                <td class="hidden-xs">{{$info['rates']*100}}%</td>
                 <td class="hidden-xs">@if($info['take_status']==0)未接单@elseif($info['take_status']==1)已接单@endif</td>
                 <td class="hidden-xs">@if($info['jh_status']==0)未激活@elseif($info['take_status']==1)已激活@endif</td>
                 <td class="hidden-xs">{{$info['tol_brokerage']/100}}</td>
                 <td class="hidden-xs">{{$info['imsi_num']}}</td>
+                <td class="hidden-xs">{{$info['reg_time']}}</td>
                 <td class="hidden-xs">
                     <input type="checkbox" name="status" value="{{$info['user_id']}}" lay-skin="switch" lay-text="开启|封禁" lay-filter="status" {{ $info['is_over'] == 0 ? 'checked' : '' }}>
                 </td>
@@ -78,7 +81,6 @@
                         <a class="layui-btn layui-btn-small layui-btn-normal" href="{{url('admin/codeownbill/own',['id'=>$info['user_id']])}}">流水</a>
                         <a class="layui-btn layui-btn-small layui-btn-danger " onclick="ownfee({{$info['user_id']}})">费率</a>
                         <a class="layui-btn layui-btn-small layui-btn-danger" onclick="logpwd({{$info['user_id']}})">登录密码</a>
-{{--                        <a class="layui-btn layui-btn-small layui-btn-primary" onclick="secondpwd({{$info['user_id']}})">二级密码</a>--}}
                         <a class="layui-btn layui-btn-small layui-btn-warm" onclick="zfpwd({{$info['user_id']}})">支付密码</a>
                     </div>
                 </td>
@@ -100,8 +102,8 @@
             var form = layui.form(),
                 $ = layui.jquery,
                 laydate = layui.laydate,
-                layer = layui.layer
-            ;
+                layer = layui.layer ;
+
             laydate({istoday: true});
             form.render();
             form.on('submit(formDemo)', function(data) {
@@ -199,20 +201,6 @@
                 }
             });
         }
-        // function secondpwd(id) {
-        //     var id=id;
-        //     layer.open({
-        //         type: 2,
-        //         title: '更改二级密码',
-        //         closeBtn: 1,
-        //         area: ['500px','500px'],
-        //         shadeClose: false, //点击遮罩关闭
-        //         content: ['/admin/codeuser/secondpwd/'+id],
-        //         end:function(){
-        //
-        //         }
-        //     });
-        // }
         function zfpwd(id) {
             var id=id;
             layer.open({

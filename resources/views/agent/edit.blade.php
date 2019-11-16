@@ -28,12 +28,12 @@
         </div>
     </div>
     @endif
-    <div class="layui-form-item">
-        <label class="layui-form-label">费率：</label>
-        <div class="layui-input-block">
-            <input type="text" value="{{$info['fee'] or ''}}" name="fee" required lay-verify="fee" placeholder="请输入费率" autocomplete="off" class="layui-input">
-        </div>
-    </div>
+{{--    <div class="layui-form-item">--}}
+{{--        <label class="layui-form-label">费率：</label>--}}
+{{--        <div class="layui-input-block">--}}
+{{--            <input type="text" value="{{$info['fee'] or ''}}" name="fee" required lay-verify="fee" placeholder="请输入费率" autocomplete="off" class="layui-input">--}}
+{{--        </div>--}}
+{{--    </div>--}}
 
     <div class="layui-form-item">
         <label class="layui-form-label">电话：</label>

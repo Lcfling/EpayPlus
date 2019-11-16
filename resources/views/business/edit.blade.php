@@ -1,28 +1,28 @@
 @section('title', '添加商户')
 @section('content')
     <div class="layui-form-item">
-        <label class="layui-form-label" style="color: red">商户名：</label>
+        <label class="layui-form-label">商户名：</label>
         <div class="layui-input-block">
             <input type="text" value="{{$info['nickname'] or ''}}" name="nickname" required lay-verify="nickname" placeholder="请输入商户名" autocomplete="off" class="layui-input" id="nickname">
         </div>
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label" style="color: red">账号：</label>
+        <label class="layui-form-label">账号：</label>
         <div class="layui-input-block">
             <input type="text" value="{{$info['account'] or ''}}" name="account" required lay-verify="account" placeholder="请输入账号(4-8位数字字母,字母开头)" autocomplete="off" class="layui-input" id="account">
         </div>
     </div>
     @if($id==0)
     <div class="layui-form-item">
-        <label class="layui-form-label" style="color: red">密码：</label>
+        <label class="layui-form-label">密码：</label>
         <div class="layui-input-block">
             <input type="password" value="{{$info['password'] or ''}}" name="password" required placeholder="请输入密码(6-12数字字母)" autocomplete="off" class="layui-input">
         </div>
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label" style="color: red">确认密码：</label>
+        <label class="layui-form-label">确认密码：</label>
         <div class="layui-input-block">
             <input type="password" value="{{$info['password'] or ''}}" required lay-verify="confirmPass" placeholder="请确认密码" autocomplete="off" class="layui-input">
         </div>
@@ -30,13 +30,13 @@
     @endif
 
     <div class="layui-form-item">
-        <label class="layui-form-label" style="color: red">电话：</label>
+        <label class="layui-form-label">电话：</label>
         <div class="layui-input-block">
             <input type="text" value="{{$info['mobile'] or ''}}" name="mobile" required lay-verify="tel" placeholder="请输入电话号码" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label" style="color: red">类型：</label>
+        <label class="layui-form-label">类型：</label>
         <div class="layui-input-block">
             <select name="paycode" lay-filter="status" lay-verify="status">
                 <option value="">请选择一个内容</option>
@@ -48,7 +48,7 @@
     </div>
     @if($id==0)
     <div class="layui-form-item">
-        <label class="layui-form-label" style="color: red">商户费率：</label>
+        <label class="layui-form-label">商户费率：</label>
         <div class="layui-input-block">
             <input type="text" value="{{$info['fee'] or ''}}" name="fee" lay-verify="fee" placeholder="请输入商户费率" autocomplete="off" class="layui-input">
         </div>

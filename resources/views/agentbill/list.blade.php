@@ -4,10 +4,22 @@
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
+        <input type="text"  value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入订单号" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
         <input type="text"  value="{{ $input['agent_id'] or '' }}" name="agent_id" placeholder="请输入代理商ID" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
+        <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户ID" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
+    </div>
+    <div class="layui-inline">
+        <button class="layui-btn layui-btn-warm" name="excel" value="excel" lay-submit lay-filter="formDemo">导出EXCEL</button>
     </div>
 @endsection
 @section('table')
@@ -17,31 +29,35 @@
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="200">
-            <col class="hidden-xs" width="200">
+
         </colgroup>
         <thead>
         <tr>
             <th class="hidden-xs">ID</th>
-            <th class="hidden-xs">代理商ID</th>
             <th class="hidden-xs">订单号</th>
+            <th class="hidden-xs">代理商ID</th>
             <th class="hidden-xs">商户ID</th>
             <th class="hidden-xs">积分</th>
+            <th class="hidden-xs">状态</th>
+            <th class="hidden-xs">类型</th>
             <th class="hidden-xs">创建时间</th>
-            <th class="hidden-xs">跟新时间</th>
         </tr>
         </thead>
         <tbody>
         @foreach($list as $info)
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
-                <td class="hidden-xs">{{$info['agent_id']}}</td>
                 <td class="hidden-xs">{{$info['order_sn']}}</td>
+                <td class="hidden-xs">{{$info['agent_id']}}</td>
                 <td class="hidden-xs">{{$info['business_code']}}</td>
                 <td class="hidden-xs">{{$info['score']/100}}</td>
+                <td class="hidden-xs">@if($info['status']==0)默认@elseif($info['status']==1)支付@elseif($info['status']==2)利润@endif</td>
+                <td class="hidden-xs">@if($info['paycode']==0)默认@elseif($info['paycode']==1)微信@elseif($info['paycode']==2)支付宝@endif</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
-                <td class="hidden-xs">{{$info['savetime']}}</td>
             </tr>
         @endforeach
         @if(!$list[0])
@@ -61,7 +77,7 @@
                 $ = layui.jquery,
                 laydate = layui.laydate,
                 layer = layui.layer;
-
+            laydate({istoday: true});
             form.render();
             form.on('submit(formDemo)', function(data) {
             });

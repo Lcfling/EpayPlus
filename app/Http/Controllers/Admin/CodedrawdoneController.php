@@ -12,12 +12,18 @@ class CodedrawdoneController extends Controller
      * 数据列表
      */
     public function index(Request $request){
-        $map=array();
+        $codedraw=Codedraw::query();
         if(true==$request->has('user_id')){
-            $map['user_id']=$request->input('user_id');
+            $codedraw->where('user_id','=',$request->input('user_id'));
         }
-        $map['status']=1;
-        $data = Codedraw::where($map)->paginate(10)->appends($request->all());
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $codedraw->whereBetween('creatime',[$start,$end]);
+        }
+
+        $data = $codedraw->where('status','=',1)->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['withdraw_time'] =date("Y-m-d H:i:s",$value["withdraw_time"]);

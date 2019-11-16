@@ -1,4 +1,4 @@
-@section('title', '商户')
+@section('title', '商户提现')
 @section('header')
     <div class="layui-inline">
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>

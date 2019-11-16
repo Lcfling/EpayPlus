@@ -1,4 +1,4 @@
-@section('title', '配置列表')
+@section('title', '激活佣金')
 @section('header')
     <div class="layui-inline">
         <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
@@ -55,7 +55,7 @@
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td>
                     <div class="layui-inline">
-                        <a class="layui-btn layui-btn-small layui-btn-normal" onclick="edit({{$info['id']}})"><i class="layui-icon">&#xe642;</i></a>
+                        <a class="layui-btn layui-btn-small layui-btn-normal" onclick="edit({{$info['id']}})">编辑</a>
                     </div>
                 </td>
             </tr>
@@ -80,7 +80,7 @@
             var id=id;
             layer.open({
                 type: 2,
-                title: '修改返佣',
+                title: '激活佣金',
                 closeBtn: 1,
                 area: ['500px','700px'],
                 shadeClose: false, //点击遮罩关闭

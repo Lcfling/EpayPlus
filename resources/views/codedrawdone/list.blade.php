@@ -7,10 +7,10 @@
         <input type="text" value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入代理商编号号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="begin" placeholder="开始日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}">
+        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="begin" placeholder="结束日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['endtime'] or '' }}">
+        <input class="layui-input" name="withdraw_time" placeholder="提现日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['withdraw_time'] or '' }}">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>

@@ -14,12 +14,22 @@ class OptionController extends Controller
     /**
     首页
      */
-    public function index(){
-        $data=Option::paginate();
-        foreach ($data as $key =>$value){
-            $data[$key]['creattime']=date("Y-m-d H:i:s",$value["creattime"]);
+    public function index(StoreRequest $request){
+        $option=Option::query();
+        if(true==$request->has('content')){
+            $option->where('content','like','%'.$request->input('content').'%');
         }
-        return view('options.list',['pager'=>$data]);
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $option->whereBetween('creatime',[$start,$end]);
+        }
+        $data=$option->paginate(10)->appends($request->all());
+        foreach ($data as $key =>$value){
+            $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
+        }
+        return view('options.list',['pager'=>$data,'input'=>$request->all()]);
     }
 
 
@@ -39,7 +49,7 @@ class OptionController extends Controller
         unset($data['_token']);
         $res=$this->add_unique($data['key'],$data['value']);
         if(!$res){
-            $data['creattime']=time();
+            $data['creatime']=time();
             $insert=Option::insert($data);
             if($insert){
                 $key=$data['key'].'_'.$data['value'];

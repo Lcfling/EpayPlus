@@ -30,7 +30,6 @@ class CodedrawnoneController extends Controller
         $data = $codedraw->where('status','=','0')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
-            $data[$key]['withdraw_time'] =date("Y-m-d H:i:s",$value["withdraw_time"]);
         }
         return view('codedrawnone.list',['list'=>$data,'input'=>$request->all()]);
 

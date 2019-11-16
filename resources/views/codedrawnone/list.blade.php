@@ -1,10 +1,10 @@
-@section('title', '码商')
+@section('title', '码商提现')
 @section('header')
     <div class="layui-inline">
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
-        <input type="text" value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入代理商编号号" autocomplete="off" class="layui-input">
+        <input type="text" value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商ID" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}" autocomplete="off">
@@ -33,7 +33,7 @@
         <thead>
         <tr>
             <th class="hidden-xs">ID</th>
-            <th class="hidden-xs">码商编号</th>
+            <th class="hidden-xs">码商ID</th>
             <th class="hidden-xs">订单号</th>
             <th class="hidden-xs">提现额度</th>
             <th class="hidden-xs">手机号</th>

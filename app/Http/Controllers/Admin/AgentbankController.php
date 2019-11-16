@@ -12,11 +12,24 @@ class AgentbankController extends Controller
      * 数据列表
      */
     public function index(Request $request){
-        $map=array();
+        $agentbank=Agentbank::query();
+
         if(true==$request->has('agent_id')){
-            $map['agent_id']=$request->input('agent_id');
+            $agentbank->where('agent_id','=',$request->input('agent_id'));
         }
-        $data = Agentbank::where($map)->paginate(10)->appends($request->all());
+        if(true==$request->has('name')){
+            $agentbank->where('name','like','%'.$request->input('name').'%');
+        }
+        if(true==$request->has('deposit_card')){
+            $agentbank->where('deposit_card','=',$request->input('deposit_card'));
+        }
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $agentbank->whereBetween('creatime',[$start,$end]);
+        }
+        $data = $agentbank->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
         }
