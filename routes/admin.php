@@ -96,7 +96,10 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/codenewTwopwd',         'CodeUserController@codenewTwopwd');
     Route::get('/codeuser/zfpwd/{id}',  'CodeUserController@zfpwd');//码商支付密码
     Route::post('/codenewpaypwd',         'CodeUserController@codenewpaypwd');
-
+    Route::get('/codeuser/shangfen/{id}',  'CodeUserController@shangfen');//码商上分
+    Route::post('/codeaddscore',         'CodeUserController@codeaddscore');
+    Route::get('/codeuser/xiafen/{id}',  'CodeUserController@xiafen');//码商下分
+    Route::post('/codeoffscore',         'CodeUserController@codeoffscore');
     Route::get('/codeownbill/own/{id}',  'CodeownbillController@own');//码商个人流水
     Route::resource('/codeownbill',      'CodeownbillController');
 

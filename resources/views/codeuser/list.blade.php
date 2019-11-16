@@ -163,7 +163,7 @@
             var id=id;
             layer.open({
                 type: 2,
-                title: '增加二维码数量',
+                title: '通知',
                 closeBtn: 1,
                 area: ['500px','500px'],
                 shadeClose: false, //点击遮罩关闭
@@ -210,6 +210,34 @@
                 area: ['500px','500px'],
                 shadeClose: false, //点击遮罩关闭
                 content: ['/admin/codeuser/zfpwd/'+id],
+                end:function(){
+
+                }
+            });
+        }
+        function shangfen(id) {
+            var id=id;
+            layer.open({
+                type: 2,
+                title: '码商上分',
+                closeBtn: 1,
+                area: ['500px','300px'],
+                shadeClose: false, //点击遮罩关闭
+                content: ['/admin/codeuser/shangfen/'+id],
+                end:function(){
+
+                }
+            });
+        }
+        function xiafen(id) {
+            var id=id;
+            layer.open({
+                type: 2,
+                title: '码商下分',
+                closeBtn: 1,
+                area: ['500px','300px'],
+                shadeClose: false, //点击遮罩关闭
+                content: ['/admin/codeuser/xiafen/'+id],
                 end:function(){
 
                 }

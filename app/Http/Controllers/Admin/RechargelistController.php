@@ -50,7 +50,7 @@ class RechargelistController extends Controller
         $tablepfe=date('Ymd');
         $account =new Billflow;
         $account->setTable('account_'.$tablepfe);
-        $score=intval($info['score']);
+        $score=$info['score'];
         $user_id=$info['user_id'];
         if($status==1){
             //开启事物

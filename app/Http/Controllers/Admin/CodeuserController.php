@@ -8,6 +8,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\StoreRequest;
 use App\Http\Controllers\Controller;
+use App\Models\Billflow;
+use App\Models\Codecount;
 use App\Models\Codeuser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -257,4 +259,74 @@ class CodeuserController extends Controller
             return ['msg'=>'修改失败！'];
         }
     }
+    /**
+     * 上分页面
+     */
+    public function shangfen($user_id){
+        $info = $user_id?Codeuser::find($user_id):[];
+        return view('codeuser.addscore',['id'=>$user_id,'info'=>$info]);
+    }
+    //上分
+    public function codeaddscore(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        $tablepfe=date('Ymd');
+        $account =new Billflow;
+        $account->setTable('account_'.$tablepfe);
+        $score=$data['score']*100;
+
+        DB::beginTransaction();
+        try{
+            $account->insert(['user_id'=>$id,'score'=>$score,'status'=>1,'remark'=>'手动上分','creatime'=>time()]);
+            $add=DB::table('users_count')->where('user_id','=',$id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score")]);
+            DB::table('users_count')->where('user_id',$id)->update(array('savetime'=>time()));
+            if($add){
+                DB::commit();
+                return ['msg'=>'上分成功！','status'=>1];
+            }else{
+                DB::rollBack();
+                return ['msg'=>'上分失败！','status'=>0];
+            }
+        }catch (Exception $e){
+            DB::rollBack();
+            return ['msg'=>'发生异常！事物进行回滚！','status'=>0];
+        }
+
+    }
+    /**
+     * 下分页面
+     */
+    public function xiafen($user_id){
+        $info = $user_id?Codeuser::find($user_id):[];
+        return view('codeuser.offscore',['id'=>$user_id,'info'=>$info]);
+    }
+    //下分
+    public function codeoffscore(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        $tablepfe=date('Ymd');
+        $account =new Billflow;
+        $account->setTable('account_'.$tablepfe);
+        $score=$data['score']*100;
+        DB::beginTransaction();
+        try{
+            $account->insert(['user_id'=>$id,'score'=>$score,'status'=>1,'remark'=>'手动下分','creatime'=>time()]);
+            $add=DB::table('users_count')->where('user_id','=',$id)->decrement('balance',$score,['tol_sore'=>DB::raw("tol_sore - $score")]);
+            DB::table('users_count')->where('user_id',$id)->update(array('savetime'=>time()));
+            if($add){
+                DB::commit();
+                return ['msg'=>'下分成功！','status'=>1];
+            }else{
+                DB::rollBack();
+                return ['msg'=>'下分失败！','status'=>0];
+            }
+        }catch (Exception $e){
+            DB::rollBack();
+            return ['msg'=>'发生异常！事物进行回滚！','status'=>0];
+        }
+
+    }
+
 }
