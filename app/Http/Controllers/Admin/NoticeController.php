@@ -17,13 +17,6 @@ class NoticeController extends Controller
      */
     public function index(StoreRequest $request)
     {
-//        $google2fa = new Google2FA();
-//        $qrCodeUrl = $google2fa->getQRCodeUrl(
-//            "EPP",//名称后台获取
-//            '13213211321',
-//            'QN7CXF4BSB2SIGTJ'
-//        );
-//        dump($qrCodeUrl);die;
         $notice=Notice::query();
         if(true==$request->has('title')){
             $notice->where('title','like','%'.$request->input('title').'%');
@@ -37,7 +30,7 @@ class NoticeController extends Controller
             $end=strtotime('+1day',$start);
             $notice->whereBetween('creattime',[$start,$end]);
         }
-        $data=$notice->paginate(10)->appends($request->all());
+        $data=$notice->orderBy('creattime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creattime']=date("Y-m-d H:i:s",$value["creattime"]);
         }

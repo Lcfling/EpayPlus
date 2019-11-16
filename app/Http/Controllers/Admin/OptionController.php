@@ -102,6 +102,9 @@ class OptionController extends Controller
      * 删除
      */
     public function destroy($id){
+        $info = Option::find($id);
+        $key='option_'.$info['key'];
+        Redis::del($key);
         $res = Option::where('id', '=', $id)->delete();
         if($res){
             return ['msg'=>'删除成功！','status'=>1];

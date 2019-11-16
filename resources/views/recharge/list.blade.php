@@ -28,7 +28,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">收款姓名</th>
             <th class="hidden-xs">收款银行</th>
             <th class="hidden-xs">收款卡号</th>
@@ -44,7 +44,7 @@
                 <td class="hidden-xs">{{$info['sk_name']}}</td>
                 <td class="hidden-xs">{{$info['sk_bankname']}}</td>
                 <td>{{$info['sk_banknum']}}</td>
-                <td class="hidden-xs">@if($info['status']==1)已启用@else未启用@endif</td>
+                <td class="hidden-xs">@if($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-normal">已启用</span>@else<span class="layui-btn layui-btn-small layui-btn-warm">未启用</span>@endif</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td style="text-align: center">
                     <div class="layui-inline">
