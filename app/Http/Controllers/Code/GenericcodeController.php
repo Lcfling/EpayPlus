@@ -62,6 +62,8 @@ class GenericcodeController extends CommonController {
                         if ($id) {
                             // 二维码存入用户缓冲
                             Redis::rPush('erweimas' . $type . $user_id, $id);
+                            //二维码信息存入用户缓存
+                            Redis::set("erweimainfo_".$id,json_encode($data));
                             ajaxReturn("", "成功");
                         } else {
                             ajaxReturn("", "图片存储失败!", 0);

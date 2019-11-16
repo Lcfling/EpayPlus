@@ -70,13 +70,8 @@ class UserController extends CommonController {
             if ($userinfo['take_status'] == 0) {
                 ajaxReturn(null,"请先开启接单状态!",0);
             }
-            //取出订单队列
-            $order_id=Redis::LPOP("order_id_".$order_sn);
-            if (!$order_id>0 || empty($order_id)) {
-                ajaxReturn(null,"订单已被抢!",0);
-            }
             //获取订单信息
-            $order_info=Orderrecord::where([['order_sn',$order_sn],['status',0]])->first();
+            $order_info=Redis::get('orderrecord_'.$order_sn);
             if(!$order_info){
                 ajaxReturn(null,"订单已不存在,请刷新当前页面!",0);
             }
@@ -93,8 +88,12 @@ class UserController extends CommonController {
             if ( !empty($order_time) &&$order_time+600>time()){
                 ajaxReturn(null,"",0);
             }
-
-            if($erweimainfo=Erweima::where(array("user_id"=>$user_id,"id"=>$erweima_id,"type"=>$order_info['payType'],'status'=>1))->first()) {
+            $erweimajson=Redis::get('erweimainfo_'.$erweima_id);
+            $erweimainfo = json_decode($erweimajson,true);
+            if(!$erweimainfo) {
+                ajaxReturn('error40004','无此二维码信息!'.$erweima_id,0);
+            }
+            if($erweimainfo['status'] ==1) {
                 Redis::lRem("erweimas".$order_info['payType'].$user_id,$erweima_id,0);
                 ajaxReturn('error40004','支付码已被删除!'.$erweima_id,0);
             }
@@ -109,6 +108,11 @@ class UserController extends CommonController {
                 $yue=bcsub($balance/100,1000,2);
                 if ($yue<$tradeMoney/100) {
                     ajaxReturn(null,"账户余额不足!",0);
+                }
+                //取出订单队列
+                $order_id=Redis::LPOP("order_id_".$order_sn);
+                if (!$order_id>0 || empty($order_id)) {
+                    ajaxReturn(null,"订单已被抢!",0);
                 }
                 $moneystatus =Userscount::where('user_id',$user_id)->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
                 if(!$moneystatus){
@@ -144,7 +148,7 @@ class UserController extends CommonController {
                     //发送被抢订单信息
                     $ourdercount=Orderrecord::where(array("user_id"=>$user_id,"status"=>0,"sk_status"=>0))->count();
                     //获取订单信息
-                    $order_infos=$order->where(array("id"=>$order_id))->first();
+                    $order_infos=$order->where(array("order_sn"=>$order_sn))->first();
                     $this->senduidnotify($order_infos,3,$ourdercount);
                     //返回信息
                     ajaxReturn(null,"抢单成功!");
@@ -238,7 +242,7 @@ class UserController extends CommonController {
         Gateway::sendToAll($data);
     }
 
-    //充值队列锁
+    //抢单队列锁
     public function OrdersnLock($order_sn,$str){
 
         Redis::rPush('Order_sn_Lock'.$order_sn,$str);
@@ -249,7 +253,7 @@ class UserController extends CommonController {
             return false;
         }
     }
-    //充值队列开锁
+    //抢单队列开锁
     public function openOrdersnLock($order_sn){
         Redis::del('Order_sn_Lock'.$order_sn);
     }

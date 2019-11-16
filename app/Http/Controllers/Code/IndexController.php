@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Code;
 
 use App\Models\Czrecord;
+use App\Models\Order;
 use App\Models\Userscount;
 use App\Models\Withdraw;
 use Illuminate\Http\Request;
@@ -84,10 +85,19 @@ class IndexController extends Controller
 //        $str = "'123456'     ";
 //         // 转换双引号和单引号
 //        echo  preg_replace('/\'/', '', str_replace(" ",'',htmlspecialchars($str)));
-        print_r($balance = Userscount::onWriteConnection()->where('user_id',1)->value('balance'));
-        $tradeMoney =100;
-        Userscount::onWriteConnection()->where('user_id',1)->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
+//        print_r($balance = Userscount::onWriteConnection()->where('user_id',1)->value('balance'));
+//        $tradeMoney =100;
+//        Userscount::onWriteConnection()->where('user_id',1)->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
 
+//        try {
+//            $cmd = Userscount::onWriteConnection()->where('user_id',1)->decrement('balance','abc');
+//            $cmd->execute();
+//        } catch (Exception $e) {
+//            print $e->getMessage();
+//            exit();
+//        }
+        $res = Order::getordersntable(getrequestId());
+        print_r($res);
     }
 
     /**

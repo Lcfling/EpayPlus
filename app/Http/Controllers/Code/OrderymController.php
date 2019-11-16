@@ -95,7 +95,7 @@ class OrderymController extends Controller {
             'creatime'=>$time,
             'notifyUrl'=>$datas['notifyUrl'],
         );
-        $order_id = $Order->insertGetId($data);
+        $order_id = $Order->insertGetId($data);//检测一下是否会出现并发
         if($order_id) {
             // 发送订单数据到码商客户端
             $data['id']=$order_id;
@@ -112,6 +112,7 @@ class OrderymController extends Controller {
                 'creatime'=>$time,
             );
             Orderrecord::insert($recorddata);
+            Redis::set('orderrecord_'.$order_sn,json_encode($recorddata));
             $this->getcomonerweimaurl($order_id);
         } else {
             ajaxReturn('error40005','订单生成失败!',0);

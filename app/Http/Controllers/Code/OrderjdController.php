@@ -176,7 +176,7 @@ class OrderjdController extends CommonController {
                     //超时
                     $this->csbudan($order_info,$order_sn);
                 }
-                $this->insertrebatte($user_id,$order_info['business_code'],$order_sn,$skmoney * 100,$order_info['payType']);//缺少paycode字段
+                $this->insertrebatte($user_id,$order_info['business_code'],$order_sn,$skmoney * 100,$order_info['payType']);
                 ajaxReturn(null,'手动收款成功!',1);
             } else {
                 ajaxReturn(null,'手动收款失败!',0);
