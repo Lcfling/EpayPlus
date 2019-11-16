@@ -250,8 +250,8 @@ class MycenterController extends CommonController {
                     'remark'=>"提现",
                     'creatime'=>time(),
                 );
-                $tablesuf = date('Ymd');
-                DB::table('account_'.$tablesuf)->insert($data1);
+                $daytable =Accountlog::getdaytable();
+                $daytable->insert($data1);
                 ajaxReturn('','已提交!',1);
             }
         } else {

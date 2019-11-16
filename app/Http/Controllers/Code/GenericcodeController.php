@@ -9,85 +9,130 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use \GatewayWorker\Lib\Gateway;
+use Illuminate\Support\Facades\Storage;
 class GenericcodeController extends CommonController {
 
+    /**码商上码
+     * @param Request $request
+     */
+    public function shangma(Request $request){
+        if ($request->isMethod('POST')) {
+            $user_id = $this->uid;
+            $type = (int)$_POST['type']; //类型
+            $username = htmlformat($_POST['name']); //姓名
+            $min = (int)$_POST['min'];   // 最小值
+            $max = (int)$_POST['max'];   //最大值
 
-// 码商上码
-    public function shangma(){
+            // 查看用户费率
+            $userinfo = Users::where(array("user_id" => $user_id))->first();
+            if (!$userinfo["rate"] > 0) {
+                $this->ajaxReturn("", "请联系上级设置费率" . $this->uid, 0);
+            }
 
-        $user_id=$this->uid;
-        $type=(int)$_POST['type']; //类型
-        $username=htmlspecialchars($_POST['name']); //姓名
-        $home=htmlspecialchars($_POST['home']);   //地址
-        $min=(int)$_POST['min'];   // 最小值
-        $max=(int)$_POST['max'];   //最大值
+            //限定格式为jpg,jpeg,png
+            $fileTypes = ['jpeg', 'jpg','png'];
+            if ($request->hasFile('uploadfile')) {
+                $uploadfile =$request->file('uploadfile');
 
+                if (is_array($request->file('uploadfile'))) {
+                    foreach ($request->file('uploadfile') as $file) {
+                        if ($file->isValid()) { //判断文件上传是否有效
+                            $FileType = $file->getClientOriginalExtension(); //获取文件后缀
+                            file_put_contents('./FileType.txt',$FileType.PHP_EOL,FILE_APPEND);
+                            if (!in_array($FileType, $fileTypes)) {
+                                ajaxReturn("","图片格式为jpg,png,jpeg",0);
+                            }
+                            $FilePath = $file->getRealPath(); //获取文件临时存放位置
+                            file_put_contents('./FileType.txt',$FilePath.PHP_EOL,FILE_APPEND);
+                            $FileName = date('Y-m-d') . uniqid() . '.' . $FileType; //定义文件名
+                            file_put_contents('./FileType.txt',$FileName.PHP_EOL,FILE_APPEND);
+                            Storage::disk('erweima')->put($FileName, file_get_contents($FilePath)); //存储文件
+                        }
+                        $data =array(
+                            'user_id'=>$user_id,
+                            'erweima'=>"/erweima/" . $FileName,
+                            'status'=>0,
+                            'type'=>$type,
+                            'name'=>$username,
+                            'max'=>$max,
+                            'min'=>$min,
+                            'creatime'=>time()
+                        );
+                        $id = Erweima::insertGetId($data);
+                        if ($id) {
+                            // 二维码存入用户缓冲
+                            Redis::rPush('erweimas' . $type . $user_id, $id);
+                            ajaxReturn("", "成功");
+                        } else {
+                            ajaxReturn("", "图片存储失败!", 0);
+                        }
+                    }
+                } else {
+                    if ($uploadfile->isValid()) { //判断文件上传是否有效
+                        $FileType = $uploadfile->getClientOriginalExtension(); //获取文件后缀
+                        if (!in_array($FileType, $fileTypes)) {
+                            ajaxReturn("","图片格式为jpg,png,jpeg",0);
+                        }
+                        $FilePath = $uploadfile->getRealPath(); //获取文件临时存放位置
 
+                        $FileName = date('Y-m-d') . uniqid() . '.' . $FileType; //定义文件名
 
-        // 查看用户费率
-        $userinfo=D("Users")->where(array("user_id"=>$user_id))->find();
-        if ( ! $userinfo["rate"]>0){
-            $this->ajaxReturn("","请联系上级设置费率".$this->uid,0);
-        }
-
-
-
-
-        foreach ($_FILES["uploadfile"]["name"] as $k=>$v){
-            if ( !file_exists("./erweima/" . $_FILES["uploadfile"]["name"][$k]))
-            {
-
-                $rand=rand(10000,99999);
-                $fileName=$_FILES['uploadfile']['name'][$k];//得到上传文件的名字
-                $name=explode('.',$fileName);//将文件名以'.'分割得到后缀名,得到一个数组
-                //$ext=pathinfo($fileName);
-                switch ($_FILES['uploadfile']['type'][$k]){
-                    case "image/png":
-                        $named="png";
-                        break;
-                    case "image/jpeg":
-                        $named="jpeg";
-                        break;
-                    case "image/jpg":
-                        $named="jpg";
-                        break;
-                    case "image/*":
-                        $named="jpg";
-                        break;
-                    default:
-                        $this->ajaxReturn("","失败",0);
-                        return;
+                        Storage::disk('erweima')->put($FileName, file_get_contents($FilePath)); //存储文件
+                    }
+                    $data =array(
+                        'user_id'=>$user_id,
+                        'erweima'=>"/erweima/" . $FileName,
+                        'status'=>0,
+                        'type'=>$type,
+                        'name'=>$username,
+                        'max'=>$max,
+                        'min'=>$min,
+                        'creatime'=>time()
+                    );
+                    $id = Erweima::insertGetId($data);
+                    if ($id) {
+                        // 二维码存入用户缓冲
+                        Redis::rPush('erweimas' . $type . $user_id, $id);
+                        ajaxReturn("", "上传成功");
+                    } else {
+                        ajaxReturn("", "上传失败!", 0);
+                    }
                 }
-
-                $date=date('Ymdhis');//得到当前时间,如;20070705163148
-                $newPath=$date.$rand.'.'.$named;//得到一个新的文件为'20070705163148.jpg',即新的路径
-
-                move_uploaded_file($_FILES["uploadfile"]["tmp_name"][$k], "../img/erweima/" .$newPath);
+            } else {
+                ajaxReturn("","未上传图片!",0);
             }
-
-
-            $data['user_id']=$user_id;
-            $data['erweima'] ="/erweima/" .$newPath;
-            $data['status']=0;
-            $data['type']=$type;
-            $data['name']=$username;
-            $data['home']=$home;
-            $data['max']=$max;
-            $data['min']=$min;
-            $data['creatime']=time();
-            $id=D("erweima_generic")->add($data);
-            if($id){
-
-                // 二维码存入用户缓冲
-                Cac()->rPush('erweimas'.$type.$user_id,$id);
-                $this->ajaxReturn("","成功");
-            }else{
-                $this->ajaxReturn("","失败2",0);
-            }
-
-
+        }else {
+            ajaxReturn('','请求数据异常!',0);
         }
+    }
 
+    /**上传图片
+     * @param Request $request
+     * @return array
+     */
+    public function upload_img(Request $request)
+    {
+        if ($request->isMethod('POST')) { //判断文件是否是 POST的方式上传
+            $tmp = $request->file('file');
+            $path = '/erweima'; //public下的article
+            $rule = ['jpg', 'png','jpeg'];
+            if ($tmp->isValid()) { //判断文件上传是否有效
+                $FileType = $tmp->getClientOriginalExtension(); //获取文件后缀
+                if (!in_array($FileType, $rule)) {
+                    ajaxReturn("","图片格式为jpg,png,jpeg",0);
+                }
+                $FilePath = $tmp->getRealPath(); //获取文件临时存放位置
+
+                $FileName = date('Y-m-d') . uniqid() . '.' . $FileType; //定义文件名
+
+                Storage::disk('erweima')->put($FileName, file_get_contents($FilePath)); //存储文件
+
+                return $data = [
+                    'status' => 0,
+                    'path' => $path . '/' . $FileName //文件路径
+                ];
+            }
+        }
     }
     /**
      * 账号激活

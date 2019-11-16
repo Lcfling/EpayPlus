@@ -72,6 +72,7 @@ class UserController extends CommonController {
             if(!$this->OrdersnLock($order_sn,$nostr)){
                 ajaxReturn(null,"订单已被抢,正在处理中!",0);
             }
+
             //获取订单信息
             $order_info=Orderrecord::where([['order_sn',$order_sn],['status',0]])->first();
             if(!$order_info){
@@ -85,19 +86,19 @@ class UserController extends CommonController {
                 $this->openOrdersnLock($order_sn);
                 ajaxReturn(null,"请先开启接单状态!",0);
             }
-            $data=Erweima::where(array("user_id"=>$user_id,"status"=>0))->first();
-            if (!$data) {
-                $this->openOrdersnLock($order_sn);
-                ajaxReturn(null,"请先上传二维码!",0);
-            }
             // 取出队列二维码
             $erweima_id=Redis::LPOP("erweimas".$order_info['payType'].$user_id);
             if(!$erweima_id) {
                 $this->openOrdersnLock($order_sn);
                 ajaxReturn('error40004','没有此类型支付码!'.$erweima_id,0);
             }
+
             //二维码归队
             Users::Genericlist($user_id,$order_info['payType'],$erweima_id);
+            $order_time=Redis::get("ordertime_".$erweima_id.$order_info['tradeMoney']);
+            if ( !empty($order_time) &&$order_time+600>time()){
+                $this->ajaxReturn(null,"",0);
+            }
 
             if($erweimainfo=Erweima::where(array("user_id"=>$user_id,"id"=>$erweima_id,"type"=>$order_info['payType'],'status'=>1))->first()) {
                 Redis::lRem("erweimas".$order_info['payType'].$user_id,$erweima_id,0);
@@ -109,7 +110,7 @@ class UserController extends CommonController {
                 ajaxReturn('error40004','支付码关闭中!'.$erweima_id,0);
             }
             //取出订单队列
-            $order_id=Redis::get("order_id_".$order_sn);
+            $order_id=Redis::LPOP("order_id_".$order_sn);
             if (!$order_id>0 || empty($order_id)) {
                 $this->openOrdersnLock($order_sn);
                 ajaxReturn(null,"订单已被抢!",0);
@@ -146,8 +147,8 @@ class UserController extends CommonController {
                 //  更改订单状态
                 $order->where(array("order_sn"=>$order_sn))->update(array("user_id"=>$user_id,"erweima_id"=>$erweima_id));
                 Orderrecord::where(array("order_sn"=>$order_sn))->update(array("user_id"=>$user_id,"erweima_id"=>$erweima_id));
-                Redis::del("order_id_".$order_sn);
                 $this->openOrdersnLock($order_sn);
+                Redis::set("ordertime_".$erweima_id.$order_info['tradeMoney'],time());
                 //发送被抢订单信息
                 $this->sendnotify($order_info,2);
                 //发送被抢订单信息
