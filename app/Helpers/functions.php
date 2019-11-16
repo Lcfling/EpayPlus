@@ -186,9 +186,9 @@ function getorderId_three(){
  * @param $tablesuf 订单表后缀
  * @return string
  */
-function getrequestId($paycode,$business_code,$tablesuf){
+function getrequestId(){
 
-    $requestId  =	date("Ymd").'e'.$tablesuf.'e'.$paycode .substr($business_code, -3).date('His').rand(11111111,99999999);
+    $requestId  =	date("YmdHis").rand(11111111,99999999);
 
     return $requestId;
 
