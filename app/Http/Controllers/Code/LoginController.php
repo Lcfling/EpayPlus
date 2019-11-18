@@ -74,7 +74,7 @@ class LoginController extends Controller
             }
             $token=md5(rand_string(6,1));
             Users::where(array("account"=>$mobile))->update(array("token"=>$token));
-            $userinfo['token']=$token;
+            $userInfo['token']=$token;
             ajaxReturn($userInfo,'登陆成功！');
         }else{
             ajaxReturn("",'账号不存在！',0);
