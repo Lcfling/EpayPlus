@@ -39,7 +39,7 @@ class BuscountController extends Controller
             }
             exportExcel($head,$excel,'商户账单'.date('YmdHis',time()),'',true);
         }else{
-            $data = $buscount->paginate(10)->appends($request->all());
+            $data = $buscount->orderBy('creatime','desc')->paginate(10)->appends($request->all());
             foreach ($data as $key =>$value){
                 $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
                 $data[$key]['savetime'] =date("Y-m-d H:i:s",$value["savetime"]);

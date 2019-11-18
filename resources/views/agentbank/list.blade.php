@@ -32,7 +32,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">代理商ID</th>
             <th class="hidden-xs">姓名</th>
             <th class="hidden-xs">开户银行</th>
@@ -49,7 +49,7 @@
                 <td class="hidden-xs">{{$info['name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
-                <td class="hidden-xs">@if($info['status']==0)正常@elseif($info['status']==1)不正常@endif</td>
+                <td class="hidden-xs">@if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-warm">正常</span>@elseif($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-danger">不正常</span>@endif</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
             </tr>
         @endforeach

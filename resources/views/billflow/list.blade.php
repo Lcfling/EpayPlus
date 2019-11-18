@@ -40,7 +40,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">码商ID</th>
             <th class="hidden-xs">商户ID</th>
             <th class="hidden-xs">订单号</th>
@@ -61,8 +61,16 @@
                 <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['score']/100}}</td>
                 <td class="hidden-xs">{{$info['erweima_id']}}</td>
-                <td class="hidden-xs">@if($info['status']==1)充值@elseif($info['status']==2)第三方支付@elseif($info['status']==3)冻结@elseif($info['status']==4)解冻@elseif($info['status']==5)佣金@elseif($info['status']==6)提现@endif</td>
-                <td class="hidden-xs">@if($info['payType']==1)微信@elseif($info['payType']==2)支付宝@endif</td>
+                <td class="hidden-xs">
+                    @if($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-primary">充值</span>
+                    @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn">第三方支付</span>
+                    @elseif($info['status']==3)<span class="layui-btn layui-btn-small layui-btn-disabled">冻结</span>
+                    @elseif($info['status']==4)<span class="layui-btn layui-btn-small layui-btn-warm">充值解冻</span>
+                    @elseif($info['status']==5)<span class="layui-btn layui-btn-small layui-btn-normal">佣金</span>
+                    @elseif($info['status']==6)<span class="layui-btn layui-btn-small layui-btn-danger">提现</span>
+                    @endif
+                </td>
+                <td class="hidden-xs">@if($info['payType']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>@elseif($info['payType']==1)<span class="layui-btn layui-btn-small">微信</span>@elseif($info['payType']==2)<span class="layui-btn layui-btn-small layui-btn-normal">支付宝</span>@endif</td>
                 <td class="hidden-xs">{{$info['remark']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
             </tr>

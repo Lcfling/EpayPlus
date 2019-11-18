@@ -32,7 +32,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">商户ID</th>
             <th class="hidden-xs">姓名</th>
             <th class="hidden-xs">开户银行</th>

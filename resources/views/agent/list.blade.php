@@ -36,7 +36,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">帐号</th>
             <th class="hidden-xs">代理商昵称</th>
             <th class="hidden-xs">联系电话</th>

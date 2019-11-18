@@ -46,13 +46,12 @@
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
                 <td class="hidden-xs">{{$info['name']}}</td>
-                <td class="hidden-xs">@if($info['type']==1)微信@elseif($info['type']==2)支付宝@endif</td>
-
+                <td class="hidden-xs">@if($info['type']==1)<span class="layui-btn layui-btn-small">微信</span>@elseif($info['type']==2)<span class="layui-btn layui-btn-small layui-btn-normal">支付宝</span>@endif</td>
                 <td>
                     <img src="{{$info['erweima']}}" width="50px" onclick="previewImg(this)">
                 </td>
-                <td class="hidden-xs">@if($info['status']==0)未删除@elseif($info['status']==1)已删除@endif</td>
-                <td class="hidden-xs">@if($info['code_status']==0)开启@elseif($info['code_status']==1)关闭@endif</td>
+                <td class="hidden-xs">@if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-default">未删除</span>@elseif($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-danger">已删除</span>@endif</td>
+                <td class="hidden-xs">@if($info['code_status']==0)<span class="layui-btn layui-btn-small layui-btn-normal">开启</span>@elseif($info['code_status']==1)<span class="layui-btn layui-btn-small layui-btn-danger">关闭</span>@endif</td>
                 <td>{{$info['creatime']}}</td>
 
             </tr>

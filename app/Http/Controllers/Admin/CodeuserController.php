@@ -31,7 +31,7 @@ class CodeuserController extends Controller
             $end=strtotime('+1day',$start);
             $codeuser->whereBetween('reg_time',[$start,$end]);
         }
-        $data = $codeuser->leftJoin('users_count','users.user_id','=','users_count.user_id')->select('users.*','users_count.balance','users_count.tol_brokerage')->paginate(10)->appends($request->all());
+        $data = $codeuser->orderBy('reg_time','reg_time')->leftJoin('users_count','users.user_id','=','users_count.user_id')->select('users.*','users_count.balance','users_count.tol_brokerage')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['reg_time']=date("Y-m-d H:i:s",$value["reg_time"]);
         }
@@ -278,16 +278,27 @@ class CodeuserController extends Controller
 
         DB::beginTransaction();
         try{
-            $account->insert(['user_id'=>$id,'score'=>$score,'status'=>1,'remark'=>'手动上分','creatime'=>time()]);
-            $add=DB::table('users_count')->where('user_id','=',$id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score")]);
-            DB::table('users_count')->where('user_id',$id)->update(array('savetime'=>time()));
-            if($add){
-                DB::commit();
-                return ['msg'=>'上分成功！','status'=>1];
-            }else{
+            $update=DB::table('users_count')->where('user_id',$id)->update(array('savetime'=>time()));
+            if(!$update){
                 DB::rollBack();
                 return ['msg'=>'上分失败！','status'=>0];
             }
+
+            $shangfen=$account->insert(['user_id'=>$id,'score'=>$score,'status'=>1,'remark'=>'手动上分','creatime'=>time()]);
+            if(!$shangfen){
+                DB::rollBack();
+                return ['msg'=>'上分失败！','status'=>0];
+            }
+
+            $add=DB::table('users_count')->where('user_id','=',$id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score")]);
+            if(!$add){
+                DB::rollBack();
+                return ['msg'=>'上分失败！','status'=>0];
+            }
+
+            DB::commit();
+            return ['msg'=>'上分成功！','status'=>1];
+
         }catch (Exception $e){
             DB::rollBack();
             return ['msg'=>'发生异常！事物进行回滚！','status'=>0];
@@ -312,16 +323,26 @@ class CodeuserController extends Controller
         $score=$data['score']*100;
         DB::beginTransaction();
         try{
-            $account->insert(['user_id'=>$id,'score'=>$score,'status'=>1,'remark'=>'手动下分','creatime'=>time()]);
-            $add=DB::table('users_count')->where('user_id','=',$id)->decrement('balance',$score,['tol_sore'=>DB::raw("tol_sore - $score")]);
-            DB::table('users_count')->where('user_id',$id)->update(array('savetime'=>time()));
-            if($add){
-                DB::commit();
-                return ['msg'=>'下分成功！','status'=>1];
-            }else{
+            $update=DB::table('users_count')->where('user_id',$id)->update(array('savetime'=>time()));
+            if(!$update){
                 DB::rollBack();
                 return ['msg'=>'下分失败！','status'=>0];
             }
+            $xiafen=$account->insert(['user_id'=>$id,'score'=>$score,'status'=>1,'remark'=>'手动下分','creatime'=>time()]);
+            if(!$xiafen){
+                DB::rollBack();
+                return ['msg'=>'下分失败！','status'=>0];
+            }
+            $add=DB::table('users_count')->where('user_id','=',$id)->decrement('balance',$score,['tol_sore'=>DB::raw("tol_sore - $score")]);
+
+            if(!$add){
+                DB::rollBack();
+                return ['msg'=>'下分失败！','status'=>0];
+            }
+
+            DB::commit();
+            return ['msg'=>'下分成功！','status'=>1];
+
         }catch (Exception $e){
             DB::rollBack();
             return ['msg'=>'发生异常！事物进行回滚！','status'=>0];

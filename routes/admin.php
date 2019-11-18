@@ -65,7 +65,8 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/busdrawnone/pass',    'BusdrawnoneController@pass');
     Route::post('/busdrawnone/reject',  'BusdrawnoneController@reject');
     Route::resource('/busdrawdone',     'BusdrawdoneController');//通过列表
-    Route::resource('/busdrawreject',   'BusdrawrejectController');
+    Route::resource('/busdrawreject',   'BusdrawrejectController');//驳回列表
+
     Route::resource('/agent',           'AgentController');//代理商
     Route::get('/agent/agentbankinfo/{id}', 'AgentController@agentbankinfo');//代理银行信息
     Route::get('/agent/editpwd/{id}',   'AgentController@editpwd');//代理登录密码
@@ -75,42 +76,44 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/agentUpdate',         'AgentController@update');
     Route::post('/agent_switch',        'AgentController@agent_switch');//代理状态
     Route::post('/agent_islogin',       'AgentController@agent_islogin');//代理登陆
-    Route::resource('/agentdrawnone',   'AgentdrawnoneController');//代理提现
+    Route::resource('/agentdrawnone',   'AgentdrawnoneController');//代理提现处理
     Route::post('/agentdrawnone/pass',  'AgentdrawnoneController@pass');
     Route::post('/agentdrawnone/reject','AgentdrawnoneController@reject');
-    Route::resource('/agentdrawdone',   'AgentdrawdoneController');
-    Route::resource('/agentdrawreject', 'AgentdrawrejectController');
-    Route::resource('/codeuser',        'CodeUserController');//码商列表
-    Route::post('/codeuserUpdate',      'CodeUserController@update');//码商编辑
-    Route::post('/codeuser_isover',     'CodeUserController@codeuser_isover');//状态开关
+    Route::resource('/agentdrawdone',   'AgentdrawdoneController');//代理提现通过列表
+    Route::resource('/agentdrawreject', 'AgentdrawrejectController');//代理提现驳回列表
 
-    Route::get('/codeuser/addqr/{id}',  'CodeUserController@addqr');//码商增加二维码数量
-    Route::post('/codeaddqr',           'CodeUserController@codeaddqr');
-    Route::get('/codeuser/tomsg/{id}',  'CodeUserController@tomsg');//码商通知
-    Route::post('/codeputmsg',          'CodeUserController@codeputmsg');
-    Route::get('/codeuser/ownfee/{id}',  'CodeUserController@ownfee');//码商费率
-    Route::post('/codeuserfee',          'CodeUserController@codeuserfee');
-    Route::get('/codeuser/logpwd/{id}',  'CodeUserController@logpwd');//码商登录密码
-    Route::post('/codenewpwd',          'CodeUserController@codenewpwd');
-    Route::get('/codeuser/secondpwd/{id}', 'CodeUserController@secondpwd');//码商二级密码/已弃用
-    Route::post('/codenewTwopwd',         'CodeUserController@codenewTwopwd');
-    Route::get('/codeuser/zfpwd/{id}',  'CodeUserController@zfpwd');//码商支付密码
-    Route::post('/codenewpaypwd',         'CodeUserController@codenewpaypwd');
-    Route::get('/codeuser/shangfen/{id}',  'CodeUserController@shangfen');//码商上分
-    Route::post('/codeaddscore',         'CodeUserController@codeaddscore');
-    Route::get('/codeuser/xiafen/{id}',  'CodeUserController@xiafen');//码商下分
-    Route::post('/codeoffscore',         'CodeUserController@codeoffscore');
+    Route::resource('/codeuser',        'CodeuserController');//码商列表
+    Route::post('/codeuserUpdate',      'CodeuserController@update');//码商编辑
+    Route::post('/codeuser_isover',     'CodeuserController@codeuser_isover');//状态开关
+
+    Route::get('/codeuser/addqr/{id}',  'CodeuserController@addqr');//码商增加二维码数量
+    Route::post('/codeaddqr',           'CodeuserController@codeaddqr');
+    Route::get('/codeuser/tomsg/{id}',  'CodeuserController@tomsg');//码商通知
+    Route::post('/codeputmsg',          'CodeuserController@codeputmsg');
+    Route::get('/codeuser/ownfee/{id}',  'CodeuserController@ownfee');//码商费率
+    Route::post('/codeuserfee',          'CodeuserController@codeuserfee');
+    Route::get('/codeuser/logpwd/{id}',  'CodeuserController@logpwd');//码商登录密码
+    Route::post('/codenewpwd',          'CodeuserController@codenewpwd');
+    Route::get('/codeuser/secondpwd/{id}', 'CodeuserController@secondpwd');//码商二级密码/已弃用
+    Route::post('/codenewTwopwd',         'CodeuserController@codenewTwopwd');
+    Route::get('/codeuser/zfpwd/{id}',  'CodeuserController@zfpwd');//码商支付密码
+    Route::post('/codenewpaypwd',         'CodeuserController@codenewpaypwd');
+    Route::get('/codeuser/shangfen/{id}',  'CodeuserController@shangfen');//码商上分
+    Route::post('/codeaddscore',         'CodeuserController@codeaddscore');
+    Route::get('/codeuser/xiafen/{id}',  'CodeuserController@xiafen');//码商下分
+    Route::post('/codeoffscore',         'CodeuserController@codeoffscore');
     Route::get('/codeownbill/own/{id}',  'CodeownbillController@own');//码商个人流水
     Route::resource('/codeownbill',      'CodeownbillController');
 
 
     Route::resource('/coderakemoney',   'CoderakemoneyController');//码商激活佣金
     Route::post('/coderakemoneyUpdate', 'CoderakemoneyController@update');
-    Route::resource('/codedrawnone',    'CodedrawnoneController');//码商提现
+    Route::resource('/codedrawnone',    'CodedrawnoneController');//码商提现审核
     Route::post('/codedrawnone/pass',   'CodedrawnoneController@pass');
     Route::post('/codedrawnone/reject', 'CodedrawnoneController@reject');
-    Route::resource('/codedrawdone',    'CodedrawdoneController');
-    Route::resource('/codedrawreject',  'CodedrawrejectController');
+    Route::resource('/codedrawdone',    'CodedrawdoneController');//码商提现通过列表
+    Route::resource('/codedrawreject',  'CodedrawrejectController');//码商提现驳回列表
+
     Route::resource('/recharge',        'RechargeController');//充值信息
     Route::post('/recharge/enable',     'RechargeController@enable');
     Route::resource('/rechargelist',    'RechargelistController');//充值列表处理

@@ -39,7 +39,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">帐号</th>
             <th class="hidden-xs">商户昵称</th>
             <th class="hidden-xs">联系电话</th>

@@ -34,7 +34,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">代理商ID</th>
             <th class="hidden-xs">余额</th>
             <th class="hidden-xs">总分</th>

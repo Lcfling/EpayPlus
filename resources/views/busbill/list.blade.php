@@ -29,11 +29,12 @@
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="200">
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">订单号</th>
             <th class="hidden-xs">商户ID</th>
             <th class="hidden-xs">扣除后积分</th>
@@ -52,8 +53,8 @@
                 <td class="hidden-xs">{{$info['business_code']}}</td>
                 <td class="hidden-xs">{{$info['score']/100}}</td>
                 <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
-                <td class="hidden-xs">@if($info['status']==0)默认@elseif($info['status']==1)支付@elseif($info['status']==2)利润@endif</td>
-                <td class="hidden-xs">@if($info['paycode']==0)默认@elseif($info['paycode']==1)微信@elseif($info['paycode']==2)支付宝@endif</td>
+                <td class="hidden-xs">@if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>@elseif($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-warm">支付</span>@elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">利润</span>@endif</td>
+                <td class="hidden-xs">@if($info['paycode']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>@elseif($info['paycode']==1)<span class="layui-btn layui-btn-small">微信</span>@elseif($info['paycode']==2)<span class="layui-btn layui-btn-small layui-btn-normal">支付宝</span>@endif</td>
                 <td class="hidden-xs">{{$info['remark']}}</td>
                 <td class="hidden-xs">{{$info['creattime']}}</td>
             </tr>

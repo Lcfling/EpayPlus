@@ -20,7 +20,7 @@
 @section('table')
     <table class="layui-table" lay-even lay-skin="nob">
         <colgroup>
-            <col class="hidden-xs" width="50">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
@@ -37,7 +37,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">手机号</th>
             <th class="hidden-xs">上级ID</th>
             <th class="hidden-xs">身份</th>
@@ -63,8 +63,8 @@
                 <td class="hidden-xs">{{$info['balance']/100}}</td>
                 <td class="hidden-xs">{{$info['rate']*100}}%</td>
                 <td class="hidden-xs">{{$info['rates']*100}}%</td>
-                <td class="hidden-xs">@if($info['take_status']==0)未接单@elseif($info['take_status']==1)已接单@endif</td>
-                <td class="hidden-xs">@if($info['jh_status']==0)未激活@elseif($info['take_status']==1)已激活@endif</td>
+                <td class="hidden-xs">@if($info['take_status']==0)<span class="layui-btn layui-btn-small">未接单</span>@elseif($info['take_status']==1)<span class="layui-btn layui-btn-small layui-btn-warm">已接单</span>@endif</td>
+                <td class="hidden-xs">@if($info['jh_status']==0)<span class="layui-btn layui-btn-small layui-btn-danger">未激活</span>@elseif($info['take_status']==1)<span class="layui-btn layui-btn-small layui-btn-normal">已激活</span>@endif</td>
                 <td class="hidden-xs">{{$info['tol_brokerage']/100}}</td>
                 <td class="hidden-xs">{{$info['imsi_num']}}</td>
                 <td class="hidden-xs">{{$info['reg_time']}}</td>
