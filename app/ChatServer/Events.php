@@ -31,20 +31,20 @@ class Events
     public static function onWorkerStart($businessWorker)
     {
 
-        $hostUrl = "http://epayplus.com/";
+        $hostUrl = "http://epp.zgzyph.com/";
 
         Timer::add(2, function () use ($hostUrl) {
             // 订单5分钟更改为过期：
             file_get_contents($hostUrl . "code/Timernotify/setstale");
             // 订单3个小时解冻订单并返回跑分
-//            file_get_contents($hostUrl . "code/Timernotify/orderunfreeze");
+            file_get_contents($hostUrl . "code/Timernotify/orderunfreeze");
         });
 
         Timer::add(2, function () use ($hostUrl) {
             // 商户返佣：
-//            file_get_contents($hostUrl . "code/Timernotify/bussiness_fy");
+            file_get_contents($hostUrl . "code/Timernotify/bussiness_fy");
             // 码商返佣
-//            file_get_contents($hostUrl . "code/Timernotify/user_fy");
+            file_get_contents($hostUrl . "code/Timernotify/user_fy");
         });
 
     }
