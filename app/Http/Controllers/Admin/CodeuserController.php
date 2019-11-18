@@ -42,7 +42,12 @@ class CodeuserController extends Controller
      */
     public function edit($user_id=0){
         $info = $user_id?Codeuser::find($user_id):[];
-        $paccount=Codeuser::where('user_id',$info['pid'])->value('account');
+        if($user_id!=0){
+            $paccount=Codeuser::where('user_id',$info['pid'])->value('account');
+        }else{
+            $paccount='';
+        }
+
         return view('codeuser.edit',['id'=>$user_id,'info'=>$info,'paccount'=>$paccount]);
     }
 

@@ -30,7 +30,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">码商ID</th>
             <th class="hidden-xs">姓名</th>
             <th class="hidden-xs">类型</th>

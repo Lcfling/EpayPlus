@@ -61,11 +61,20 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::get('/business/busfee/{id}', 'BusinessController@busfee');//商户费率
     Route::post('/busnewfee',           'BusinessController@busnewfee');
     Route::post('/businessUpdate',      'BusinessController@update');
+
     Route::resource('/busdrawnone',     'BusdrawnoneController');//商户提现-审核
-    Route::post('/busdrawnone/pass',    'BusdrawnoneController@pass');
-    Route::post('/busdrawnone/reject',  'BusdrawnoneController@reject');
+    Route::post('/busdrawnone/pass',    'BusdrawnoneController@pass');//通过
+    Route::get('/busdrawnone/bohui/{id}',  'BusdrawnoneController@bohui');//驳回-原因页面
+    Route::post('/busdrawrenonereject',       'BusdrawnoneController@reject');//驳回
+
     Route::resource('/busdrawdone',     'BusdrawdoneController');//通过列表
+
     Route::resource('/busdrawreject',   'BusdrawrejectController');//驳回列表
+    Route::get('/busdrawreject/editreject/{id}',  'BusdrawrejectController@editreject');//信息编辑页
+    Route::post('/busdrawreject_save',       'BusdrawrejectController@saveinfo');//保存信息
+
+    Route::post('/busdrawreject/pass',    'BusdrawrejectController@pass');//确认通过
+    Route::post('/busdrawreject/reject',  'BusdrawrejectController@reject');//确认驳回
 
     Route::resource('/agent',           'AgentController');//代理商
     Route::get('/agent/agentbankinfo/{id}', 'AgentController@agentbankinfo');//代理银行信息
