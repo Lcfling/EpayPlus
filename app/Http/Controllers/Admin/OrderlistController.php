@@ -11,10 +11,9 @@ use App\Http\Controllers\Controller;
 class OrderlistController extends Controller
 {
     /**
-     * 数据列表
+     * 订单列表
      */
     public function index(StoreRequest $request){
-
         if(true==$request->has('creatime')){
             $time = strtotime($request->input('creatime'));
             $weeksuf = computeWeek($time,false);
@@ -62,5 +61,81 @@ class OrderlistController extends Controller
             }
         }
         return view('orderlist.list',['list'=>$data,'input'=>$request->all()]);
+    }
+    /**
+     * 码商收款
+     */
+    protected function sk_status($type){
+        switch ($type){
+            case $type==0:
+                $name='未收款';
+                return $name;
+                break;
+            case $type==1:
+                $name='手动收款';
+                return $name;
+                break;
+            case $type==2:
+                $name='自动收款';
+                return $name;
+                break;
+        }
+    }
+    /**
+     * paytype判断
+     */
+    protected function payName($type){
+        switch ($type){
+            case $type==0:
+                $name='默认';
+                return $name;
+                break;
+            case $type==1:
+                $name='微信';
+                return $name;
+                break;
+            case $type==2:
+                $name='支付宝';
+                return $name;
+                break;
+        }
+    }
+    /**
+     * status判断
+     */
+    protected function statusName($type){
+        switch ($type){
+            case $type==0:
+                $name='未支付';
+                return $name;
+                break;
+            case $type==1:
+                $name='支付成功';
+                return $name;
+                break;
+            case $type==2:
+                $name='过期';
+                return $name;
+                break;
+            case $type==3:
+                $name='取消';
+                return $name;
+                break;
+        }
+    }
+    /**
+     * callback判断
+     */
+    protected function callback($type){
+        switch ($type){
+            case $type==1:
+                $name='推送成功';
+                return $name;
+                break;
+            case $type==2:
+                $name='推送失败';
+                return $name;
+                break;
+        }
     }
 }

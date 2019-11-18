@@ -113,8 +113,11 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/codedrawreject',  'CodedrawrejectController');
     Route::resource('/recharge',        'RechargeController');//充值信息
     Route::post('/recharge/enable',     'RechargeController@enable');
-    Route::resource('/rechargelist',    'RechargelistController');//充值列表管理审核
+    Route::resource('/rechargelist',    'RechargelistController');//充值列表处理
     Route::post('/rechargelist/enable', 'RechargelistController@enable');
+    Route::resource('/rechargedone',    'RechargedoneController');//充值通过列表
+    Route::resource('/rechargereject',  'RechargerejectController');//充值驳回列表
+
     Route::resource('/billflow',        'BillflowController');//码商流水
     Route::resource('/order',           'OrderController');//订单处理
     Route::post('/order/budan',         'OrderController@budan');//订单补单

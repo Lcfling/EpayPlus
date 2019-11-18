@@ -1,7 +1,7 @@
-@section('title', '充值通过')
+@section('title', '充值驳回列表')
 @section('header')
     <div class="layui-inline">
-    <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
+        <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
         <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="码商ID" autocomplete="off" class="layui-input">
@@ -10,7 +10,7 @@
         <input type="text"  value="{{ $input['name'] or '' }}" name="name" placeholder="充值姓名" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="申请时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="申请时间" onclick="layui.laydate({elem: this, festival: true,})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
@@ -28,7 +28,7 @@
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
         </colgroup>
@@ -44,7 +44,7 @@
             <th class="hidden-xs">收款银行</th>
             <th class="hidden-xs">充值状态</th>
             <th class="hidden-xs">申请时间</th>
-            <th style="text-align: center">操作</th>
+            <th class="hidden-xs">审核时间</th>
         </tr>
         </thead>
         <tbody>
@@ -60,16 +60,9 @@
                 <td class="hidden-xs">{{$info['sk_name']}}</td>
                 <td class="hidden-xs">{{$info['sk_banknum']}}</td>
                 <td class="hidden-xs">{{$info['sk_bankname']}}</td>
-                <td class="hidden-xs"><span class="layui-btn layui-btn-small layui-btn">待审核</span></td>
+                <td class="hidden-xs"><span class="layui-btn layui-btn-small layui-btn-danger">驳回</span></td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
-                <td style="text-align: center">
-                    <div class="layui-inline">
-                        @if($info['status']==0)
-                            <button class="layui-btn layui-btn-small layui-btn-normal edits-btn" data-id="{{$info['id']}}" data-key="1" data-desc="通过">通过</button>
-                            <button class="layui-btn layui-btn-small layui-btn-danger edits-btn" data-id="{{$info['id']}}" data-key="2" data-desc="驳回">驳回</button>
-                        @endif
-                    </div>
-                </td>
+                <td class="hidden-xs">{{$info['savetime']}}</td>
             </tr>
         @endforeach
         @if(!$list[0])
@@ -89,42 +82,10 @@
                 laydate = layui.laydate,
                 layer = layui.layer;
 
-            laydate({istoday: true});
+            laydate({istoday: true, });
             form.render();
             form.on('submit(formDemo)', function(data) {
             });
-
-            $('.edits-btn').click(function () {
-                var that = $(this);
-                var id=$(this).attr('data-id');
-                var status = that.attr('data-key');
-                var str = that.attr('data-desc');
-                layer.confirm('确定要'+str+'吗？',{title:'提示'},function () {
-                    $.ajax({
-                        headers: {
-                            'X-CSRF-TOKEN': $('#token').val()
-                        },
-                        url:"{{url('/admin/rechargelist/enable')}}",
-                        data:{
-                            "id":id,
-                            "status":status
-                        },
-                        type:"post",
-                        dataType:'json',
-                        success:function (res) {
-                            if(res.status==1){
-                                layer.msg(res.msg,{icon:6});
-                                location.reload();
-                            }else{
-                                layer.msg(res.msg,{shift: 6,icon:5});
-                                location.reload();
-                            }
-                        }
-                    });
-                })
-            });
-
-
         });
         function previewImg(obj) {
             var img = new Image();
@@ -141,7 +102,7 @@
                 title:"图片预览",
                 content:imgHtml,
                 cancel:function () {
-                    
+
                 }
             });
         }

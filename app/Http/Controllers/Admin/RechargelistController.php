@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 class RechargelistController extends Controller
 {
     /**
-     * 数据列表
+     * 充值审核列表
      */
     public function index(Request $request){
         $czrecord=Rechargelist::query();
@@ -33,7 +33,7 @@ class RechargelistController extends Controller
             $end=strtotime('+1day',$start);
             $czrecord->whereBetween('creatime',[$start,$end]);
         }
-        $data = $czrecord->paginate(10)->appends($request->all());
+        $data = $czrecord->where('status',0)->orderBy('creatime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
         }
@@ -56,22 +56,30 @@ class RechargelistController extends Controller
             //开启事物
             DB::beginTransaction();
             try{
-                $account->insert(['user_id'=>$user_id,'score'=>$score,'status'=>$status,'remark'=>'自动充值','creatime'=>time()]);
-                DB::table('users_count')->where('user_id','=',$user_id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score")]);
-                $count = Rechargelist::where('id',$request->input('id'))->update(['status'=>$status]);
-                if($count){
-                    DB::commit();
-                    return ['msg'=>'审核成功！','status'=>1];
-                }else{
+                $status = Rechargelist::where('id',$request->input('id'))->update(['status'=>$status,'savetime'=>time()]);//改状态
+                if(!$status){
                     DB::rollBack();
                     return ['msg'=>'审核失败！','status'=>0];
                 }
+                $billflow=$account->insert(['user_id'=>$user_id,'score'=>$score,'status'=>$status,'remark'=>'自动充值','creatime'=>time()]);//插数据
+                if(!$billflow){
+                    DB::rollBack();
+                    return ['msg'=>'审核失败！','status'=>0];
+                }
+                $money=DB::table('users_count')->where('user_id','=',$user_id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score")]);//加钱
+                if(!$money){
+                    DB::rollBack();
+                    return ['msg'=>'审核失败！','status'=>0];
+                }
+                DB::commit();
+                return ['msg'=>'审核成功！','status'=>1];
+
             }catch (Exception $e) {
                 DB::rollBack();
                 return ['msg'=>'发生异常！事物进行回滚！','status'=>0];
             }
         }else{
-            $count = Rechargelist::where('id',$request->input('id'))->update(['status'=>$status]);
+            $count = Rechargelist::where('id',$request->input('id'))->update(['status'=>$status,'savetime'=>time()]);
             if($count){
                 return ['msg'=>'驳回成功！','status'=>1];
             }else{
