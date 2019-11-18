@@ -55,6 +55,19 @@ return [
             'visibility' => 'public',
         ],
 
+        'erweima' => [
+            'driver' => 'local',
+            'root' => public_path('/erweima'), // public_path 就是public的路径
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+        ],
+        'recharge' => [
+            'driver' => 'local',
+            'root' => public_path('/recharge'), // public_path 就是public的路径
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_KEY'),

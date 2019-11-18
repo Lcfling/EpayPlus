@@ -48,7 +48,7 @@ return [
                 'host' => ['39.100.237.239'],
             ],
 
-            'sticky'    => true,
+            'sticky'    => false,
             'driver'    => 'mysql',
             'database'  => 'epayplus',
             'username'  => 'epayplus',
