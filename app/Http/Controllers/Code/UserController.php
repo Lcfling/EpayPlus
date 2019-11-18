@@ -205,7 +205,7 @@ class UserController extends CommonController {
      * 发送数据
      */
     private function senduidnotify($orderinfo,$type,$ordercount) {
-        Gateway::$registerAddress = '127.0.0.1:1236';
+        Gateway::$registerAddress = '39.100.237.239:1236';
         $data=array(
             'ordercount'=>$ordercount,
             'type'=>$type,
@@ -226,7 +226,7 @@ class UserController extends CommonController {
      * 发送数据
      */
     private function sendnotify($orderinfo,$type) {
-        Gateway::$registerAddress = '127.0.0.1:1236';
+        Gateway::$registerAddress = '39.100.237.239:1236';
         $data=array(
             'ordercount'=>1,
             'type'=>$type,

@@ -83,7 +83,7 @@ class OrderymController extends Controller {
 
             ajaxReturn('error','签名错误!',0);
         }
-        $order_sn = getrequestId($type,$business_code,$weeksuf);
+        $order_sn = getrequestId();
         $time = time();
         //保存商户订单记录
         $data =array(
@@ -181,7 +181,7 @@ class OrderymController extends Controller {
     }
 
     private function sendnotify($orderinfo,$type) {
-        Gateway::$registerAddress = '127.0.0.1:1236';
+        Gateway::$registerAddress = '39.100.237.239:1236';
         $data=array(
             'ordercount'=>1,
             'type'=>$type,
