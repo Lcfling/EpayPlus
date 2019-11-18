@@ -44,7 +44,7 @@ class GenericcodeController extends CommonController {
                             }
                             $FilePath = $file->getRealPath(); //获取文件临时存放位置
                             file_put_contents('./FileType.txt',$FilePath.PHP_EOL,FILE_APPEND);
-                            $FileName = date('Y-m-d') . uniqid() . '.' . $FileType; //定义文件名
+                            $FileName = date('YmdHis') . uniqid() . '.' . $FileType; //定义文件名
                             file_put_contents('./FileType.txt',$FileName.PHP_EOL,FILE_APPEND);
                             Storage::disk('erweima')->put($FileName, file_get_contents($FilePath)); //存储文件
                         }
@@ -77,7 +77,7 @@ class GenericcodeController extends CommonController {
                         }
                         $FilePath = $uploadfile->getRealPath(); //获取文件临时存放位置
 
-                        $FileName = date('Y-m-d') . uniqid() . '.' . $FileType; //定义文件名
+                        $FileName = date('YmdHis') . uniqid() . '.' . $FileType; //定义文件名
 
                         Storage::disk('erweima')->put($FileName, file_get_contents($FilePath)); //存储文件
                     }

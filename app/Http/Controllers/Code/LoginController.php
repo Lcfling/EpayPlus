@@ -92,9 +92,9 @@ class LoginController extends Controller
             }
             $code=rand_string(6,1);
             $ip =$request->ip();
-            Cac()->set('login_code_'.$mobile,$code,300);
+            Redis::set('login_code_'.$mobile,$code,300);
             //todo 发送短信
-            $res=Verificat::dxbsend($mobile,$code);
+            $res=Verificat::dxbsend($mobile,$code,$ip);
             if($res=="0") {
                 Verificat::insertsendcode($code,$mobile,4,$ip,1,'发送成功!');
                 ajaxReturn('','发送成功!',1);
