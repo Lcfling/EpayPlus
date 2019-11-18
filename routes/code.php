@@ -23,9 +23,13 @@ Route::group(['namespace'  => "Code"], function () {
     Route::post('/welcome',                           'IndexController@welcome');
     Route::post('/index/update',                      'IndexController@update');//检测更新
 
-
+    /**
+     *LoginController
+     */
     Route::post('/login/login',                       'LoginController@login');//码商登录
-
+    Route::post('/login/mobile',                      'LoginController@mobile');//注册
+    Route::post('/login/sendcode',                    'LoginController@sendcode');//短信登录发送验证码
+    Route::post('/login/mobilelogin',                 'LoginController@mobilelogin');//手机验证码登陆
     /**
      * MycenterController
      */
