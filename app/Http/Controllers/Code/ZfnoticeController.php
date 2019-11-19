@@ -61,7 +61,8 @@ class ZfnoticeController extends CommonController {
     }
     // 客服二维码
     public function kefu() {
-        $list = Kefu::orderBy('id','desc')->limit(1)->get();
+        $list = Kefu::orderBy('id','desc')->limit(1)->first();
+        $list['url']= $this->kefuurl.$list['url'];
         ajaxReturn($list,'请求成功!',1);
     }
     /**

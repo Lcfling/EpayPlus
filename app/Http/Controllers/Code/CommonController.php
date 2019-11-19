@@ -18,6 +18,7 @@ class CommonController extends Controller {
     public $redis=null;
     public $imgurl="http://epp.zgzyph.com";
     public $imgurls="http://epp.zgzyph.com";
+    public $kefuurl="http://eppht.zgzyph.com";
     public function __construct() {
         $this->checkLogin();
     }
