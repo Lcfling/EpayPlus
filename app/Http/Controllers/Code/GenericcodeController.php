@@ -26,7 +26,7 @@ class GenericcodeController extends CommonController {
             // 查看用户费率
             $userinfo = Users::where(array("user_id" => $user_id))->first();
             if (!$userinfo["rate"] > 0) {
-                $this->ajaxReturn("", "请联系上级设置费率" . $this->uid, 0);
+                ajaxReturn("", "请联系上级设置费率" . $this->uid, 0);
             }
 
             //限定格式为jpg,jpeg,png
@@ -154,7 +154,7 @@ class GenericcodeController extends CommonController {
      */
     public function jhmoney() {
         $jhmoney=Jhmoney::first();
-        $this->ajaxReturn($jhmoney,"激活佣金!");
+        ajaxReturn($jhmoney,"激活佣金!");
     }
     /**
      * 二维码开关
