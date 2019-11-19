@@ -37,7 +37,7 @@ class LoginController extends Controller
                     ajaxReturn(null,'此账号已被封禁!',0);
                 }
                 $token=md5(rand_string(6,1));
-                Users::where(array("account"=>$account))->update(array("token"=>$token));
+                Users::where(array("account"=>$account))->update(array("token"=>$token,'take_status'=>0));
                 $userinfo['token']=$token;
                 ajaxReturn($userinfo,"成功");
             }else{
@@ -73,7 +73,7 @@ class LoginController extends Controller
                 ajaxReturn($userInfo,'此账号已被封禁!',0);
             }
             $token=md5(rand_string(6,1));
-            Users::where(array("account"=>$mobile))->update(array("token"=>$token));
+            Users::where(array("account"=>$mobile))->update(array("token"=>$token,'take_status'=>0));
             $userInfo['token']=$token;
             ajaxReturn($userInfo,'登陆成功！');
         }else{

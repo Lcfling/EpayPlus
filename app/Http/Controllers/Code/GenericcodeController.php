@@ -38,24 +38,27 @@ class GenericcodeController extends CommonController {
                     foreach ($request->file('uploadfile') as $file) {
                         if ($file->isValid()) { //判断文件上传是否有效
                             $FileType = $file->getClientOriginalExtension(); //获取文件后缀
-                            file_put_contents('./FileType.txt',$FileType.PHP_EOL,FILE_APPEND);
                             if (!in_array($FileType, $fileTypes)) {
                                 ajaxReturn("","图片格式为jpg,png,jpeg",0);
                             }
+                            $file_relative_path = '/erweima/'.date('Y-m-d');
+                            $file_path = public_path($file_relative_path);
+                            if (!is_dir($file_path)){
+                                mkdir($file_path);
+                            }
                             $FilePath = $file->getRealPath(); //获取文件临时存放位置
-                            file_put_contents('./FileType.txt',$FilePath.PHP_EOL,FILE_APPEND);
-                            $FileName = date('YmdHis') . uniqid() . '.' . $FileType; //定义文件名
-                            file_put_contents('./FileType.txt',$FileName.PHP_EOL,FILE_APPEND);
-                            Storage::disk('erweima')->put($FileName, file_get_contents($FilePath)); //存储文件
+                            $FileName = $file_relative_path.'/'.date('YmdHis') . uniqid() . '.' . $FileType; //定义文件名
+                            Storage::disk('imgupload')->put($FileName, file_get_contents($FilePath)); //存储文件
                         }
                         $data =array(
                             'user_id'=>$user_id,
-                            'erweima'=>"/erweima/" . $FileName,
+                            'erweima'=>$file_relative_path,
                             'status'=>0,
                             'type'=>$type,
                             'name'=>$username,
                             'max'=>$max,
                             'min'=>$min,
+                            'code_status'=>0,
                             'creatime'=>time()
                         );
                         $id = Erweima::insertGetId($data);

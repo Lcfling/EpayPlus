@@ -71,10 +71,11 @@ class UserController extends CommonController {
                 ajaxReturn(null,"请先开启接单状态!",0);
             }
             //获取订单信息
-            $order_info=Redis::get('orderrecord_'.$order_sn);
-            if(!$order_info){
+            $orderjson=Redis::get('orderrecord_'.$order_sn);
+            if(!$orderjson){
                 ajaxReturn(null,"订单已不存在,请刷新当前页面!",0);
             }
+            $order_info =json_decode($orderjson,true);
             $tradeMoney = $order_info['tradeMoney'];
 
             // 取出队列二维码
@@ -86,10 +87,11 @@ class UserController extends CommonController {
             Users::Genericlist($user_id,$order_info['payType'],$erweima_id);
             $order_time=Redis::get("ordertime_".$erweima_id.$order_info['tradeMoney']);
             if ( !empty($order_time) &&$order_time+600>time()){
-                ajaxReturn(null,"",0);
+                ajaxReturn(null,"该支付码正在使用中,请勿频繁接单!",0);
             }
             $erweimajson=Redis::get('erweimainfo_'.$erweima_id);
             $erweimainfo = json_decode($erweimajson,true);
+            print_r($erweimainfo);
             if(!$erweimainfo) {
                 ajaxReturn('error40004','无此二维码信息!'.$erweima_id,0);
             }

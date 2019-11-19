@@ -104,6 +104,7 @@ class OrderymController extends Controller {
             Redis::rPush('order_id_'.$order_sn,$order_id);
             //保存商户订单记录
             $recorddata =array(
+                'id'=>$order_id,
                 'order_sn'=>$order_sn,
                 'business_code'=>$business_code,
                 'payType'=>$datas["payType"],
@@ -142,7 +143,7 @@ class OrderymController extends Controller {
                     }
                     $erweima_info=Erweima::where(array("id"=>$order_info['erweima_id']))->first();
                     $data=array(
-                        "erweimaurl"=>"http://47.111.110.1:8555".$erweima_info['erweima'],
+                        "erweimaurl"=>"http://epp.zgzyph.com".$erweima_info['erweima'],
                         "order_id"=>$order_id,
                         "user_id"=>$erweima_info['user_id'],
                         "gptime"=>$order_info['creatime']+600,
