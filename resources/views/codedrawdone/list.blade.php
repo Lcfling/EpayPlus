@@ -7,10 +7,10 @@
         <input type="text" value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入代理商编号号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}">
+        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}" autocomplete="off">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="withdraw_time" placeholder="提现日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['withdraw_time'] or '' }}">
+        <input class="layui-input" name="endtime" placeholder="提现日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['endtime'] or '' }}" autocomplete="off">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
@@ -35,8 +35,8 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
-            <th class="hidden-xs">码商编号</th>
+            <th class="hidden-xs">序号</th>
+            <th class="hidden-xs">码商ID</th>
             <th class="hidden-xs">订单号</th>
             <th class="hidden-xs">提现额度</th>
             <th class="hidden-xs">手机号</th>
@@ -62,8 +62,8 @@
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
-                <td class="hidden-xs">{{$info['withdraw_time']}}</td>
-                <td class="hidden-xs">已打款</td>
+                <td class="hidden-xs">{{$info['endtime']}}</td>
+               <td class="hidden-xs"><span class="layui-btn layui-btn-small layui-btn-warm">已打款</span></td>
 
             </tr>
         @endforeach

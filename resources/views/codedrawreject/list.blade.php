@@ -4,7 +4,10 @@
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
-        <input type="text" value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入代理商编号号" autocomplete="off" class="layui-input">
+        <input type="text" value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商ID" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text" value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入提现单号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <input class="layui-input" name="begin" placeholder="开始日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}">
@@ -32,11 +35,13 @@
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="100">
+             <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="300">
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
-            <th class="hidden-xs">码商编号</th>
+            <th class="hidden-xs">序号</th>
+            <th class="hidden-xs">码商ID</th>
             <th class="hidden-xs">订单号</th>
             <th class="hidden-xs">提现额度</th>
             <th class="hidden-xs">手机号</th>
@@ -47,6 +52,8 @@
             <th class="hidden-xs">申请时间</th>
             <th class="hidden-xs">提现时间</th>
             <th class="hidden-xs">状态</th>
+             <th class="hidden-xs">备注</th>
+            <th class="hidden-xs">操作</th>
         </tr>
         </thead>
         <tbody>
@@ -54,7 +61,7 @@
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
-                <td class="hidden-xs">{{$info['order_no']}}</td>
+                <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['money']/100}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
                 <td class="hidden-xs">{{$info['wx_name']}}</td>
@@ -62,8 +69,23 @@
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
-                <td class="hidden-xs">{{$info['withdraw_time']}}</td>
-                <td class="hidden-xs">已驳回</td>
+                <td class="hidden-xs">{{$info['endtime']}}</td>
+                <td class="hidden-xs">
+                    @if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-default">已驳回</span>
+                    @elseif($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-warm">已打款</span>
+                    @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">确认驳回</span>
+                    @endif
+                </td>
+                <td class="hidden-xs">{{$info['remark'] or '无备注'}}</td>
+                <td>
+                    <div class="layui-inline">
+                        <a class="layui-btn layui-btn-small layui-btn-normal"  onclick="edit({{$info['id']}})">编辑</a>
+                        @if($info['status']==0)
+                            <button class="layui-btn layui-btn-small layui-btn-warm edits-btn1" data-id="{{$info['id']}}" data-desc="确认打款">确认打款</button>
+                            <button class="layui-btn layui-btn-small layui-btn-danger edits-btn2" data-id="{{$info['id']}}" data-desc="确认驳回">确认驳回</button>
+                        @endif
+                    </div>
+                </td>
 
             </tr>
         @endforeach
@@ -91,12 +113,12 @@
             $('.edits-btn1').click(function () {
                 var that = $(this);
                 var id=$(this).attr('data-id');
-                layer.confirm('确定要通过吗？',{title:'提示'},function (index) {
+                layer.confirm('确定要打款？',{title:'提示'},function (index) {
                         $.ajax({
                             headers: {
                                 'X-CSRF-TOKEN': $('#token').val()
                             },
-                            url:"{{url('/admin/codedrawnone/pass')}}",
+                            url:"{{url('/admin/codedrawreject/pass')}}",
                             data:{
                                 "id":id,
                             },
@@ -124,7 +146,7 @@
                             headers: {
                                 'X-CSRF-TOKEN': $('#token').val()
                             },
-                            url:"{{url('/admin/codedrawnone/reject')}}",
+                            url:"{{url('/admin/codedrawreject/reject')}}",
                             data:{
                                 "id":id,
                             },
@@ -144,6 +166,20 @@
                 );
             });
         });
+        function edit(id) {
+            var id=id;
+            layer.open({
+                type: 2,
+                title: '提现驳回',
+                closeBtn: 1,
+                area: ['500px','700px'],
+                shadeClose: false, //点击遮罩关闭
+                content: ['/admin/codedrawreject/editreject/'+id],
+                end:function(){
+
+                }
+            });
+        }
     </script>
 @endsection
 @extends('common.list')

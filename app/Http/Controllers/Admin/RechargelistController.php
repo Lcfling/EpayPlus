@@ -36,6 +36,7 @@ class RechargelistController extends Controller
         $data = $czrecord->where('status',0)->orderBy('creatime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
+            $data[$key]['czimg']='http://epp.zgzyph.com'.$value["czimg"];
         }
         return view('rechargelist.list',['list'=>$data,'input'=>$request->all()]);
     }

@@ -16,7 +16,9 @@ class AgentdrawdoneController extends Controller
         if(true==$request->has('agent_id')){
             $agendraw->where('agent_id','=',$request->input('agent_id'));
         }
-
+        if(true==$request->has('order_sn')){
+            $agendraw->where('order_sn','=',$request->input('order_sn'));
+        }
         if(true==$request->has('creatime')){
             $creatime=$request->input('creatime');
             $start=strtotime($creatime);

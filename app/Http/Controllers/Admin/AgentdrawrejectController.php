@@ -100,7 +100,6 @@ class AgentdrawrejectController extends Controller
             return ['msg'=>'操作失败！'];
         }
 
-
     }
 
 

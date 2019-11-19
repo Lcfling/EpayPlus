@@ -10,7 +10,7 @@
         <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['creattime'] or '' }}" name="creattime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
@@ -56,7 +56,7 @@
                 <td class="hidden-xs">@if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>@elseif($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-warm">支付</span>@elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">利润</span>@endif</td>
                 <td class="hidden-xs">@if($info['paycode']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>@elseif($info['paycode']==1)<span class="layui-btn layui-btn-small">微信</span>@elseif($info['paycode']==2)<span class="layui-btn layui-btn-small layui-btn-normal">支付宝</span>@endif</td>
                 <td class="hidden-xs">{{$info['remark']}}</td>
-                <td class="hidden-xs">{{$info['creattime']}}</td>
+                <td class="hidden-xs">{{$info['creatime']}}</td>
             </tr>
         @endforeach
         @if(!$list[0])

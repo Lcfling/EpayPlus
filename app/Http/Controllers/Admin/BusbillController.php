@@ -13,15 +13,15 @@ class BusbillController extends Controller
      */
     public function index(Request $request){
 
-        if(true==$request->has('creattime')){
-            $time = strtotime($request->input('creattime'));
+        if(true==$request->has('creatime')){
+            $time = strtotime($request->input('creatime'));
             $weeksuf = computeWeek($time,false);
         }else{
             $weeksuf = computeWeek(time(),false);
         }
         $busbill=new Busbill();
         $busbill->setTable('business_billflow_'.$weeksuf);
-        $sql=$busbill->orderBy('creattime','desc');
+        $sql=$busbill->orderBy('creatime','desc');
 
         if(true==$request->has('order_sn')){
             $sql->where('order_sn','=',$request->input('order_sn'));
@@ -31,19 +31,19 @@ class BusbillController extends Controller
         }
         if(true==$request->input('excel')&& true==$request->has('excel')){
             $head = array('订单号','商户ID','扣除后积分','实际支付金额','状态','类型','备注','创建时间');
-            $excel = $sql->select('order_sn','business_code','score','tradeMoney','status','paycode','remark','creattime')->get()->toArray();
+            $excel = $sql->select('order_sn','business_code','score','tradeMoney','status','paycode','remark','creatime')->get()->toArray();
             foreach ($excel as $key=>$value){
                 $excel[$key]['score']=$value['score']/100;
                 $excel[$key]['tradeMoney']=$value['tradeMoney']/100;
                 $excel[$key]['status']=$this->statusName($value['status']);
                 $excel[$key]['paycode']=$this->payName($value['paycode']);
-                $excel[$key]['creattime']=date("Y-m-d H:i:s",$value["creattime"]);
+                $excel[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
             }
             exportExcel($head,$excel,'商户流水'.date('YmdHis',time()),'',true);
         }else{
             $data = $busbill->paginate(10)->appends($request->all());
             foreach ($data as $key =>$value){
-                $data[$key]['creattime'] =date("Y-m-d H:i:s",$value["creattime"]);
+                $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
             }
         }
 

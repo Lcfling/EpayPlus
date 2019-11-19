@@ -31,7 +31,7 @@ class QrcodeController extends Controller
         $data = $erweima->orderBy('creatime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
-            $data[$key]['erweima']='http://'.$_SERVER['HTTP_HOST'].'/storage'.$value["erweima"];
+            $data[$key]['erweima']='http://epp.zgzyph.com'.$value["erweima"];
         }
         return view('qrcode.list',['list'=>$data,'input'=>$request->all()]);
     }

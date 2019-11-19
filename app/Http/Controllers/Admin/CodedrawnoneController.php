@@ -6,6 +6,7 @@ created by z
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Codedraw;
+use App\Models\Codedrawreject;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreRequest;
 use App\Http\Controllers\Controller;
@@ -20,6 +21,9 @@ class CodedrawnoneController extends Controller
         $codedraw=Codedraw::query();
         if(true==$request->has('user_id')){
             $codedraw->where('user_id','=',$request->input('user_id'));
+        }
+        if(true==$request->has('order_no')){
+            $codedraw->where('order_no','=',$request->input('order_no'));
         }
         if(true==$request->has('creatime')){
             $creatime=$request->input('creatime');
@@ -55,35 +59,51 @@ class CodedrawnoneController extends Controller
 
     }
     /**
+     * 驳回页面
+     */
+    public function bohui($id){
+        $info = $id?Codedraw::find($id):[];
+        $info['creatime']=date("Y-m-d H:i:s",$info['creatime']);
+        return view('codedrawnone.bohui',['id'=>$id,'info'=>$info]);
+    }
+    /**
      * 驳回
      */
-//    public function reject(StoreRequest $request){
-//        $id=$request->input('id');
-//        $key='code_lock_'.$id;
-//        $is=Redis::get($key);
-//        if(!empty($is)){
-//            return ['msg'=>'操作失败！'];
-//        }else{
-//            DB::beginTransaction();
-//            try{
-//                $res=Codedraw::reject($id);
-//                if($res){
-//                    //提现驳回向驳回表中插入数据-sql
-//                    DB::commit();
-//                    return ['msg'=>'驳回成功！','status'=>1];
-//                }else{
-//                    DB::rollBack();
-//                    return ['msg'=>'驳回失败！'];
-//                }
-//            }catch (Exception $e){
-//                DB::rollBack();
-//                return ['msg'=>'发生异常！事物进行回滚！'];
-//            }
-//
-//
-//        }
-//
-//    }
+    public function reject(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        $key='code_lock_'.$id;
+        $is=Redis::get($key);
+        if(!empty($is)){
+            return ['msg'=>'操作失败！'];
+        }else{
+            $info=Codedraw::find($id);
+            $insert=[
+                'order_sn'=>$info['order_sn'],
+                'user_id'=>$info['user_id'],
+                'name'=>$info['name'],
+                'wx_name'=>$info['wx_name'],
+                'mobile'=>$info['mobile'],
+                'deposit_name'=>$info['deposit_name'],
+                'deposit_card'=>$info['deposit_card'],
+                'money'=>$info['money'],
+                'remark'=>$data['remark'],
+                'creatime'=>$info['creatime'],
+            ];
+            $down=Codedraw::reject($id);
+            if(!$down){
+                return ['msg'=>'操作失败！'];
+            }
+            $ins=Codedrawreject::insert($insert);
+            if(!$ins){
+                return ['msg'=>'操作失败！'];
+            }else{
+                return ['msg'=>'驳回成功！','status'=>1];
+            }
+
+        }
+
+    }
 
     //redis加锁
     private function codelock($functions){

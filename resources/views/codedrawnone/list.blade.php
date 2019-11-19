@@ -7,6 +7,9 @@
         <input type="text" value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商ID" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
+        <input type="text" value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入提现单号" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
         <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}" autocomplete="off">
     </div>
     <div class="layui-inline">
@@ -32,7 +35,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">码商ID</th>
             <th class="hidden-xs">订单号</th>
             <th class="hidden-xs">提现额度</th>
@@ -51,7 +54,7 @@
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
-                <td class="hidden-xs">{{$info['order_no']}}</td>
+                <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['money']/100}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
                 <td class="hidden-xs">{{$info['wx_name']}}</td>
@@ -59,11 +62,11 @@
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
-                <td class="hidden-xs">未结算</td>
+                <td class="hidden-xs"><span class="layui-btn layui-btn-small layui-btn">未结算</span></td>
                 <td>
                     <div class="layui-inline">
                         <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['id']}}" data-desc="确认收款">确认收款</button>
-{{--                        <button class="layui-btn layui-btn-small layui-btn-warm edits-btn2"  data-id="{{$info['id']}}" data-desc="驳回操作">驳回</button>--}}
+                       <a class="layui-btn layui-btn-small layui-btn-warm"  onclick="bohui({{$info['id']}})">驳回</a>
                     </div>
                 </td>
             </tr>
@@ -116,35 +119,22 @@
                     }
                 );
             });
-            //驳回
-            {{--$('.edits-btn2').click(function () {--}}
-            {{--    var that = $(this);--}}
-            {{--    var id=$(this).attr('data-id');--}}
-            {{--    layer.confirm('确定要驳回吗？',{title:'提示'},function (index) {--}}
-            {{--            $.ajax({--}}
-            {{--                headers: {--}}
-            {{--                    'X-CSRF-TOKEN': $('#token').val()--}}
-            {{--                },--}}
-            {{--                url:"{{url('/admin/codedrawnone/reject')}}",--}}
-            {{--                data:{--}}
-            {{--                    "id":id,--}}
-            {{--                },--}}
-            {{--                type:"post",--}}
-            {{--                dataType:"json",--}}
-            {{--                success:function (res) {--}}
-            {{--                    if(res.status==1){--}}
-            {{--                        layer.msg(res.msg,{icon:6});--}}
-            {{--                        location.reload();--}}
-            {{--                    }else{--}}
-            {{--                        layer.msg(res.msg,{shift: 6,icon:5});--}}
-            {{--                        location.reload();--}}
-            {{--                    }--}}
-            {{--                }--}}
-            {{--            });--}}
-            {{--        }--}}
-            {{--    );--}}
-            {{--});--}}
         });
+            //驳回
+            function bohui(id) {
+            var id=id;
+            layer.open({
+                type: 2,
+                title: '提现驳回',
+                closeBtn: 1,
+                area: ['500px','700px'],
+                shadeClose: false, //点击遮罩关闭
+                content: ['/admin/codedrawnone/bohui/'+id],
+                end:function(){
+
+                }
+            });
+        }
     </script>
 @endsection
 @extends('common.list')
