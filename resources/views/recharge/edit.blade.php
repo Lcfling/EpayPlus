@@ -20,6 +20,24 @@
             <input type="text" value="{{$info['sk_bankname'] or ''}}" id="sk_bankname" name="sk_bankname" required placeholder="请输入收款银行" autocomplete="off" class="layui-input">
         </div>
     </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">通道：</label>
+        <div class="layui-input-block">
+            <input type="text" value="{{$info['payway'] or ''}}" name="payway" required placeholder="请输入通道名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择客服：</label>
+        <div class="layui-input-block">
+            <select name="kefu_id" required>
+                <option value="">请选择客服</option>
+                @foreach($kefu as $call)
+                    <option value="{{$call['id']}}" @if(isset($info['kefu_id'])and$info['kefu_id']==$call['id']) selected @endif>{{$call['content']}}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
 @endsection
 @section('id',$id)
 @section('js')
@@ -27,9 +45,10 @@
         layui.use(['form','jquery','laypage', 'layer'], function() {
             var form = layui.form(),
                 $ = layui.jquery;
-
-            form.render();
             var layer = layui.layer;
+            form.render();
+            var id = $("input[name='id']").val();
+            var index = parent.layer.getFrameIndex(window.name);
             var banklist={!! $banklist!!};//不转义字符
             //console.log(banklist);
             $("#sk_banknum").blur(function(){
@@ -54,27 +73,52 @@
             form.verify({
                 sk_banknum:[/^([1-9]{1})(\d{14}|\d{18})$/,'请填写正确的银行卡号'],
             });
-            form.on('submit(formDemo)', function(data) {
-                $.ajax({
-                    url:"{{url('/admin/recharge')}}",
-                    data:$('form').serialize(),
-                    type:'post',
-                    dataType:'json',
-                    success:function(res){
-                        if(res.status == 1){
-                            layer.msg(res.msg,{icon:6});
-                            var index = parent.layer.getFrameIndex(window.name);
-                            setTimeout('parent.layer.close('+index+')',2000);
-                        }else{
-                            layer.msg(res.msg,{shift: 6,icon:5});
+            if(id==0){
+                form.on('submit(formDemo)', function(data) {
+                    $.ajax({
+                        url:"{{url('/admin/recharge')}}",
+                        data:$('form').serialize(),
+                        type:'post',
+                        dataType:'json',
+                        success:function(res){
+                            if(res.status == 1){
+                                layer.msg(res.msg,{icon:6});
+                                var index = parent.layer.getFrameIndex(window.name);
+                                setTimeout('parent.layer.close('+index+')',2000);
+                            }else{
+                                layer.msg(res.msg,{shift: 6,icon:5});
+                            }
+                        },
+                        error : function(XMLHttpRequest, textStatus, errorThrown) {
+                            layer.msg('网络失败', {time: 1000});
                         }
-                    },
-                    error : function(XMLHttpRequest, textStatus, errorThrown) {
-                        layer.msg('网络失败', {time: 1000});
-                    }
+                    });
+                    return false;
                 });
-                return false;
-            });
+            }else{
+                form.on('submit(formDemo)', function(data) {
+                    $.ajax({
+                        url:"{{url('/admin/rechargeUpdate')}}",
+                        data:$('form').serialize(),
+                        type:'post',
+                        dataType:'json',
+                        success:function(res){
+                            if(res.status == 1){
+                                layer.msg(res.msg,{icon:6});
+                                var index = parent.layer.getFrameIndex(window.name);
+                                setTimeout('parent.layer.close('+index+')',2000);
+                            }else{
+                                layer.msg(res.msg,{shift: 6,icon:5});
+                            }
+                        },
+                        error : function(XMLHttpRequest, textStatus, errorThrown) {
+                            layer.msg('网络失败', {time: 1000});
+                        }
+                    });
+                    return false;
+                });
+            }
+
         });
     </script>
 @endsection

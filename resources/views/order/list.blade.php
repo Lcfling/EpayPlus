@@ -81,12 +81,28 @@
                 <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
                 <td class="hidden-xs">{{$info['erweima_id']}}</td>
-                <td class="hidden-xs">@if($info['sk_status']==0)<span class="layui-btn layui-btn-small layui-btn-danger">未收款</span>@elseif($info['sk_status']==1)<span class="layui-btn layui-btn-small">手动收款</span>@elseif($info['sk_status']==2)<span span class="layui-btn layui-btn-small layui-btn-warm">自动收款</span>@endif</td>
+                <td class="hidden-xs">
+                    @if($info['sk_status']==0)<span class="layui-btn layui-btn-small layui-btn-danger">未收款</span>
+                    @elseif($info['sk_status']==1)<span class="layui-btn layui-btn-small">手动收款</span>
+                    @elseif($info['sk_status']==2)<span span class="layui-btn layui-btn-small layui-btn-warm">自动收款</span>
+                    @endif</td>
                 <td class="hidden-xs">{{$info['sk_money']/100}}</td>
                 <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
-                <td class="hidden-xs">@if($info['payType']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>@elseif($info['payType']==1)<span class="layui-btn layui-btn-small">微信</span>@elseif($info['payType']==2)<span class="layui-btn layui-btn-small layui-btn-normal">支付宝</span>@endif</td>
-                <td class="hidden-xs">@if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-danger">未支付</span>@elseif($info['status']==1)<span span class="layui-btn layui-btn-small layui-btn-warm">支付成功</span>@elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-primary">过期</span>@elseif($info['status']==3)<span class="layui-btn layui-btn-small layui-btn">取消</span>@endif</td>
-                <td class="hidden-xs">@if($info['callback_status']==0)<span class="layui-btn layui-btn-small layui-btn-primary">未处理</span>@elseif($info['callback_status']==1)<span span class="layui-btn layui-btn-small layui-btn-warm">推送成功</span>@elseif($info['callback_status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">推送失败</span>@endif</td>
+                <td class="hidden-xs">
+                    @if($info['payType']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>
+                    @elseif($info['payType']==1)<span class="layui-btn layui-btn-small">微信</span>
+                    @elseif($info['payType']==2)<span class="layui-btn layui-btn-small layui-btn-normal">支付宝</span>
+                    @endif</td>
+                <td class="hidden-xs">
+                    @if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-warm">未支付</span>
+                    @elseif($info['status']==1)<span span class="layui-btn layui-btn-small layui-btn">支付成功</span>
+                    @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-normal">过期</span>
+                    @elseif($info['status']==3)<span class="layui-btn layui-btn-small layui-btn-danger">取消</span>
+                    @endif</td>
+                <td class="hidden-xs">
+                    @if($info['callback_status']==0)<span class="layui-btn layui-btn-small layui-btn-primary">未处理</span>
+                    @elseif($info['callback_status']==1)<span span class="layui-btn layui-btn-small layui-btn">推送成功</span>
+                    @elseif($info['callback_status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">推送失败</span>@endif</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">@if($info['status']==1){{$info['paytime']}}@endif</td>
                 <td style="text-align: center">

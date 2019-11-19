@@ -141,7 +141,9 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/codedrawreject/reject',  'CodedrawrejectController@reject');//确认驳回
 
     Route::resource('/recharge',        'RechargeController');//充值信息
-    Route::post('/recharge/enable',     'RechargeController@enable');
+    Route::post('/rechargeUpdate',      'RechargeController@update');//码商编辑
+    Route::post('/status_switch', 'RechargeController@status_switch');
+
     Route::resource('/rechargelist',    'RechargelistController');//充值列表处理
     Route::post('/rechargelist/enable', 'RechargelistController@enable');
     Route::resource('/rechargedone',    'RechargedoneController');//充值通过列表

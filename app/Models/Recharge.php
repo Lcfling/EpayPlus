@@ -14,9 +14,15 @@ class Recharge extends Model
     public $timestamps = false;
 
     /**
-     * 添加效验银行卡唯一
+     * 添加校验银行卡唯一
      */
     public static function add_bank($banknum){
         return Recharge::where('sk_banknum',$banknum)->exists();
+    }
+    /**
+     * 编辑校验银行卡唯一
+     */
+    public static function edit_bank($id,$banknum){
+        return Recharge::where('sk_banknum',$banknum)->whereNotIn('id',[$id])->exists();
     }
 }

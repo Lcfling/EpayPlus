@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
+use App\Models\Callcenter;
 use App\Models\Recharge;
 use Illuminate\Http\Request;
 
@@ -37,10 +38,11 @@ class RechargeController extends Controller
         $info = $id?Recharge::find($id):[];
         $bank = config('bank');
         $banklist=json_encode($bank);
-        return view('recharge.edit',['id'=>$id,'info'=>$info,'banklist'=>$banklist]);
+        $kefulist=Callcenter::get()->toArray();
+        return view('recharge.edit',['id'=>$id,'info'=>$info,'banklist'=>$banklist,'kefu'=>$kefulist]);
     }
     /**
-     * 保存数据
+     * 添加数据
      */
     public function store(StoreRequest $request){
         $data = $request->all();
@@ -59,7 +61,27 @@ class RechargeController extends Controller
             }
         }
     }
+    /**
+     * 编辑数据
+     */
+    public function update(StoreRequest $request){
+        $data = $request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        unset($data['id']);
+        $bankcard=Recharge::edit_bank($id,$data['sk_banknum']);
+        if($bankcard){
+            return ['msg'=>'银行卡已添加！'];
+        }else{
+            $res=Recharge::where('id',$id)->update($data);
+            if($res!==false){
+                return ['msg'=>'修改成功！','status'=>1];
+            }else{
+                return ['msg'=>'修改失败！'];
+            }
+        }
 
+    }
     /**
      * 删除
      */
@@ -79,13 +101,16 @@ class RechargeController extends Controller
     /**
      * 启用
      */
-    public function enable(StoreRequest $request){
-        Recharge::query()->update(array('status'=>0));
-        $num = Recharge::where('id','=',$request->input('id'))->update(['status'=>$request->input('status')]);
-        if($num){
-            return ['msg'=>'启用成功！','status'=>1];
+    public function status_switch(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        $aswitch=$data['aswitch'];
+        $res=Recharge::where('id',$id)->update(array('status'=>$aswitch));
+        if($res){
+            return ['msg'=>'更改成功！','status'=>1];
         }else{
-            return ['msg'=>'启动失败！','status'=>2];
+            return ['msg'=>'更改失败！'];
         }
     }
 }
