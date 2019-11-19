@@ -52,7 +52,7 @@ class GenericcodeController extends CommonController {
                         }
                         $data =array(
                             'user_id'=>$user_id,
-                            'erweima'=>$file_relative_path,
+                            'erweima'=>$FileName,
                             'status'=>0,
                             'type'=>$type,
                             'name'=>$username,
@@ -171,7 +171,7 @@ class GenericcodeController extends CommonController {
             $code_status=1;
             $msg="关闭二维码接单";
             //移除二维码队列
-            Redis::lRem('erweimas'.$erweimainfo['type'].$user_id,$erweima_id,0);
+            Redis::lRem('erweimas'.$erweimainfo['type'].$user_id,0,$erweima_id);
         } else {
             $code_status=0;
             $msg="开启二维码接单";

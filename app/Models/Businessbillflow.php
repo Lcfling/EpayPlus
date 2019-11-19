@@ -17,7 +17,7 @@ class Businessbillflow extends Model {
      * @return Businessbillflow
      */
     public static function getbusbftable($order_sn){
-        $nyr = substr($order_sn,0,6);
+        $nyr = substr($order_sn,0,8);
         $weeksuf = computeWeek($nyr);
         $Businessbillflow =new Businessbillflow;
         $Businessbillflow->setTable('business_billflow_'.$weeksuf);

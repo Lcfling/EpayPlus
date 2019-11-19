@@ -39,7 +39,7 @@ class Accountlog extends Model {
      * @return Accountlog
      */
     public static function getcounttable($order_sn){
-        $tablesuf = $order_sn.substr(0,6);
+        $tablesuf = substr($order_sn,0,8);
         $Accountlog =new Accountlog;
         $Accountlog->setTable('account_'.$tablesuf);
         return $Accountlog;

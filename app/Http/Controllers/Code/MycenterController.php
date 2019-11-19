@@ -232,7 +232,7 @@ class MycenterController extends CommonController {
             DB::commit();
             $data =array(
                 'user_id'=>$user_id,
-                'order_no'=>getorderId_three(),
+                'order_sn'=>getorderId_three(),
                 'mobile'=>$userinfo['mobile'],
                 'money'=>$money,
                 'wx_name'=>$userinfo['wx_name'],
@@ -449,7 +449,7 @@ class MycenterController extends CommonController {
             if($list =Erweima::where(array('id'=>$id,'user_id'=>$user_id,'status'=>0))->first()) {
                 $savestatus = Erweima::where(array('id'=>$id,'user_id'=>$user_id,'status'=>0))->update(array('status'=>1,'savetime'=>time()));
                 if($savestatus) {
-                    Redis::lRem("erweimas".$list['type'].$user_id,$id,0);
+                    Redis::lRem("erweimas".$list['type'].$user_id,0,$id);
                     ajaxReturn('','删除成功!',1);
                 } else {
                     ajaxReturn('','删除失败!',0);

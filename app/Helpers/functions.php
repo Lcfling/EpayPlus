@@ -26,7 +26,7 @@ if (!function_exists('is_config_id')) {
  * @param $date
  * @return float
  */
-function computeWeek($date,$status = 'true'){
+function computeWeek($date,$status = true){
     date_default_timezone_set('PRC');
     if($status){
         $diff = strtotime($date);

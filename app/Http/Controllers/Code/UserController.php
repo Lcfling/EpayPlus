@@ -35,7 +35,7 @@ class UserController extends CommonController {
             }
             if ($Userinfo["take_status"]==1) {
                 //用户移除接单队列
-                Redis::lRem("jiedans",$user_id,0);
+                Redis::lRem("jiedans",0,$user_id);
                 Users::where(array("user_id"=>$user_id))->update(['take_status' => 0]);
                 ajaxReturn(null,"关闭接单!");
             }
@@ -91,12 +91,11 @@ class UserController extends CommonController {
             }
             $erweimajson=Redis::get('erweimainfo_'.$erweima_id);
             $erweimainfo = json_decode($erweimajson,true);
-            print_r($erweimainfo);
             if(!$erweimainfo) {
                 ajaxReturn('error40004','无此二维码信息!'.$erweima_id,0);
             }
             if($erweimainfo['status'] ==1) {
-                Redis::lRem("erweimas".$order_info['payType'].$user_id,$erweima_id,0);
+                Redis::lRem("erweimas".$order_info['payType'].$user_id,0,$erweima_id);
                 ajaxReturn('error40004','支付码已被删除!'.$erweima_id,0);
             }
             if($erweimainfo['code_status'] == 1) {

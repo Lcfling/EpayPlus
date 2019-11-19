@@ -14,9 +14,11 @@ use App\Models\Erweima;
 use App\Models\Order;
 use App\Models\Orderrecord;
 use App\Models\Rebate;
+use App\Models\Userscount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 class OrderjdController extends CommonController {
 
     // 在线充值
@@ -127,11 +129,27 @@ class OrderjdController extends CommonController {
 
     }
     /**
-     * 官方充值信息
+     * 充值信息列表
      */
-    public function chongzhiinfo() {
-        $czinfo=Czinfo::where(array("status"=>1))->first();
+    public function czlist() {
+        $czinfo=Czinfo::where(array("status"=>1))->get();
         ajaxReturn($czinfo,"充值信息");
+    }
+    /**
+     * 获取详细充值信息
+     */
+    public function chongzhiinfo(Request $request) {
+        if($request->isMethod('post')) {
+            if($request->has('id')){
+                $id =$request->input('id');
+            }else{
+                ajaxReturn('','请求数据异常!',0);
+            }
+            $czinfo=Czinfo::where(array("id"=>$id))->first();
+            ajaxReturn($czinfo,"充值信息");
+        } else {
+            ajaxReturn('','请求数据异常!',0);
+        }
     }
     /**
      * 进行中的订单
@@ -199,27 +217,27 @@ class OrderjdController extends CommonController {
                 ajaxReturn(null,'无此订单信息!',1);
             }
             $counttable = Accountlog::getcounttable($order_sn);
-            $freezenum=  $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',3]])->value('score') /100;
+            $freezenum=  - $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',3]])->value('score') /100;
             if($orderinfo['dj_status']==1){
                 $unfreezenum =  $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',4]])->value('score') /100;
                 $deductnum =  '未扣除';
             }elseif($orderinfo['dj_status']==2){
                 $unfreezenum =  $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',4]])->value('score') /100;
-                $deductnum =  $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',2]])->value('score') /100;
+                $deductnum =  - $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',2]])->value('score') /100;
             }else{
                 $unfreezenum =  '未解冻';
                 $deductnum =  '未扣除';
             }
-            if(Rebate::where([['user_id',$user_id],['order_sn',$order_sn],['user_is_fy',1]])->first()){
+            if(Rebate::where([['user_id',$user_id],['order_sn',$order_sn],['user_is_fy',2]])->first()){
                 $brokerage = $counttable->where([['user_id',$user_id],['order_sn',$order_sn],['status',5]])->value('score') /100;
             }else{
                 $brokerage ='未返佣';
             }
             $erweima =Erweima::where([['user_id',$user_id],['id',$orderinfo['erweima_id']]])->value('erweima');
             $data = array(
-                'freezenum'=>-$freezenum,//冻结金额
+                'freezenum'=>$freezenum,//冻结金额
                 'unfreezenum'=>$unfreezenum,//解冻金额
-                'deductnum'=>-$deductnum,//扣除金额
+                'deductnum'=>$deductnum,//扣除金额
                 'brokerage'=>$brokerage,//佣金
                 'erweima'=>$erweima//二维码
             );
@@ -276,6 +294,7 @@ class OrderjdController extends CommonController {
          * @param $order_sn_info 订单信息
          * @param $order_sn 订单号
          */
+        $tradeMoney =$order_sn_info['tradeMoney'];
         $data['score']=$order_sn_info['tradeMoney'];
         $data['user_id'] = $order_sn_info['user_id'];
         $data['status']=4;
@@ -295,6 +314,7 @@ class OrderjdController extends CommonController {
         $info['remark']="手动资金扣除";
         $info['creatime']=time();
         $account->insert($info);
+        Userscount::where('user_id',$order_sn_info['user_id'])->decrement('freeze_money',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
         $order = Order::getordersntable($order_sn);
         // 修改订单状态
         $order->where(array("order_sn"=>$order_sn))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
@@ -306,7 +326,8 @@ class OrderjdController extends CommonController {
          * @param $order_sn_info 订单信息
          * @param $order_sn 订单号
          */
-        $info['score']=-$order_sn_info['tradeMoney'];
+        $tradeMoney =$order_sn_info['tradeMoney'];
+        $info['score']=-$tradeMoney;
         $info['user_id'] = $order_sn_info['user_id'];
         $info['status']=2;
         $info['erweima_id']=$order_sn_info['erweima_id'];
@@ -316,6 +337,7 @@ class OrderjdController extends CommonController {
         $info['creatime']=time();
         $account = Accountlog::getcounttable($order_sn);
         $account->insert($info);
+        Userscount::where('user_id',$order_sn_info['user_id'])->decrement('balance',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
         $order = Order::getordersntable($order_sn);
         // 修改订单状态
         $order->where(array("order_sn"=>$order_sn))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));

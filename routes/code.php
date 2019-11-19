@@ -87,6 +87,7 @@ Route::group(['namespace'  => "Code"], function () {
     Route::post('/Orderjd/ordering',                'OrderjdController@ordering');//进行中的抢单
     Route::post('/orderjd/chongzhi',                'OrderjdController@chongzhi');//上传充值凭证
     Route::post('/orderjd/chongzhirecord',          'OrderjdController@chongzhirecord');//提交记录
+    Route::post('/orderjd/czlist',                  'OrderjdController@czlist');//充值信息列表
     Route::post('/orderjd/chongzhiinfo',            'OrderjdController@chongzhiinfo');//充值信息
 
     /**

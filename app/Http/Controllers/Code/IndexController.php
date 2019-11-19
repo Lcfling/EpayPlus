@@ -96,8 +96,19 @@ class IndexController extends Controller
 //            print $e->getMessage();
 //            exit();
 //        }
-        $res = Order::getordersntable(getrequestId());
-        print_r($res);
+//        $res = Order::getordersntable(getrequestId());
+//        print_r($res);
+//        Redis::rPush('erweimas00000',12);
+//        Redis::rPush('erweimas00000',10);
+//        Redis::rPush('erweimas00000',9);
+//        Redis::rPush('erweimas00000',8);
+//        Redis::rPush('erweimas00000',11);
+        $list = Redis::lrange('erweimas00000',0,-1);
+        print_r($list);
+        Redis::lRem('erweimas00000',0,11);
+        Redis::rPush('erweimas00000',11);
+        $list = Redis::lrange('erweimas00000',0,-1);
+        print_r($list);
     }
 
     /**
@@ -119,17 +130,6 @@ class IndexController extends Controller
             $data['force']='1';
             ajaxReturn($data,'版本更新',1);
         }
-    }
-
-    public function getcode() {
-        //更改二维码为未使用状态
-        //        D("Orderym")->chanum_push(33,'');
-        //        D("Orderym")->chanum_push(33,0);
-        //        D("Orderym")->chanum_push(44,1);
-        $erweimainfo = D("Users")->getGeneric_code(100,1,1);
-        //二维码信息
-        //        $chanum =Cac()->lRange('lkcode43',0,-1);
-        print_r($erweimainfo);
     }
 
     /**

@@ -97,14 +97,10 @@ class OrderymController extends Controller {
         );
         $order_id = $Order->insertGetId($data);//检测一下是否会出现并发
         if($order_id) {
-            // 发送订单数据到码商客户端
-            $data['id']=$order_id;
             //订单入队
-            Redis::set('order_sn_'.$order_id,$order_sn);
             Redis::rPush('order_id_'.$order_sn,$order_id);
             //保存商户订单记录
             $recorddata =array(
-                'id'=>$order_id,
                 'order_sn'=>$order_sn,
                 'business_code'=>$business_code,
                 'payType'=>$datas["payType"],
@@ -113,8 +109,7 @@ class OrderymController extends Controller {
                 'creatime'=>$time,
             );
             Orderrecord::insert($recorddata);
-            Redis::set('orderrecord_'.$order_sn,json_encode($recorddata));
-            $this->getcomonerweimaurl($order_id);
+            $this->getcomonerweimaurl($order_sn);
         } else {
             ajaxReturn('error40005','订单生成失败!',0);
         }
@@ -127,16 +122,16 @@ class OrderymController extends Controller {
      */
     public function orderinfo(Request $request) {
         if($request->isMethod('post')){
-            $order_id=(int)$_POST['order_id'];
+            $order_sn=$request->input('order_id');
             $home=htmlspecialchars($_POST['home']);
-            $order =  $this->getordertable($order_id);
-            if (empty($order_id) ) {
+            $order =  $this->getordertable($order_sn);
+            if (empty($order_sn) ) {
                 ajaxReturn(null,'请求信息错误!',0);
             }
             if (empty($home) ) {
                 ajaxReturn(null,'请求信息错误!',0);
             }
-            if($order_info= $order->where(array("id"=>$order_id,'status'=>0))->first()){
+            if($order_info= $order->where(array("order_sn"=>$order_sn,'status'=>0))->first()){
                 if($order_info['is_send']==1){
                     if ( !$order_info['user_id']>0 || empty($order_info['user_id'])) {
                         ajaxReturn(null,'暂无人接单!',2);
@@ -144,7 +139,6 @@ class OrderymController extends Controller {
                     $erweima_info=Erweima::where(array("id"=>$order_info['erweima_id']))->first();
                     $data=array(
                         "erweimaurl"=>"http://epp.zgzyph.com".$erweima_info['erweima'],
-                        "order_id"=>$order_id,
                         "user_id"=>$erweima_info['user_id'],
                         "gptime"=>$order_info['creatime']+600,
                         "type"=>$order_info['payType'],
@@ -154,14 +148,15 @@ class OrderymController extends Controller {
                     ajaxReturn($data,"订单详情!",1);
                 }else{
                     $order_info['home']=$home;
+                    Redis::set('orderrecord_'.$order_sn,json_encode($order_info));
                     $this->sendnotify($order_info,1);
-                    $order->where(array("id"=>$order_id,'status'=>0))->update(array('is_send'=>1,'home'=>$home));
+                    $order->where(array("order_sn"=>$order_sn,'status'=>0))->update(array('is_send'=>1,'home'=>$home));
                 }
-            }elseif($order->where(array('id'=>$order_id,'status'=>2))->first()){
+            }elseif($order->where(array("order_sn"=>$order_sn,'status'=>2))->first()){
                 ajaxReturn('','订单已过期!',0);
-            }elseif($order->where(array('id'=>$order_id,'status'=>3))->first()){
+            }elseif($order->where(array("order_sn"=>$order_sn,'status'=>3))->first()){
                 ajaxReturn('','订单已被取消!',0);
-            }elseif($order->where(array('id'=>$order_id,'status'=>1))->first()){
+            }elseif($order->where(array("order_sn"=>$order_sn,'status'=>1))->first()){
                 ajaxReturn('','已支付成功!',0);
             }else{
                 ajaxReturn(null,'订单不存在!',0);
@@ -175,8 +170,8 @@ class OrderymController extends Controller {
     /**获取通用码支付页面
      * @param $erweimaurl
      */
-    private function getcomonerweimaurl($order_id) {
-        $qrurl = 'http://'.$_SERVER['HTTP_HOST'].'/wxzfqr/zfcmfirst.html?order_id='.$order_id;
+    private function getcomonerweimaurl($order_sn) {
+        $qrurl = 'http://'.$_SERVER['HTTP_HOST'].'/wxzfqr/zfcmfirst.html?order_id='.$order_sn;
         ajaxReturn('OK',$qrurl,1001);
         //输出支付url
     }
@@ -260,8 +255,7 @@ class OrderymController extends Controller {
      * @param $order_id
      * @return Order
      */
-    private function getordertable($order_id){
-        $order_sn = Redis::get('order_sn_'.$order_id);
+    private function getordertable($order_sn){
         return Order::getordersntable($order_sn);
     }
 }

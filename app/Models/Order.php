@@ -40,7 +40,7 @@ class Order extends Model {
      * @return Order
      */
     public static function getordersntable($order_sn){
-        $nyr = substr($order_sn,0,6);
+        $nyr = substr($order_sn,0,8);
         $weeksuf = computeWeek($nyr);
         $Order =new Order;
         $order =$Order->setTable('order_'.$weeksuf);
