@@ -33,7 +33,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">代理商ID</th>
             <th class="hidden-xs">提现单号</th>
             <th class="hidden-xs">提现额度</th>
