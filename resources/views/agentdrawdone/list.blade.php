@@ -4,13 +4,16 @@
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
-        <input type="text" value="{{ $input['agent_id'] or '' }}" name="agent_id" placeholder="请输入代理商编号号" autocomplete="off" class="layui-input">
+        <input type="text" value="{{ $input['agent_id'] or '' }}" name="agent_id" placeholder="请输入代理商ID" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}">
+        <input type="text" value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入提现单号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="endtime" placeholder="审批日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['endtime'] or '' }}">
+        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}" autocomplete="off">
+    </div>
+    <div class="layui-inline">
+        <input class="layui-input" name="endtime" placeholder="审批日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['endtime'] or '' }}" autocomplete="off">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
@@ -26,14 +29,16 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="100">
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
-            <th class="hidden-xs">代理商编号</th>
+            <th class="hidden-xs">序号</th>
+            <th class="hidden-xs">代理商ID</th>
+            <th class="hidden-xs">提现单号</th>
             <th class="hidden-xs">提现额度</th>
             <th class="hidden-xs">开户人</th>
             <th class="hidden-xs">开户行</th>
@@ -49,13 +54,14 @@
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['agent_id']}}</td>
+                <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['money']/100}}</td>
                 <td class="hidden-xs">{{$info['name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">{{$info['endtime']}}</td>
-                <td class="hidden-xs">已打款</td>
+                <td class="hidden-xs"><span class="layui-btn layui-btn-small layui-btn-warm">已打款</span></td>
             </tr>
         @endforeach
         @if(!$list[0])

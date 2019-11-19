@@ -33,6 +33,7 @@
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="300">
         </colgroup>
         <thead>
@@ -47,6 +48,7 @@
             <th class="hidden-xs">申请时间</th>
             <th class="hidden-xs">审批时间</th>
             <th class="hidden-xs">状态</th>
+            <th class="hidden-xs">备注</th>
             <th class="hidden-xs">操作</th>
         </tr>
         </thead>
@@ -68,6 +70,7 @@
                     @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">确认驳回</span>
                     @endif
                 </td>
+                <td class="hidden-xs">{{$info['remark'] or '无备注'}}</td>
                 <td>
                     <div class="layui-inline">
                         <a class="layui-btn layui-btn-small layui-btn-normal"  onclick="edit({{$info['id']}})">编辑</a>

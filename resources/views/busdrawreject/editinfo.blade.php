@@ -47,6 +47,12 @@
             <input type="text"  value="{{$info['creatime']}}" class="layui-input" disabled>
         </div>
     </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="width: 100px">驳回原因：</label>
+        <div class="layui-input-inline">
+            <input type="text"  value="{{$info['remark']}}" class="layui-input" disabled>
+        </div>
+    </div>
 @endsection
 @section('id',$id)
 @section('js')

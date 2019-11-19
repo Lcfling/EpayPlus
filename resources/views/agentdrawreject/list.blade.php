@@ -10,10 +10,10 @@
         <input type="text" value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入提现单号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}">
+        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['creatime'] or '' }}" autocomplete="off">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="endtime" placeholder="审批日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['endtime'] or '' }}">
+        <input class="layui-input" name="endtime" placeholder="审批日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['endtime'] or '' }}" autocomplete="off">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
@@ -33,11 +33,12 @@
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="300">
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">代理商编号</th>
             <th class="hidden-xs">提现单号</th>
             <th class="hidden-xs">提现额度</th>
@@ -47,6 +48,7 @@
             <th class="hidden-xs">申请时间</th>
             <th class="hidden-xs">审批时间</th>
             <th class="hidden-xs">状态</th>
+            <th class="hidden-xs">备注</th>
             <th class="hidden-xs">操作</th>
         </tr>
         </thead>
@@ -68,6 +70,7 @@
                     @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">确认驳回</span>
                     @endif
                 </td>
+                <td class="hidden-xs">{{$info['remark'] or '无备注'}}</td>
                 <td>
                     <div class="layui-inline">
                         <a class="layui-btn layui-btn-small layui-btn-normal"  onclick="edit({{$info['id']}})">编辑</a>
