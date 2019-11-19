@@ -76,7 +76,7 @@ class BusinessController extends Controller
             $data['remember_token']='';
             $data['paypassword']='';
             $unicode=$this->unicode();
-            $accessKey=bcrypt(md5(md5($unicode)));
+            $accessKey=md5(md5($unicode));
             $data['accessKey']=$accessKey;
             $data['ggkey']=$secretKey;
             $data['fee']=$data['fee']/100;
@@ -142,8 +142,23 @@ class BusinessController extends Controller
         $info['fee']=$info['fee']*100;
         $fee=DB::table('agent_fee')->where('business_code','=',$bussiness_code)->first();
         $fee=get_object_vars($fee);
-        $fee['agent1_fee']=$fee['agent1_fee']*100;
-        $fee['agent2_fee']=$fee['agent2_fee']*100;
+        if($fee['agent1_id']==0){
+            $fee['agent1_id']='';
+        }
+        if($fee['agent2_id']==0){
+            $fee['agent2_id']='';
+        }
+        if($fee['agent1_fee']==0){
+            $fee['agent1_fee']='';
+        }else{
+            $fee['agent1_fee']=$fee['agent1_fee']*100;
+        }
+        if($fee['agent2_fee']==0){
+            $fee['agent2_fee']='';
+        }else{
+            $fee['agent2_fee']=$fee['agent2_fee']*100;
+        }
+
         return view('business.editfee',['id'=>$bussiness_code,'info'=>$info,'fee'=>$fee]);
     }
     /**
@@ -157,9 +172,9 @@ class BusinessController extends Controller
         $fee=$data['fee']/100;
         $busfee=Business::where('business_code','=',$id)->update(array('fee'=>$fee));
         $agent1_id=$data['agent1_id'];
-        $agent1_fee=$data['agent1_fee']/100;
+        $agent1_fee=$data['agent1_fee'];
         $agent2_id=$data['agent2_id'];
-        $agent2_fee=$data['agent2_fee']/100;
+        $agent2_fee=$data['agent2_fee'];
         if($agent1_id!=null&&$agent2_id!=null){
             if($agent1_id==$agent2_id){
                 return ['msg'=>'一、二级代理商不可相同！'];
@@ -171,13 +186,13 @@ class BusinessController extends Controller
                 }else if($res2==false){
                     return ['msg'=>'二级代理商不存在！'];
                 }else{
-                    if(!preg_match("/^[0-9]+(.?[0-9]{1,2})?$/", $agent1_fee)){
+                    if(!preg_match("/^[0-9]+(.?[0-9]{1,4})?$/", $agent1_fee)){
                         return ['msg'=>'请输入正确一级费率！'];
-                    }else if(!preg_match("/^[0-9]+(.?[0-9]{1,2})?$/", $agent2_fee)){
+                    }else if(!preg_match("/^[0-9]+(.?[0-9]{1,4})?$/", $agent2_fee)){
                         return ['msg'=>'请输入正确二级费率！'];
                     }else{
-                        $agent1_fee=floatval($agent1_fee);
-                        $agent2_fee=floatval($agent2_fee);
+                        $agent1_fee=$agent1_fee/100;
+                        $agent2_fee=$agent2_fee/100;
                         if($agent1_fee>=$fee){
                             return ['msg'=>'一级费率不可大于商户费率！'];
                         }else if($agent2_fee>=$agent1_fee){
@@ -189,8 +204,10 @@ class BusinessController extends Controller
                                 'agent2_id'=>intval($agent2_id),
                                 'agent2_fee'=>$agent2_fee,
                             ];
+
                             $up1=DB::table('agent_fee')->where('business_code','=',$id)->update($fee);
-                            if($up1!==false&&$busfee!==false){
+
+                            if($up1!==false){
                                 return ['msg'=>'修改成功！','status'=>1];
                             }else{
                                 return ['msg'=>'修改失败！'];
@@ -205,7 +222,7 @@ class BusinessController extends Controller
             $res2=Business::is_agent($agent1_id);
             if($res2==true){
                 if(preg_match("/^[0-9]+(.?[0-9]{1,2})?$/", $agent1_fee)){
-                    $agent1_fee=floatval($agent1_fee);
+                    $agent1_fee=$agent1_fee/100;
                     if($agent1_fee>=$fee){
                         return ['msg'=>'一级费率不可大于商户费率！'];
                     }else{
@@ -284,7 +301,21 @@ class BusinessController extends Controller
             return ['msg'=>'修改失败！'];
         }
     }
-
+    /**
+     * 开关
+     */
+    public function bus_switch(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        $aswitch=$data['aswitch'];
+        $res=Business::where('business_code',$id)->update(array('status'=>$aswitch));
+        if($res){
+            return ['msg'=>'更改成功！','status'=>1];
+        }else{
+            return ['msg'=>'更改失败！'];
+        }
+    }
     //生成6位随机码
     private function unicode(){
         $code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';

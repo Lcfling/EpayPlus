@@ -59,8 +59,14 @@
                 <td class="hidden-xs">{{$info['nickname']}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
                 <td class="hidden-xs">{{$info['fee']*100}}%</td>
-                <td class="hidden-xs">@if($info['paycode']==0)默认@elseif(($info['paycode']==1))微信@elseif(($info['paycode']==2))支付宝@endif</td>
-                <td class="hidden-xs">@if($info['status']==0)停止@elseif(($info['status']==1))激活@elseif(($info['status']==2))异常@endif</td>
+                <td class="hidden-xs">
+                    @if($info['paycode']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>
+                    @elseif(($info['paycode']==1))<span class="layui-btn layui-btn-small layui-btn">微信</span>
+                    @elseif(($info['paycode']==2))<span class="layui-btn layui-btn-small layui-btn-normal">支付宝</span>
+                    @endif</td>
+                <td class="hidden-xs">
+                    <input type="checkbox" name="status" value="{{$info['business_code']}}" lay-skin="switch" lay-text="正常|停止" lay-filter="status" {{ $info['status'] == 1 ? 'checked' : '' }}>
+                </td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">{{$info['updatetime']}}</td>
                 <td>
@@ -78,7 +84,7 @@
             <tr><td colspan="6" style="text-align: center;color: orangered;">暂无数据</td></tr>
         @endif
         </tbody>
-        </tbody>
+        <input type="hidden" id="token" value="{{csrf_token()}}">
     </table>
     <div class="page-wrap">
         {{$list->render()}}
@@ -94,6 +100,41 @@
             laydate({istoday: true});
             form.render();
             form.on('submit(formDemo)', function(data) {
+            });
+            //监听开关操作
+            form.on('switch(status)', function(obj){
+                var id=this.value,
+                    status=obj.elem.checked;
+                if(status==false){
+                    var aswitch=0;
+                }else if(status==true){
+                    aswitch=1;
+                }
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('#token').val()
+                    },
+                    url:"{{url('/admin/bus_switch')}}",
+                    data:{
+                        id:id,
+                        aswitch:aswitch
+                    },
+                    type:'post',
+                    dataType:'json',
+                    success:function(res){
+                        if(res.status == 1){
+                            layer.msg(res.msg,{icon:6},function () {
+                                location.reload();
+                            });
+
+                        }else{
+                            layer.msg(res.msg,{shift: 6,icon:5});
+                        }
+                    },
+                    error : function(XMLHttpRequest, textStatus, errorThrown) {
+                        layer.msg('网络失败', {time: 1000});
+                    }
+                });
             });
         });
         function bank(id) {
