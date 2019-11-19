@@ -55,9 +55,9 @@ return [
             'visibility' => 'public',
         ],
 
-        'erweima' => [
+        'imgupload' => [
             'driver' => 'local',
-            'root' => public_path('/erweima'), // public_path 就是public的路径
+            'root' => public_path(''), // public_path 就是public的路径
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],
