@@ -103,6 +103,7 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/codeuser',        'CodeuserController');//码商列表
     Route::post('/codeuserUpdate',      'CodeuserController@update');//码商编辑
     Route::post('/codeuser_isover',     'CodeuserController@codeuser_isover');//状态开关
+    Route::get('/codeuser/showinfo/{id}',  'CodeuserController@showinfo');//查看码商个人信息
 
     Route::get('/codeuser/addqr/{id}',  'CodeuserController@addqr');//码商增加二维码数量
     Route::post('/codeaddqr',           'CodeuserController@codeaddqr');
@@ -123,14 +124,21 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::get('/codeownbill/own/{id}',  'CodeownbillController@own');//码商个人流水
     Route::resource('/codeownbill',      'CodeownbillController');
 
-
     Route::resource('/coderakemoney',   'CoderakemoneyController');//码商激活佣金
     Route::post('/coderakemoneyUpdate', 'CoderakemoneyController@update');
-    Route::resource('/codedrawnone',    'CodedrawnoneController');//码商提现审核
+
+    Route::resource('/codedrawnone',    'CodedrawnoneController');//码商提现处理
     Route::post('/codedrawnone/pass',   'CodedrawnoneController@pass');
-    Route::post('/codedrawnone/reject', 'CodedrawnoneController@reject');
+    Route::get('/codedrawnone/bohui/{id}',  'CodedrawnoneController@bohui');//驳回-原因页面
+    Route::post('/codedrawnonereject', 'CodedrawnoneController@reject');
+
     Route::resource('/codedrawdone',    'CodedrawdoneController');//码商提现通过列表
+
     Route::resource('/codedrawreject',  'CodedrawrejectController');//码商提现驳回列表
+    Route::get('/codedrawreject/editreject/{id}',  'CodedrawrejectController@editreject');//信息编辑页
+    Route::post('/codedrawreject_save',       'CodedrawrejectController@saveinfo');//保存信息
+    Route::post('/codedrawreject/pass',    'CodedrawrejectController@pass');//确认通过
+    Route::post('/codedrawreject/reject',  'CodedrawrejectController@reject');//确认驳回
 
     Route::resource('/recharge',        'RechargeController');//充值信息
     Route::post('/recharge/enable',     'RechargeController@enable');

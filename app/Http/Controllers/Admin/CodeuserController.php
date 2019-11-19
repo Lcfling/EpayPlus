@@ -50,7 +50,19 @@ class CodeuserController extends Controller
 
         return view('codeuser.edit',['id'=>$user_id,'info'=>$info,'paccount'=>$paccount]);
     }
+    /**
+     * 查看个人信息
+     */
+    public function showinfo($user_id){
+        $info = $user_id?Codeuser::find($user_id):[];
+        if($user_id!=0){
+            $paccount=Codeuser::where('user_id',$info['pid'])->value('account');
+        }else{
+            $paccount='';
+        }
 
+        return view('codeuser.showinfo',['id'=>$user_id,'info'=>$info,'paccount'=>$paccount]);
+    }
     /**
      * 用户增加保存
      */

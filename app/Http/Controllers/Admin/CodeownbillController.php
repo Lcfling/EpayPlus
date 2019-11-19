@@ -10,26 +10,33 @@ class CodeownbillController extends Controller
 {
     public function own($id){
         $id=$id?$id:'';
-        $map=array();
+
         $tablepfe=date('Ymd');
         $account =new Billflow;
         $account->setTable('account_'.$tablepfe);
-        $map['user_id']=$id;
-        $data=$account->where($map)->paginate(10);
+
+        $data=$account->where('user_id',$id)->orderBy('creatime','desc')->paginate(10);
         foreach ($data as $key=>$value){
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
         }
         return view('codeownbill.list',['list'=>$data,'own_id'=>$id]);
     }
+
     public function index(Request $request){
-        $map=array();
         $tablepfe=date('Ymd');
         $account =new Billflow;
         $account->setTable('account_'.$tablepfe);
+        $sql=$account->orderBy('creatime','desc');
         if(true==$request->has('business_code')){
-            $map['business_code']=$request->input('business_code');
+            $sql->where('business_code','=',$request->input('business_code'));
         }
-        $data=$account->where($map)->paginate(10)->appends($request->all());
+        if(true==$request->has('order_sn')){
+            $sql->where('order_sn','=',$request->input('order_sn'));
+        }
+        if(true==$request->has('erweima_id')){
+            $sql->where('erweima_id','=',$request->input('erweima_id'));
+        }
+        $data=$sql->where('user_id',$request->input('user_id'))->paginate(10)->appends($request->all());
         foreach ($data as $key=>$value){
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
         }

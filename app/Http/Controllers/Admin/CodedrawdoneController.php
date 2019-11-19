@@ -23,10 +23,10 @@ class CodedrawdoneController extends Controller
             $codedraw->whereBetween('creatime',[$start,$end]);
         }
 
-        $data = $codedraw->where('status','=',1)->paginate(10)->appends($request->all());
+        $data = $codedraw->where('status','=',1)->orderBy('creatime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
-            $data[$key]['withdraw_time'] =date("Y-m-d H:i:s",$value["withdraw_time"]);
+            $data[$key]['endtime'] =date("Y-m-d H:i:s",$value["endtime"]);
         }
         return view('codedrawdone.list',['list'=>$data,'input'=>$request->all()]);
 

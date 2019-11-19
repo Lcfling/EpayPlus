@@ -73,12 +73,13 @@
                 </td>
                 <td>
                     <div class="layui-inline">
-                        <button class="layui-btn layui-btn-small layui-btn-normal edit-btn" data-id="{{$info['user_id']}}" data-desc="编辑码商" data-url="{{url('/admin/codeuser/'. $info['user_id'] .'/edit')}}">编辑</button>
+                        <a class="layui-btn layui-btn-small layui-btn-normal" onclick="showinfo({{$info['user_id']}})">查看</a>
                         <a class="layui-btn layui-btn-small layui-btn" onclick="shangfen({{$info['user_id']}})">上分</a>
                         <a class="layui-btn layui-btn-small layui-btn-primary" onclick="xiafen({{$info['user_id']}})">下分</a>
                         <a class="layui-btn layui-btn-small layui-btn-worm" onclick="addqr({{$info['user_id']}})">加码</a>
                         <a class="layui-btn layui-btn-small layui-btn-primary" onclick="tomsg({{$info['user_id']}})">通知</a>
                         <a class="layui-btn layui-btn-small layui-btn-normal" href="{{url('admin/codeownbill/own',['id'=>$info['user_id']])}}">流水</a>
+
                         <a class="layui-btn layui-btn-small layui-btn-danger " onclick="ownfee({{$info['user_id']}})">费率</a>
                         <a class="layui-btn layui-btn-small layui-btn-danger" onclick="logpwd({{$info['user_id']}})">登录密码</a>
                         <a class="layui-btn layui-btn-small layui-btn-warm" onclick="zfpwd({{$info['user_id']}})">支付密码</a>
@@ -98,16 +99,17 @@
 @endsection
 @section('js')
     <script>
-        layui.use(['form', 'jquery','laydate', 'layer'], function() {
+        layui.use(['form', 'jquery','laydate', 'layer','element'], function() {
             var form = layui.form(),
                 $ = layui.jquery,
                 laydate = layui.laydate,
+                element = layui.element(),
                 layer = layui.layer ;
-
             laydate({istoday: true});
             form.render();
             form.on('submit(formDemo)', function(data) {
             });
+
             //封禁开关
             form.on('switch(status)', function(obj){
                 layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
@@ -145,6 +147,36 @@
                 });
             });
         });
+        function showinfo(id) {
+            var id=id;
+            layer.open({
+                type: 2,
+                title: '个人信息',
+                closeBtn: 1,
+                area: ['500px','700px'],
+                shadeClose: false, //点击遮罩关闭
+                content: ['/admin/codeuser/showinfo/'+id],
+                end:function(){
+
+                }
+            });
+        }
+        
+        function bill(id) {
+            var id=id;
+            layer.open({
+                type: 2,
+                title: '个人流水',
+                closeBtn: 1,
+                area: ['1000px','750px'],
+                shadeClose: false, //点击遮罩关闭
+                content: ['/admin/codeownbill/own/'+id],
+                end:function(){
+
+                }
+            });
+        }
+
         function addqr(id) {
             var id=id;
             layer.open({

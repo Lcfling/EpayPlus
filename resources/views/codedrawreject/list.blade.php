@@ -23,7 +23,7 @@
     <table class="layui-table" lay-even lay-skin="nob">
         <input type="hidden" id="token" value="{{csrf_token()}}">
         <colgroup>
-            <col class="hidden-xs" width="50">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
