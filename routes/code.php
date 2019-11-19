@@ -95,7 +95,7 @@ Route::group(['namespace'  => "Code"], function () {
     Route::post('/Zfnotice/index',                  'ZfnoticeController@index');//获取通告
     Route::post('/Zfnotice/message',                'ZfnoticeController@message');//获取消息
     Route::post('/Zfnotice/setifread',              'ZfnoticeController@setifread');//已读消息
-    Route::post('/Zfnotice/kefu',                   'ZfnoticeController@kefu');//邀请码记录
+    Route::post('/zfnotice/kefu',                   'ZfnoticeController@kefu');//客服
     Route::post('/Zfnotice/getnotice',              'ZfnoticeController@getnotice');//邀请码记录
 
     /**
