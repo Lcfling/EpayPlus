@@ -33,7 +33,7 @@ class CallcenterController extends Controller
         $data=$kefu->orderBy('creatime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
-            $data[$key]['url']='http://'.$_SERVER['HTTP_HOST'].'/storage'.$value["url"];
+            $data[$key]['url']='http://'.$_SERVER['HTTP_HOST'].$value["url"];
         }
         return view('callcenter.list',['pager'=>$data,'input'=>$request->all()]);
     }
@@ -44,7 +44,7 @@ class CallcenterController extends Controller
     public function edit($id=0){
         $info = $id?Callcenter::find($id):[];
         if(!empty($info)){
-            $info['url']='http://'.$_SERVER['HTTP_HOST'].'/storage'.$info["url"];
+            $info['url']='http://'.$_SERVER['HTTP_HOST'].$info["url"];
         }
         return view('callcenter.edit',['id'=>$id,'info'=>$info]);
     }
@@ -56,14 +56,25 @@ class CallcenterController extends Controller
         $data=$request->all();
         $file = $request->file('url');
         if($file){
-            $ext = $file->getClientOriginalExtension();
-            $path = $file->getRealPath();
-            $filename = '/data/upload/'.time().mt_rand(999,9999).'.'.$ext;//文件路径  存入数据库
 
-            Storage::disk('public')->put($filename, file_get_contents($path));
+            $file_relative_path = '/callcenter/'.date('Ymd');//public下callcenter目录
+            $file_path = public_path($file_relative_path);//相对路劲
+            if (!is_dir($file_path)){                       //创建年月日文件夹
+                mkdir($file_path);
+            }
+            $ext = $file->getClientOriginalExtension();   //后缀
+            $img=['jpeg','jpg','png','ico'];
+            if(!in_array($ext,$img)){
+                return ['msg'=>'图片格式为jpeg,jpg,png,ico'];
+            }
+
+            $path = $file->getRealPath();       //真实路径
+            $filename = $file_relative_path.'/'.date('Ymd').mt_rand(999,9999).'.'.$ext;//文件路径
+
+            Storage::disk('callcenter')->put($filename, file_get_contents($path)); //存入服务器
             $data['creatime']=time();
             $data['url']=$filename;
-            $insert=Callcenter::insert($data);
+            $insert=Callcenter::insert($data);//存入数据库
             if($insert){
                 return ['msg'=>'添加成功！','status'=>1];
             }else{
@@ -84,10 +95,29 @@ class CallcenterController extends Controller
         unset($data['id']);
         $file = $request->file('url');
         if($file){
+
+            $file_relative_path = '/callcenter/'.date('Ymd');//public下callcenter目录
+            $file_path = public_path($file_relative_path);//相对路劲
+            if (!is_dir($file_path)){                       //创建年月日文件夹
+                mkdir($file_path);
+            }
+
             $ext = $file->getClientOriginalExtension();
+
+            $img=['jpeg','jpg','png','ico'];
+            if(!in_array($ext,$img)){
+                return ['msg'=>'图片格式为jpeg,jpg,png,ico'];
+            }
+            $info=Callcenter::find($id);
+            $url=$info['url'];
+            //图片存在先删除
+            if(Storage::disk('callcenter')->exists($url)){
+                Storage::disk('callcenter')->delete($url);
+            }
             $path = $file->getRealPath();
-            $filename = '/data/upload/'.time().mt_rand(999,9999).'.'.$ext;//文件路径
-            Storage::disk('public')->put($filename, file_get_contents($path));//上传图片
+            $filename = $file_relative_path.'/'.date('Ymd').mt_rand(999,9999).'.'.$ext;//文件路径
+
+            Storage::disk('callcenter')->put($filename, file_get_contents($path));//上传图片
             $data['url']=$filename;
             $update2=Callcenter::where('id',$id)->update($data);
             if($update2!==false){
