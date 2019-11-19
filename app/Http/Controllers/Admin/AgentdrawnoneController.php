@@ -6,6 +6,7 @@ created by z
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Agentdraw;
+use App\Models\Agentdrawreject;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreRequest;
 use App\Http\Controllers\Controller;
@@ -21,14 +22,16 @@ class AgentdrawnoneController extends Controller
         if(true==$request->has('agent_id')){
             $agendraw->where('agent_id','=',$request->input('agent_id'));
         }
-
+        if(true==$request->has('order_sn')){
+            $agendraw->where('order_sn','=',$request->input('order_sn'));
+        }
         if(true==$request->has('creatime')){
             $creatime=$request->input('creatime');
             $start=strtotime($creatime);
             $end=strtotime('+1day',$start);
             $agendraw->whereBetween('creatime',[$start,$end]);
         }
-        $data = $agendraw->where('status','=','0')->paginate(10)->appends($request->all());
+        $data = $agendraw->where('status','=','0')->orderBy('creatime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
         }
@@ -56,34 +59,48 @@ class AgentdrawnoneController extends Controller
 
     }
     /**
+     * 驳回页面
+     */
+    public function bohui($id){
+        $info = $id?Agentdraw::find($id):[];
+        $info['creatime']=date("Y-m-d H:i:s",$info['creatime']);
+        return view('agentdrawnone.bohui',['id'=>$id,'info'=>$info]);
+    }
+    /**
      * 驳回
      */
-//    public function reject(StoreRequest $request){
-//        $id=$request->input('id');
-//        $key='agent_lock_'.$id;
-//        $is=Redis::get($key);
-//        if(!empty($is)){
-//            return ['msg'=>'操作失败！'];
-//        }else{
-//            DB::beginTransaction();
-//            try{
-//                $res=Agentdraw::reject($id);
-//                if($res){
-//                    //提现驳回向驳回表中插入数据-sql
-//                    DB::commit();
-//                    return ['msg'=>'驳回成功！','status'=>1];
-//                }else{
-//                    DB::rollBack();
-//                    return ['msg'=>'驳回失败！'];
-//                }
-//            }catch (Exception $e){
-//                DB::rollBack();
-//                return ['msg'=>'发生异常！事物进行回滚！'];
-//            }
-//
-//        }
-//
-//    }
+   public function reject(StoreRequest $request){
+       $data=$request->all();
+       $id=$data['id'];
+       $key='agent_lock_'.$id;
+       $is=Redis::get($key);
+       if(!empty($is)){
+           return ['msg'=>'操作失败！'];
+       }else{
+           $info=Agentdraw::find($id);
+           $insert=[
+               'order_sn'=>$info['order_sn'],
+               'agent_id'=>$info['agent_id'],
+               'name'=>$info['name'],
+               'deposit_name'=>$info['deposit_name'],
+               'deposit_card'=>$info['deposit_card'],
+               'money'=>$info['money'],
+               'remark'=>$data['remark'],
+               'creatime'=>$info['creatime'],
+           ];
+           $down=Agentdraw::reject($id);
+           if(!$down){
+               return ['msg'=>'操作失败！'];
+           }
+           $ins=Agentdrawreject::insert($insert);
+           if(!$ins){
+               return ['msg'=>'操作失败！'];
+           }else{
+               return ['msg'=>'驳回成功！','status'=>1];
+           }
+       }
+
+   }
 
     //redis加锁
     private function agentlock($functions){

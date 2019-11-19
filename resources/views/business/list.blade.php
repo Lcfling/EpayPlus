@@ -69,7 +69,7 @@
                         <a class="layui-btn layui-btn-small layui-btn-normal" onclick="bank({{$info['business_code']}})">银行</a>
                         <a class="layui-btn layui-btn-small layui-btn-danger" onclick="editpwd({{$info['business_code']}})">登录密码</a>
                         <a class="layui-btn layui-btn-small layui-btn-warm" onclick="editpayword({{$info['business_code']}})">支付密码</a>
-                        <a class="layui-btn layui-btn-small layui-btn" onclick="editfee({{$info['business_code']}})">更改费率</a>
+                        <a class="layui-btn layui-btn-small layui-btn" onclick="editfee({{$info['business_code']}})">添加代理</a>
                     </div>
                 </td>
             </tr>
@@ -144,7 +144,7 @@
             var id=id;
             layer.open({
                 type: 2,
-                title: '更改费率',
+                title: '添加代理',
                 closeBtn: 1,
                 area: ['700px','500px'],
                 shadeClose: false, //点击遮罩关闭

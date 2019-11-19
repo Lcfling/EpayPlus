@@ -18,6 +18,7 @@ class BusinessController extends Controller
      * 数据列表
      */
     public function index(StoreRequest $request){
+
         $business=Business::query();
 
         if(true==$request->has('business_code')){

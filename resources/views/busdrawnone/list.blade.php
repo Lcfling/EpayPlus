@@ -56,7 +56,7 @@
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
-                <td class="hidden-xs">未结算</td>
+                <td class="hidden-xs"><span class="layui-btn layui-btn-small layui-btn">未结算</span></td>
                 <td>
                     <div class="layui-inline">
                         <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['id']}}" data-desc="确认打款">确认打款</button>

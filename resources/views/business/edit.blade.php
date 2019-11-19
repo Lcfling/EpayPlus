@@ -114,8 +114,6 @@
             });
             if(id==0){
                 form.on('submit(formDemo)', function(data) {
-                    console.log($('form').serialize());
-                    //return false
                     $.ajax({
                         url:"{{url('/admin/business')}}",
                         data:$('form').serialize(),

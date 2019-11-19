@@ -65,14 +65,13 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/busdrawnone',     'BusdrawnoneController');//商户提现-审核
     Route::post('/busdrawnone/pass',    'BusdrawnoneController@pass');//通过
     Route::get('/busdrawnone/bohui/{id}',  'BusdrawnoneController@bohui');//驳回-原因页面
-    Route::post('/busdrawrenonereject',       'BusdrawnoneController@reject');//驳回
+    Route::post('/busdrawrenonereject',    'BusdrawnoneController@reject');//驳回
 
     Route::resource('/busdrawdone',     'BusdrawdoneController');//通过列表
 
     Route::resource('/busdrawreject',   'BusdrawrejectController');//驳回列表
     Route::get('/busdrawreject/editreject/{id}',  'BusdrawrejectController@editreject');//信息编辑页
     Route::post('/busdrawreject_save',       'BusdrawrejectController@saveinfo');//保存信息
-
     Route::post('/busdrawreject/pass',    'BusdrawrejectController@pass');//确认通过
     Route::post('/busdrawreject/reject',  'BusdrawrejectController@reject');//确认驳回
 
@@ -85,11 +84,21 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/agentUpdate',         'AgentController@update');
     Route::post('/agent_switch',        'AgentController@agent_switch');//代理状态
     Route::post('/agent_islogin',       'AgentController@agent_islogin');//代理登陆
+
     Route::resource('/agentdrawnone',   'AgentdrawnoneController');//代理提现处理
     Route::post('/agentdrawnone/pass',  'AgentdrawnoneController@pass');
-    Route::post('/agentdrawnone/reject','AgentdrawnoneController@reject');
+    Route::get('/agentdrawnone/bohui/{id}','AgentdrawnoneController@bohui');
+    Route::post('/agentdrawnonereject',     'AgentdrawnoneController@reject');//驳回
+
     Route::resource('/agentdrawdone',   'AgentdrawdoneController');//代理提现通过列表
+
     Route::resource('/agentdrawreject', 'AgentdrawrejectController');//代理提现驳回列表
+    Route::get('/agentdrawreject/editreject/{id}',  'AgentdrawrejectController@editreject');//信息编辑页
+    Route::post('/agentdrawreject_save',       'AgentdrawrejectController@saveinfo');//保存信息
+    Route::post('/agentdrawreject/pass',    'AgentdrawrejectController@pass');//确认通过
+    Route::post('/agentdrawreject/reject',  'AgentdrawrejectController@reject');//确认驳回
+
+
 
     Route::resource('/codeuser',        'CodeuserController');//码商列表
     Route::post('/codeuserUpdate',      'CodeuserController@update');//码商编辑

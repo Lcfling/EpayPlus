@@ -82,12 +82,12 @@
         function previewImg(obj) {
             var img = new Image();
             img.src=obj.src;
-            var imgHtml = "<img src='" + obj.src + "' width='300px' height='300px'/>";
+            var imgHtml = "<img src='" + obj.src + "' width='400px' height='700px'/>";
             //弹出层
             layer.open({
                 type:1,
                 shade:0.8,
-                area:['300px','350px'],
+                area:['400px','700px'],
                 offset:'auto',
                 shadeClose:true,
                 scrollbar:false,
