@@ -54,10 +54,10 @@ function objectToArray($object) {
  * @param bool   $status 返回状态
  * @param string $status ajax返回类型 JSON XML
  */
-function ajaxReturn($data, $info = null, $status = 1, $type = 'JSON') {
+function ajaxReturn($data = null, $info = null, $status = 1, $type = 'JSON') {
     $result = array();
-    if(empty($info)){
-        $info = null;
+    if(empty($data)){
+        $data = null;
     }
     $result['status'] = $status;
     $result['info'] = $info;
