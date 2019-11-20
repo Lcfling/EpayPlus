@@ -296,32 +296,40 @@ class CodeuserController extends Controller
         $account =new Billflow;
         $account->setTable('account_'.$tablepfe);
         $score=$data['score']*100;
-
+        $islock=$this->codelock($id);
+        if(!$islock){
+            return ['msg'=>'请勿频繁操作！'];
+        }
         DB::beginTransaction();
         try{
             $update=DB::table('users_count')->where('user_id',$id)->update(array('savetime'=>time()));
             if(!$update){
                 DB::rollBack();
+                $this->uncodelock($id);
                 return ['msg'=>'上分失败！','status'=>0];
             }
 
             $shangfen=$account->insert(['user_id'=>$id,'score'=>$score,'status'=>1,'remark'=>'手动上分','creatime'=>time()]);
             if(!$shangfen){
                 DB::rollBack();
+                $this->uncodelock($id);
                 return ['msg'=>'上分失败！','status'=>0];
             }
 
             $add=DB::table('users_count')->where('user_id','=',$id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score")]);
             if(!$add){
                 DB::rollBack();
+                $this->uncodelock($id);
                 return ['msg'=>'上分失败！','status'=>0];
             }
 
             DB::commit();
+            $this->uncodelock($id);
             return ['msg'=>'上分成功！','status'=>1];
 
         }catch (Exception $e){
             DB::rollBack();
+            $this->uncodelock($id);
             return ['msg'=>'发生异常！事物进行回滚！','status'=>0];
         }
 
@@ -342,33 +350,61 @@ class CodeuserController extends Controller
         $account =new Billflow;
         $account->setTable('account_'.$tablepfe);
         $score=$data['score']*100;
+        $islock=$this->codelock($id);
+        if(!$islock){
+            return ['msg'=>'请勿频繁操作！'];
+        }
         DB::beginTransaction();
         try{
             $update=DB::table('users_count')->where('user_id',$id)->update(array('savetime'=>time()));
             if(!$update){
                 DB::rollBack();
+                $this->uncodelock($id);
                 return ['msg'=>'下分失败！','status'=>0];
             }
             $xiafen=$account->insert(['user_id'=>$id,'score'=>$score,'status'=>1,'remark'=>'手动下分','creatime'=>time()]);
             if(!$xiafen){
                 DB::rollBack();
+                $this->uncodelock($id);
                 return ['msg'=>'下分失败！','status'=>0];
             }
             $add=DB::table('users_count')->where('user_id','=',$id)->decrement('balance',$score,['tol_sore'=>DB::raw("tol_sore - $score")]);
 
             if(!$add){
                 DB::rollBack();
+                $this->uncodelock($id);
                 return ['msg'=>'下分失败！','status'=>0];
             }
 
             DB::commit();
+            $this->uncodelock($id);
             return ['msg'=>'下分成功！','status'=>1];
 
         }catch (Exception $e){
             DB::rollBack();
+            $this->uncodelock($id);
             return ['msg'=>'发生异常！事物进行回滚！','status'=>0];
         }
 
+    }
+    //redis加锁
+    private function codelock($functions){
+
+        $code=time().rand(100000,999999);
+        //随机锁入队
+        Redis::rPush("codeuser_lock_".$functions,$code);
+
+        //随机锁出队
+        $codes=Redis::LINDEX("codeuser_lock_".$functions,0);
+        if ($code != $codes){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    //redis解锁
+    private function uncodelock($functions){
+        Redis::del("codeuser_lock_".$functions);
     }
 
 }

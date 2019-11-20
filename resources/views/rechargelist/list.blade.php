@@ -60,7 +60,7 @@
                 <td class="hidden-xs">{{$info['sk_name']}}</td>
                 <td class="hidden-xs">{{$info['sk_banknum']}}</td>
                 <td class="hidden-xs">{{$info['sk_bankname']}}</td>
-                <td class="hidden-xs"><span class="layui-btn layui-btn-small layui-btn">待审核</span></td>
+                <td class="hidden-xs"><span class="layui-btn layui-btn-small layui-btn-warm">待审核</span></td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td style="text-align: center">
                     <div class="layui-inline">

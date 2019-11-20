@@ -79,7 +79,7 @@ class BusdrawnoneController extends Controller
         $key='business_lock_'.$id;
         $is=Redis::get($key);
         if(!empty($is)){
-            return ['msg'=>'操作失败！'];
+            return ['msg'=>'请勿频繁操作！'];
         }else{
             $info=Busdraw::find($id);
             $insert=[
