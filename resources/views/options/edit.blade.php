@@ -1,16 +1,21 @@
 @section('title', '配置编辑')
 @section('content')
-
     <div class="layui-form-item">
         <label class="layui-form-label">key：</label>
-        <div class="layui-input-inline">
-            <input type="text" value="{{$info['key'] or ''}}" name="key"  placeholder="请填写key值" lay-verify="required" lay-reqText="请填写key值" autocomplete="off" class="layui-input">
+        <div class="layui-input-block">
+            <input type="text" value="{{$info['key'] or ''}}" name="key" placeholder="请填写key值" lay-verify="required" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">value：</label>
         <div class="layui-input-block">
-            <input type="text" value="{{$info['value'] or ''}}" name="value"  placeholder="请填写value值" lay-verify="required" lay-reqText="请填写value值" autocomplete="off" class="layui-input">
+            <input type="text" value="{{$info['value'] or ''}}" name="value"  placeholder="请填写value值" lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注：</label>
+        <div class="layui-input-block">
+            <input type="text" value="{{$info['remark'] or ''}}" name="remark"  placeholder="请填写备注" lay-verify="required" autocomplete="off" class="layui-input">
         </div>
     </div>
 @endsection

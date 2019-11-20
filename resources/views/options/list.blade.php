@@ -24,6 +24,7 @@
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
             <col width="200">
         </colgroup>
         <thead>
@@ -31,6 +32,7 @@
             <th class="hidden-xs">序号</th>
             <th class="hidden-xs">key</th>
             <th class="hidden-xs">value</th>
+            <th class="hidden-xs">备注</th>
             <th>创建时间</th>
             <th>操作</th>
         </tr>
@@ -41,6 +43,7 @@
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['key']}}</td>
                 <td class="hidden-xs">{{$info['value']}}</td>
+                <td class="hidden-xs">{{$info['remark']}}</td>
                 <td>{{$info['creatime']}}</td>
                 <td>
                     <div class="layui-inline">

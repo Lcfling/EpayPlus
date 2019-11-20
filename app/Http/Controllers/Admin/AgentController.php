@@ -71,7 +71,7 @@ class AgentController extends Controller
             $data['creatime']=time();
             $agent_id=Agent::insertGetId($data);
             if($agent_id){
-                $res=DB::table('agent_count')->insert(array('agent_count'=>$agent_id,'creatime'=>time()));
+                $res=DB::table('agent_count')->insert(array('agent_id'=>$agent_id,'creatime'=>time()));
                 if($res){
                     return ['msg'=>'添加成功！','status'=>1];
                 }else{

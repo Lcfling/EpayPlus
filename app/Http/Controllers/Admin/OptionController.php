@@ -50,7 +50,7 @@ class OptionController extends Controller
     public function store(StoreRequest $request){
         $data=$request->all();
         unset($data['_token']);
-        $res=$this->add_unique($data['key'],$data['value']);
+        $res=$this->add_unique($data['key']);
         if(!$res){
             $data['creatime']=time();
             $insert=Option::insert($data);
@@ -81,7 +81,7 @@ class OptionController extends Controller
         $info = Option::find($id);
         $key='option_'.$info['key'];
         Redis::del($key);
-        $res=$this->edit_unique($id,$data['key'],$data['value']);
+        $res=$this->edit_unique($id,$data['key']);
         if(!$res){
             $update=Option::where('id',$id)->update($data);
             if($update!==false){
@@ -116,8 +116,8 @@ class OptionController extends Controller
     /**
      * 添加判断存在
      */
-    private function add_unique($key,$value){
-        $res=Option::where(array('key'=>$key,'value'=>$value))->exists();
+    private function add_unique($key){
+        $res=Option::where(array('key'=>$key))->exists();
         if($res){
             return true;
         }else{
@@ -127,8 +127,8 @@ class OptionController extends Controller
     /**
      * 编辑判断存在
      */
-    private function edit_unique($id,$key,$value){
-        $res=Option::where(array('key'=>$key,'value'=>$value))->whereNotIn('id',[$id])->exists();
+    private function edit_unique($id,$key){
+        $res=Option::where(array('key'=>$key))->whereNotIn('id',[$id])->exists();
         if($res){
             return true;
         }else{
