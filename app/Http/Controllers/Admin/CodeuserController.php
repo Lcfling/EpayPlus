@@ -22,14 +22,18 @@ class CodeuserController extends Controller
      */
     public function index(Request $request){
         $codeuser=Codeuser::query();
+
+        if(true==$request->has('user_id')){
+            $codeuser->where('users.user_id','=',$request->input('user_id'));
+        }
         if(true==$request->has('mobile')){
-            $codeuser->where('mobile','=',$request->input('mobile'));
+            $codeuser->where('users.mobile','=',$request->input('mobile'));
         }
         if(true==$request->has('reg_time')){
             $creatime=$request->input('reg_time');
             $start=strtotime($creatime);
             $end=strtotime('+1day',$start);
-            $codeuser->whereBetween('reg_time',[$start,$end]);
+            $codeuser->whereBetween('users.reg_time',[$start,$end]);
         }
         $data = $codeuser->orderBy('reg_time','reg_time')->leftJoin('users_count','users.user_id','=','users_count.user_id')->select('users.*','users_count.balance','users_count.tol_brokerage')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){

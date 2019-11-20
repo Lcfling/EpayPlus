@@ -4,9 +4,9 @@
     <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-desc="添加码商" data-url="{{url('/admin/codeuser/0/edit')}}"><i class="layui-icon">&#xe654;</i></button>
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
-{{--    <div class="layui-inline">--}}
-{{--        <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商ID" autocomplete="off" class="layui-input">--}}
-{{--    </div>--}}
+    <div class="layui-inline">
+       <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商ID" autocomplete="off" class="layui-input">
+    </div>
     <div class="layui-inline">
         <input type="text"  value="{{ $input['mobile'] or '' }}" name="mobile" placeholder="请输入手机号" autocomplete="off" class="layui-input">
     </div>
@@ -78,7 +78,7 @@
                         <a class="layui-btn layui-btn-small layui-btn-primary" onclick="xiafen({{$info['user_id']}})">下分</a>
                         <a class="layui-btn layui-btn-small layui-btn-worm" onclick="addqr({{$info['user_id']}})">加码</a>
                         <a class="layui-btn layui-btn-small layui-btn-primary" onclick="tomsg({{$info['user_id']}})">通知</a>
-                        <a class="layui-btn layui-btn-small layui-btn-normal" href="{{url('admin/codeownbill/own',['id'=>$info['user_id']])}}">流水</a>
+                        <a class="layui-btn layui-btn-small layui-btn-normal " onclick="bill({{$info['user_id']}})">流水</a>
 
                         <a class="layui-btn layui-btn-small layui-btn-danger " onclick="ownfee({{$info['user_id']}})">费率</a>
                         <a class="layui-btn layui-btn-small layui-btn-danger" onclick="logpwd({{$info['user_id']}})">登录密码</a>

@@ -14,19 +14,19 @@ class BuscountController extends Controller
     public function index(Request $request){
         $buscount=Buscount::query();
         if(true==$request->has('business_code')){
-            $buscount->where('business_code','=',$request->input('business_code'));
+            $buscount->where('business_count.business_code','=',$request->input('business_code'));
         }
         if(true==$request->has('creatime')){
             $creatime=$request->input('creatime');
             $start=strtotime($creatime);
             $end=strtotime('+1day',$start);
-            $buscount->whereBetween('creatime',[$start,$end]);
+            $buscount->whereBetween('business_count.creatime',[$start,$end]);
         }
         if(true==$request->has('savetime')){
             $creatime=$request->input('savetime');
             $start=strtotime($creatime);
             $end=strtotime('+1day',$start);
-            $buscount->whereBetween('savetime',[$start,$end]);
+            $buscount->whereBetween('business_count.savetime',[$start,$end]);
         }
         if(true==$request->input('excel')&& true==$request->has('excel')){
             $head = array('商户ID','余额','总分','创建时间','更新时间');
@@ -39,14 +39,22 @@ class BuscountController extends Controller
             }
             exportExcel($head,$excel,'商户账单'.date('YmdHis',time()),'',true);
         }else{
-            $data = $buscount->orderBy('creatime','desc')->paginate(10)->appends($request->all());
+            $data = $buscount->leftJoin('business','business_count.business_code','=','business.business_code')
+                             ->select('business_count.*','business.nickname','business.mobile','business.fee')
+                             ->orderBy('business_count.business_code','desc')->paginate(10)->appends($request->all());
             foreach ($data as $key =>$value){
                 $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
-                $data[$key]['savetime'] =date("Y-m-d H:i:s",$value["savetime"]);
+
             }
         }
 
         return view('buscount.list',['list'=>$data,'input'=>$request->all()]);
+
+    }
+    /**
+     * 总账单统计
+     */
+    protected function allbuscount($business_code){
 
     }
 }
