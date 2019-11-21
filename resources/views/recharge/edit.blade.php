@@ -33,7 +33,7 @@
             <select name="kefu_id" required>
                 <option value="">请选择客服</option>
                 @foreach($kefu as $call)
-                    <option value="{{$call['id']}}" @if(isset($info['kefu_id'])and$info['kefu_id']==$call['id']) selected @endif>{{$call['content']}}</option>
+                    <option value="{{$call['id']}}" @if(isset($info['kefu_id'])and$info['kefu_id']==$call['id']) selected @endif>{{$call['username']}}</option>
                 @endforeach
             </select>
         </div>

@@ -16,6 +16,8 @@ class RechargeController extends Controller
      */
     public function index(Request $request){
         $recharge=Recharge::query();
+
+
         if(true==$request->has('sk_name')){
             $recharge->where('sk_name','like','%'.$request->input('sk_name').'%');
         }
@@ -38,7 +40,7 @@ class RechargeController extends Controller
         $info = $id?Recharge::find($id):[];
         $bank = config('bank');
         $banklist=json_encode($bank);
-        $kefulist=Callcenter::get()->toArray();
+        $kefulist=Recharge::getkefu();
         return view('recharge.edit',['id'=>$id,'info'=>$info,'banklist'=>$banklist,'kefu'=>$kefulist]);
     }
     /**

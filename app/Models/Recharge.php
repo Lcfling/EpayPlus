@@ -3,7 +3,7 @@
 
 namespace App\Models;
 
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 
 class Recharge extends Model
@@ -24,5 +24,12 @@ class Recharge extends Model
      */
     public static function edit_bank($id,$banknum){
         return Recharge::where('sk_banknum',$banknum)->whereNotIn('id',[$id])->exists();
+    }
+
+    public static function getkefu(){
+        $uid=Adminrole::where('role_id',4)->select('user_id')->get()->toArray();
+        $ids=array_column($uid,'user_id');
+        $kefu=User::whereIn('id',$ids)->select('id','username')->get()->toArray();
+        return $kefu;
     }
 }

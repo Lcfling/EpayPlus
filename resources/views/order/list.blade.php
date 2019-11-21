@@ -10,7 +10,7 @@
         <input type="text"  value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入平台订单号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入商户订单号" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['out_order_sn'] or '' }}" name="out_order_sn" placeholder="请输入商户订单号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商号" autocomplete="off" class="layui-input">
@@ -78,7 +78,7 @@
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['business_code']}}</td>
                 <td class="hidden-xs">{{$info['order_sn']}}</td>
-                <td class="hidden-xs">{{$info['order_sn']}}</td>
+                <td class="hidden-xs">{{$info['out_order_sn']}}</td>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
                 <td class="hidden-xs">{{$info['erweima_id']}}</td>
                 <td class="hidden-xs">
@@ -107,9 +107,11 @@
                 <td class="hidden-xs">@if($info['status']==1){{$info['paytime']}}@endif</td>
                 <td style="text-align: center">
                     <div class="layui-inline">
+                        @if($info['status']==2||$info['status']==0)
                         <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['order_sn']}}" data-desc="补单">补单</button>
+                        @elseif($info['status']==3)
                         <button class="layui-btn layui-btn-small layui-btn-warm edits-btn2"  data-id="{{$info['order_sn']}}" data-desc="超时补单">超时补单</button>
-                        <button class="layui-btn layui-btn-small layui-btn-default edits-btn3"  data-id="{{$info['order_sn']}}" data-desc="手动回调">手动回调</button>
+                       @endif
                     </div>
                 </td>
             </tr>
@@ -146,8 +148,8 @@
             //补单
             $('.edits-btn1').click(function () {
                 var that = $(this);
-                var order_sn=$(this).attr('data-id');
-                //'console.log(id);
+                var order_sn=that.attr('data-id');
+                //console.log(order_sn);
                 layer.confirm('确定要补单吗？',{title:'提示'},function (index) {
                         $.ajax({
                             headers: {
@@ -177,7 +179,8 @@
             //超时补单
             $('.edits-btn2').click(function () {
                 var that = $(this);
-                var order_sn=$(this).attr('data-id');
+                var order_sn=that.attr('data-id');
+                //console.log(order_sn);
                 layer.confirm('确定要超时补单吗？',{title:'提示'},function (index) {
                         $.ajax({
                             headers: {

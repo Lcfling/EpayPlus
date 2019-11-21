@@ -46,7 +46,6 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/saveinfo/{type}',     'UserController@saveInfo');
     Route::resource('/roles',           'RoleController');
     Route::resource('/permissions',     'PermissionController');
-
     Route::resource('/options',         'OptionController');//系统设置
     Route::post('/optionsUpdate',       'OptionController@update');
     Route::resource('/notices',         'NoticeController');//公告
@@ -62,7 +61,6 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::get('/business/busfee/{id}', 'BusinessController@busfee');//商户费率
     Route::post('/busnewfee',           'BusinessController@busnewfee');
     Route::post('/businessUpdate',      'BusinessController@update');
-    Route::post('/bus_switch',          'BusinessController@bus_switch');//状态更改
 
     Route::resource('/busdrawnone',     'BusdrawnoneController');//商户提现-审核
     Route::post('/busdrawnone/pass',    'BusdrawnoneController@pass');//通过
@@ -144,7 +142,7 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
 
     Route::resource('/recharge',        'RechargeController');//充值信息
     Route::post('/rechargeUpdate',      'RechargeController@update');//码商编辑
-    Route::post('/status_switch',       'RechargeController@status_switch');
+    Route::post('/status_switch', 'RechargeController@status_switch');
 
     Route::resource('/rechargelist',    'RechargelistController');//充值列表处理
     Route::post('/rechargelist/enable', 'RechargelistController@enable');
@@ -152,10 +150,12 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/rechargereject',  'RechargerejectController');//充值驳回列表
 
     Route::resource('/billflow',        'BillflowController');//码商流水
+
     Route::resource('/order',           'OrderController');//订单处理
     Route::post('/order/budan',         'OrderController@budan');//订单补单
     Route::post('/order/csbudan',       'OrderController@csbudan');//订单超时补单
     Route::post('/order/sfpushfirst',   'OrderController@sfpushfirst');//订单手动补单
+
     Route::resource('/orderlist',       'OrderlistController');//订单处理
     Route::resource('/buscount',        'BuscountController');//商户账单
     Route::resource('/busbill',         'BusbillController');//商户流水

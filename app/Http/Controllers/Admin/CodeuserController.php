@@ -6,6 +6,7 @@ created by z
 
 namespace App\Http\Controllers\Admin;
 
+
 use App\Http\Requests\StoreRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Billflow;
@@ -14,7 +15,7 @@ use App\Models\Codeuser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PragmaRX\Google2FA\Google2FA;
-
+use Illuminate\Support\Facades\Redis;
 class CodeuserController extends Controller
 {
     /**
@@ -362,7 +363,7 @@ class CodeuserController extends Controller
                 $this->uncodelock($id);
                 return ['msg'=>'下分失败！','status'=>0];
             }
-            $xiafen=$account->insert(['user_id'=>$id,'score'=>$score,'status'=>1,'remark'=>'手动下分','creatime'=>time()]);
+            $xiafen=$account->insert(['user_id'=>$id,'score'=>-$score,'status'=>1,'remark'=>'手动下分','creatime'=>time()]);
             if(!$xiafen){
                 DB::rollBack();
                 $this->uncodelock($id);

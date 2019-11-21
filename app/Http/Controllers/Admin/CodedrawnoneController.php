@@ -43,6 +43,7 @@ class CodedrawnoneController extends Controller
      */
     public function pass(StoreRequest $request){
         $id=$request->input('id');
+
         $islock=$this->codelock($id);
         if($islock){
             $res=Codedraw::pass($id);

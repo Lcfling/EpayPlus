@@ -4,7 +4,7 @@ created by z
  * time 2019-11-4 17:53:05
  */
 namespace App\Http\Controllers\Admin;
-
+use Auth;
 use App\Http\Requests\StoreRequest;
 use App\Models\Callcenter;
 use App\Http\Controllers\Controller;
@@ -30,6 +30,7 @@ class CallcenterController extends Controller
             $end=strtotime('+1day',$start);
             $kefu->whereBetween('creatime',[$start,$end]);
         }
+
         $data=$kefu->orderBy('creatime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);

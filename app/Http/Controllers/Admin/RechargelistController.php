@@ -3,12 +3,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-
+use Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
 use App\Models\Billflow;
-use App\Models\Codecount;
-use App\Models\Recharge;
 use App\Models\Rechargelist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +18,11 @@ class RechargelistController extends Controller
      */
     public function index(Request $request){
         $czrecord=Rechargelist::query();
-
+        $kid=Auth::id();
+        $rid=getrole($kid);
+        if($rid==4){
+            $czrecord->where('admin_kefu_id','=',$kid);
+        }
         if(true==$request->has('user_id')){
             $czrecord->where('user_id','=',$request->input('user_id'));
         }

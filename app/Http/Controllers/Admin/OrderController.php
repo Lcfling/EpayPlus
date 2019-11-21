@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\StoreRequest;
 use App\Models\Business;
+use App\Models\Codecount;
 use App\Models\Order;
-use App\Models\Orderrecord;
-use Illuminate\Http\Request;
+
 use App\Http\Controllers\Controller;
 use App\Models\Billflow;
+use App\Models\Rebate;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
@@ -18,32 +19,41 @@ class OrderController extends Controller
      */
     public function index(StoreRequest $request){
 
-        $order = Orderrecord::query();
+        if(true==$request->has('creatime')){
+            $time = strtotime($request->input('creatime'));
+            $weeksuf = computeWeek($time,false);
+        }else{
+            $weeksuf = computeWeek(time(),false);
+        }
+
+        $order=new Order;
+        $order->setTable('order_'.$weeksuf);
+        $sql=$order->orderBy('creatime','desc');
 
         if(true==$request->has('business_code')){
-            $order->where('business_code','=',$request->input('business_code'));
+            $sql->where('business_code','=',$request->input('business_code'));
         }
         if(true==$request->has('order_sn')){
-            $order->where('order_sn','=',$request->input('order_sn'));
+            $sql->where('order_sn','=',$request->input('order_sn'));
         }
-        if(true==$request->has('order_sn')){
-            $order->where('order_sn','=',$request->input('order_sn'));
+        if(true==$request->has('out_order_sn')){
+            $sql->where('out_order_sn','=',$request->input('out_order_sn'));
         }
         if(true==$request->has('user_id')){
-            $order->where('user_id','=',$request->input('user_id'));
+            $sql->where('user_id','=',$request->input('user_id'));
         }
         if(true==$request->has('status')){
-            $order->where('status','=',$request->input('status'));
+            $sql->where('status','=',$request->input('status'));
         }
         if(true==$request->has('creatime')){
             $creatime=$request->input('creatime');
             $start=strtotime($creatime);
             $end=strtotime('+1day',$start);
-            $order->whereBetween('creatime',[$start,$end]);
+            $sql->whereBetween('creatime',[$start,$end]);
         }
         if(true==$request->input('excel')&& true==$request->has('excel')){
             $head = array('商户ID','平台订单号','码商ID','二维码ID','码商收款','收款金额','实际到账金额','支付类型','支付状态','回调状态','创建时间');
-            $excel = $order->select('business_code','order_sn','user_id','erweima_id','sk_status','sk_money','tradeMoney','payType','status','callback_status','creatime')->get()->toArray();
+            $excel = $sql->select('business_code','order_sn','user_id','erweima_id','sk_status','sk_money','tradeMoney','payType','status','callback_status','creatime')->get()->toArray();
             foreach ($excel as $key=>$value){
                 $excel[$key]['sk_status']=$this->sk_status($value['sk_status']);
                 $excel[$key]['sk_money']=$value['sk_money']/100;
@@ -55,7 +65,7 @@ class OrderController extends Controller
             }
             exportExcel($head,$excel,'订单记录'.date('YmdHis',time()),'',true);
         }else{
-            $data=$order->orderBy('creatime','desc')->paginate(10)->appends($request->all());
+            $data=$sql->whereIn('status',[2,3])->paginate(10)->appends($request->all());
             foreach ($data as $key=>$value){
                 $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
                 $data[$key]['paytime']=date("Y-m-d H:i:s",$value["paytime"]);
@@ -146,97 +156,179 @@ class OrderController extends Controller
     public function budan(StoreRequest $request){
         $order_sn=$request->input('order_sn');
         // 获取订单信息
-        $order_info=DB::table('order_record')->where('order_sn','=',$order_sn)->first();
-        $order_info=get_object_vars($order_info);
-        $order =new Order();
-        $order->setTable($order_info['submeter_name']);
-        $order_sn_info=$order->where(array("order_sn"=>$order_info['order_sn']))->first();
 
-        $tablepfe=date('Ymd');
-        $account =new Billflow;
-        $account->setTable('account_'.$tablepfe);
+        $order =Order::getordersntable($order_sn);
 
-        $free=$account->where(array('order_sn'=>$order_info['order_sn'],'status'=>4,'remark'=>'手动资金解冻'))->first();
-        $reduce=$account->where(array('order_sn'=>$order_info['order_sn'],'status'=>2,'remark'=>'手动资金扣除'))->first();
-        if(!empty($free)){
+        $account =Order::getcounttable($order_sn);
+
+//        $islock=Order::orderlock($order_sn);
+//        if(!$islock){
+//            return ['msg'=>'请勿频繁操作！'];
+//        }
+
+        if($account->where(array('order_sn'=>$order_sn,'status'=>4))->first()){
+            //Order::unorderlock($order_sn);
             return ['msg'=>'已手动解冻!'];
-        }else if(!empty($reduce)){
+        }
+        if($account->where(array('order_sn'=>$order_sn,'status'=>2))->first()){
+           // Order::unorderlock($order_sn);
             return ['msg'=>'已手动扣除!'];
         }
-        $data['score']=$order_sn_info['tradeMoney'];
-        $data['user_id'] = $order_sn_info['user_id'];
-        $data['status']=4;
-        $data['erweima_id']=$order_sn_info['erweima_id'];
-        $data['business_code']=$order_sn_info['business_code'];
-        $data['order_sn']=$order_sn_info['order_sn'];
-        $data['remark']="手动资金解冻";
-        $data['creatime']=time();
 
         DB::beginTransaction();
         try{
-            $insert=$account->insert($data);
-            if($insert){
-                DB::commit();
-            }else{
+            if(!$order_info=$order->where([["order_sn",$order_sn],['status','in',[0,2]]])->lockForUpdate()->first()){
                 DB::rollBack();
-                return ['msg'=>'发生异常！'];
+                return ['msg'=>'订单已处理！'];
+            }
+            $data=[
+                'score'=>$order_info['tradeMoney'],
+                'user_id'=>$order_info['user_id'],
+                'status'=>4,
+                'erweima_id'=>$order_info['erweima_id'],
+                'business_code'=>$order_info['business_code'],
+                'order_sn'=>$order_info['order_sn'],
+                'remark'=>"手动资金解冻",
+                'creatime'=>time(),
+            ];
+            $insert=$account->insert($data);
+            if(!$insert){
+                DB::rollBack();
+                return ['msg'=>'解冻失败！'];
+            }else{
+                $info=[
+                    'score'=>$order_info['tradeMoney'],
+                    'user_id'=>$order_info['user_id'],
+                    'status'=>2,
+                    'erweima_id'=>$order_info['erweima_id'],
+                    'business_code'=>$order_info['business_code'],
+                    'order_sn'=>$order_info['order_sn'],
+                    'remark'=>"手动资金扣除",
+                    'creatime'=>time(),
+                ];
+                $account->insert($info);
+                if(!$account){
+                    DB::rollBack();
+                    return ['msg'=>'扣除失败！'];
+                }else{
+                    $rate=[
+                        'user_id'=>$order_info['user_id'],
+                        'business_code'=>$order_info['business_code'],
+                        'order_sn'=>$order_info['order_sn'],
+                        'tradeMoney'=>$order_info['tradeMoney'],
+                        'payType'=>$order_info['payType'],
+                        'creatime'=>time(),
+                    ];
+                    $rebate=Rebate::insert($rate);
+                    if(!$rebate){
+                        DB::rollBack();
+                        return ['msg'=>'返佣失败！'];
+                    }else{
+                        $tradeMoney=$order_info['tradeMoney'];
+                        $fremoney=Codecount::where('user_id',$order_info['user_id'])->decrement('freeze_money',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
+                        if(!$fremoney){
+                            DB::rollBack();
+                            return ['msg'=>'修改帐户失败！'];
+                        }else{
+                            $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
+                            if(!$djstatus){
+                                DB::rollBack();
+                                return ['msg'=>'更改订单状态失败！'];
+                            }else{
+                                DB::commit();
+                                return ['msg'=>'补单成功！','status'=>1];
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
+        }catch (Exception $e){
+            DB::rollBack();
+            return ['msg'=>'发生异常！事物进行回滚！'];
+        }
+
+        // 修改订单状态
+        //$res=$this->ownpushfirst($order_info['order_sn']);
+        //return $res;
+    }
+
+    //  超时补单
+    public function csbudan(StoreRequest $request){
+        $order_sn=$request->input('order_sn');
+
+        // 获取订单信息
+        $order =Order::getordersntable($order_sn);
+
+        $account =Order::getcounttable($order_sn);
+
+        if($account->where(array('order_sn'=>$order_sn,'status'=>2))->first()){
+            // Order::unorderlock($order_sn);
+            return ['msg'=>'已手动扣除!'];
+        }
+        DB::beginTransaction();
+        try{
+            if(!$order_info=$order->where([["order_sn",$order_sn],['status',3]])->lockForUpdate()->first()){
+                DB::rollBack();
+                return ['msg'=>'订单已处理！'];
+            }else{
+                $info=[
+                    'score'=>$order_info['tradeMoney'],
+                    'user_id'=>$order_info['user_id'],
+                    'status'=>2,
+                    'erweima_id'=>$order_info['erweima_id'],
+                    'business_code'=>$order_info['business_code'],
+                    'order_sn'=>$order_info['order_sn'],
+                    'remark'=>"手动资金扣除",
+                    'creatime'=>time(),
+                ];
+                $account->insert($info);
+                if(!$account){
+                    DB::rollBack();
+                    return ['msg'=>'扣除失败！'];
+                }else{
+                    $rate=[
+                        'user_id'=>$order_info['user_id'],
+                        'business_code'=>$order_info['business_code'],
+                        'order_sn'=>$order_info['order_sn'],
+                        'tradeMoney'=>$order_info['tradeMoney'],
+                        'payType'=>$order_info['payType'],
+                        'creatime'=>time(),
+                    ];
+                    $rebate=Rebate::insert($rate);
+                    if(!$rebate){
+                        DB::rollBack();
+                        return ['msg'=>'返佣失败！'];
+                    }else{
+                        $tradeMoney=$order_info['tradeMoney'];
+                        $fremoney=Codecount::where('user_id',$order_info['user_id'])->decrement('freeze_money',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
+                        if(!$fremoney){
+                            DB::rollBack();
+                            return ['msg'=>'修改帐户失败！'];
+                        }else{
+                            $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
+                            if(!$djstatus){
+                                DB::rollBack();
+                                return ['msg'=>'更改订单状态失败！'];
+                            }else{
+                                DB::commit();
+                                return ['msg'=>'超时补单成功！','status'=>1];
+                            }
+                        }
+                    }
+                }
             }
         }catch (Exception $e){
             DB::rollBack();
             return ['msg'=>'发生异常！事物进行回滚！'];
         }
 
-        $info['score']=-$order_sn_info['tradeMoney'];
-        $info['user_id'] = $order_sn_info['user_id'];
-        $info['status']=2;
-        $info['erweima_id']=$order_sn_info['erweima_id'];
-        $info['business_code']=$order_sn_info['business_code'];
-        $info['order_sn']=$order_sn_info['order_sn'];
-        $info['remark']="手动资金扣除";
-        $info['creatime']=time();
-        $account->insert($info);
 
         // 修改订单状态
-        $order->where(array("order_sn"=>$order_sn_info['order_sn']))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
-        DB::table('order_record')->where(array("order_sn"=>$order_sn_info['order_sn']))->update(array("status"=>1,"dj_status"=>2,"pay_time"=>time()));
-        $res=$this->ownpushfirst($order_sn_info['order_sn']);
-        return $res;
-    }
-
-    //  超时补单
-    public function csbudan(StoreRequest $request){
-        $order_sn=$request->input('order_sn');
-        // 获取订单信息
-        $order_info=DB::table('order_record')->where('order_sn','=',$order_sn)->first();
-        $order_info=get_object_vars($order_info);
-        $order =new Order();
-        $order->setTable($order_info['submeter_name']);
-        $order_sn_info=$order->where(array("order_sn"=>$order_info['order_sn']))->first();
-
-
-        $tablepfe=date('Ymd');
-        $account =new Billflow;
-        $account->setTable('account_'.$tablepfe);
-        $reduce=$account->where(array('order_sn'=>$order_info['order_sn'],'status'=>2,'remark'=>'手动资金扣除'))->first();
-        if(!empty($reduce)){
-            return ['msg'=>'已手动扣除!'];
-        }
-
-        $info['score']=-$order_sn_info['tradeMoney'];
-        $info['user_id'] = $order_sn_info['user_id'];
-        $info['status']=2;
-        $info['erweima_id']=$order_sn_info['erweima_id'];
-        $info['business_code']=$order_sn_info['business_code'];
-        $info['order_sn']=$order_sn_info['order_sn'];
-        $info['remark']="手动资金扣除";
-        $info['creatime']=time();
-        $account->insert($info);
-
-        // 修改订单状态
-        $order->where(array("order_sn"=>$order_sn_info['order_sn']))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
-        DB::table('order_record')->where(array("order_sn"=>$order_sn_info['order_sn']))->update(array("status"=>1,"dj_status"=>2,"pay_time"=>time()));
-        $res=$this->ownpushfirst($order_sn_info['order_sn']);
-        return $res;
+        // $res=$this->ownpushfirst($order_sn_info['order_sn']);
+        // return $res;
     }
 
     public function ownpushfirst($order_sn){

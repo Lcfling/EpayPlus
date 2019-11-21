@@ -14,6 +14,7 @@ use Gregwar\Captcha\PhraseBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Auth;
 //use App\Http\Controllers\Controller;
 class HomeController extends BaseController
 {
@@ -43,6 +44,10 @@ class HomeController extends BaseController
      * 欢迎首页
      */
     public function welcome(){
+        $rid=getrole(Auth::id());
+        if($rid==4){
+            return '';
+        }
         //今天
         $start= strtotime(date('Y-m-d'));
         $end=strtotime('+1day',$start);
