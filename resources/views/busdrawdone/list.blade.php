@@ -30,6 +30,8 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="100">
@@ -39,7 +41,9 @@
             <th class="hidden-xs">序号</th>
             <th class="hidden-xs">商户ID</th>
             <th class="hidden-xs">提现订单号</th>
-            <th class="hidden-xs">提现额度</th>
+            <th class="hidden-xs">提现金额</th>
+            <th class="hidden-xs">到账金额</th>
+            <th class="hidden-xs">手续费</th>
             <th class="hidden-xs">开户人</th>
             <th class="hidden-xs">开户行</th>
             <th class="hidden-xs">卡号</th>
@@ -56,6 +60,8 @@
                 <td class="hidden-xs">{{$info['business_code']}}</td>
                 <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['money']/100}}</td>
+                <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
+                <td class="hidden-xs">{{$info['feemoney']/100}}</td>
                 <td class="hidden-xs">{{$info['name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>

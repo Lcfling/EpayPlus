@@ -21,7 +21,7 @@ class Codedraw extends Model
     /**
      * 驳回
      */
-    public static function reject($id){
-        return Codedraw::where('id',$id)->update(['status'=>2,'endtime'=>time()]);
+    public static function reject($id,$remark){
+        return Codedraw::where('id',$id)->update(['status'=>2,'remark'=>$remark,'endtime'=>time()]);
     }
 }

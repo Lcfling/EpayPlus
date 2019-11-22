@@ -76,10 +76,11 @@ class CodeuserController extends Controller
         unset($data['_token']);
         unset($data['id']);
         $res=Codeuser::add_unique($data['account']);
-        if(!$res){
-            $google2fa = new Google2FA();
-            $secretKey=$google2fa->generateSecretKey();
-            $data['ggkey']=$secretKey;
+        if($res){
+            return ['msg'=>'手机号已存在！'];
+        }
+        DB::beginTransaction();
+        try{
             $pid=$data['pid']?$data['pid']:0;
             $data['mobile']=$data['account'];
             $data['pid']=intval($pid);
@@ -89,22 +90,22 @@ class CodeuserController extends Controller
             $data['rates']=$data['rates']/100;
             $data['reg_time']=time();
             $user_id=Codeuser::insertGetId($data);
-            if($user_id){
-                $res=DB::table('users_count')->insert(array('user_id'=>$user_id,'creatime'=>time()));
-                if($res){
-                    return ['msg'=>'添加成功！','status'=>1];
-                }else{
-                    return ['msg'=>'添加失败！'];
-                }
-
-            }else{
-                return ['msg'=>'添加失败！'];
+            if(!$user_id){
+                DB::rollBack();
+                return ['msg'=>'码商添加失败！'];
             }
+            $res=DB::table('users_count')->insert(array('user_id'=>$user_id,'creatime'=>time()));
+            if(!$res){
+                DB::rollBack();
+                return ['msg'=>'码商帐户添加失败！'];
+            }
+            DB::commit();
+            return ['msg'=>'添加成功！','status'=>1];
 
-        }else{
-            return ['msg'=>'手机号已存在！'];
+        }catch (Exception $e){
+            DB::rollBack();
+            return ['msg'=>'操作异常！请稍后重试！'];
         }
-
     }
 
     /**

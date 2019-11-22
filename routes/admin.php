@@ -28,7 +28,7 @@ use Illuminate\Http\Request;
 Route::get('/verify',                   'Admin\HomeController@verify');
 //登陆模块
 Route::group(['namespace'  => "Auth"], function () {
-    Route::get('/login',                'LoginController@showLoginForm')->name('login');
+    Route::get('/login',                     'LoginController@showLoginForm')->name('login');
     Route::post('/login',               'LoginController@login');
     Route::get('/logout',               'LoginController@logout')->name('logout');
 });
@@ -70,10 +70,10 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/busdrawdone',     'BusdrawdoneController');//通过列表
 
     Route::resource('/busdrawreject',   'BusdrawrejectController');//驳回列表
-    Route::get('/busdrawreject/editreject/{id}',  'BusdrawrejectController@editreject');//信息编辑页
-    Route::post('/busdrawreject_save',       'BusdrawrejectController@saveinfo');//保存信息
-    Route::post('/busdrawreject/pass',    'BusdrawrejectController@pass');//确认通过
-    Route::post('/busdrawreject/reject',  'BusdrawrejectController@reject');//确认驳回
+//    Route::get('/busdrawreject/editreject/{id}',  'BusdrawrejectController@editreject');//信息编辑页
+//    Route::post('/busdrawreject_save',       'BusdrawrejectController@saveinfo');//保存信息
+//    Route::post('/busdrawreject/pass',    'BusdrawrejectController@pass');//确认通过
+//    Route::post('/busdrawreject/reject',  'BusdrawrejectController@reject');//确认驳回
 
     Route::resource('/agent',           'AgentController');//代理商
     Route::get('/agent/agentbankinfo/{id}', 'AgentController@agentbankinfo');//代理银行信息
@@ -91,12 +91,12 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/agentdrawnonereject',     'AgentdrawnoneController@reject');//驳回
 
     Route::resource('/agentdrawdone',   'AgentdrawdoneController');//代理提现通过列表
-
     Route::resource('/agentdrawreject', 'AgentdrawrejectController');//代理提现驳回列表
-    Route::get('/agentdrawreject/editreject/{id}',  'AgentdrawrejectController@editreject');//信息编辑页
-    Route::post('/agentdrawreject_save',       'AgentdrawrejectController@saveinfo');//保存信息
-    Route::post('/agentdrawreject/pass',    'AgentdrawrejectController@pass');//确认通过
-    Route::post('/agentdrawreject/reject',  'AgentdrawrejectController@reject');//确认驳回
+
+//    Route::get('/agentdrawreject/editreject/{id}',  'AgentdrawrejectController@editreject');//信息编辑页
+//    Route::post('/agentdrawreject_save',       'AgentdrawrejectController@saveinfo');//保存信息
+//    Route::post('/agentdrawreject/pass',    'AgentdrawrejectController@pass');//确认通过
+//    Route::post('/agentdrawreject/reject',  'AgentdrawrejectController@reject');//确认驳回
 
 
 
@@ -135,17 +135,19 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/codedrawdone',    'CodedrawdoneController');//码商提现通过列表
 
     Route::resource('/codedrawreject',  'CodedrawrejectController');//码商提现驳回列表
-    Route::get('/codedrawreject/editreject/{id}',  'CodedrawrejectController@editreject');//信息编辑页
-    Route::post('/codedrawreject_save',       'CodedrawrejectController@saveinfo');//保存信息
-    Route::post('/codedrawreject/pass',    'CodedrawrejectController@pass');//确认通过
-    Route::post('/codedrawreject/reject',  'CodedrawrejectController@reject');//确认驳回
+//    Route::get('/codedrawreject/editreject/{id}',  'CodedrawrejectController@editreject');//信息编辑页
+//    Route::post('/codedrawreject_save',       'CodedrawrejectController@saveinfo');//保存信息
+//    Route::post('/codedrawreject/pass',    'CodedrawrejectController@pass');//确认通过
+//    Route::post('/codedrawreject/reject',  'CodedrawrejectController@reject');//确认驳回
 
     Route::resource('/recharge',        'RechargeController');//充值信息
     Route::post('/rechargeUpdate',      'RechargeController@update');//码商编辑
-    Route::post('/status_switch', 'RechargeController@status_switch');
+    Route::post('/status_switch',       'RechargeController@status_switch');
 
     Route::resource('/rechargelist',    'RechargelistController');//充值列表处理
-    Route::post('/rechargelist/enable', 'RechargelistController@enable');
+    Route::post('/rechargelist/pass', 'RechargelistController@pass');
+    Route::post('/rechargelist/reject', 'RechargelistController@reject');
+
     Route::resource('/rechargedone',    'RechargedoneController');//充值通过列表
     Route::resource('/rechargereject',  'RechargerejectController');//充值驳回列表
 

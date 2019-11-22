@@ -65,8 +65,8 @@
                 <td style="text-align: center">
                     <div class="layui-inline">
                         @if($info['status']==0)
-                            <button class="layui-btn layui-btn-small layui-btn-normal edits-btn" data-id="{{$info['id']}}" data-key="1" data-desc="通过">通过</button>
-                            <button class="layui-btn layui-btn-small layui-btn-danger edits-btn" data-id="{{$info['id']}}" data-key="2" data-desc="驳回">驳回</button>
+                            <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['id']}}"  data-desc="通过">通过</button>
+                            <button class="layui-btn layui-btn-small layui-btn-danger edits-btn2" data-id="{{$info['id']}}"  data-desc="驳回">驳回</button>
                         @endif
                     </div>
                 </td>
@@ -94,17 +94,15 @@
             form.on('submit(formDemo)', function(data) {
             });
 
-            $('.edits-btn').click(function () {
+            $('.edits-btn1').click(function () {
                 var that = $(this);
                 var id=$(this).attr('data-id');
-                var status = that.attr('data-key');
-                var str = that.attr('data-desc');
-                layer.confirm('确定要'+str+'吗？',{title:'提示'},function () {
+                layer.confirm('确定要通过吗?',{title:'提示'},function () {
                     $.ajax({
                         headers: {
                             'X-CSRF-TOKEN': $('#token').val()
                         },
-                        url:"{{url('/admin/rechargelist/enable')}}",
+                        url:"{{url('/admin/rechargelist/pass')}}",
                         data:{
                             "id":id,
                             "status":status
@@ -123,7 +121,34 @@
                     });
                 })
             });
-
+            //驳回
+            $('.edits-btn2').click(function () {
+                var that = $(this);
+                var id=$(this).attr('data-id');
+                layer.confirm('确定要驳回吗?',{title:'提示'},function () {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('#token').val()
+                        },
+                        url:"{{url('/admin/rechargelist/reject')}}",
+                        data:{
+                            "id":id,
+                            "status":status
+                        },
+                        type:"post",
+                        dataType:'json',
+                        success:function (res) {
+                            if(res.status==1){
+                                layer.msg(res.msg,{icon:6});
+                                location.reload();
+                            }else{
+                                layer.msg(res.msg,{shift: 6,icon:5});
+                                location.reload();
+                            }
+                        }
+                    });
+                })
+            });
 
         });
         function previewImg(obj) {

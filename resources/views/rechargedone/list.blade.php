@@ -90,13 +90,13 @@
         function previewImg(obj) {
             var img = new Image();
             img.src=obj.src;
-            var imgHtml = "<img src='" + obj.src + "' width='500px' height='500px'/>";
+            var imgHtml = "<img src='" + obj.src + "' width='400px' height='700px'/>";
             //弹出层
             layer.open({
                 type:1,
                 shade:0.8,
                 offset:'auto',
-                area:[500 + 'px',500+'px'],
+                area:['400px','700px'],
                 shadeClose:true,
                 scrollbar:false,
                 title:"图片预览",

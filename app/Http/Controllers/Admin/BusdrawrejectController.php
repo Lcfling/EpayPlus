@@ -14,7 +14,7 @@ class BusdrawrejectController extends Controller
      * 数据列表
      */
     public function index(Request $request){
-       $reject=Busdrawreject::query();
+        $reject=Busdraw::query();
         if(true==$request->has('business_code')){
             $reject->where('business_code','=',$request->input('business_code'));
         }
@@ -33,7 +33,7 @@ class BusdrawrejectController extends Controller
             $end=strtotime('+1day',$start);
             $reject->whereBetween('endtime',[$start,$end]);
         }
-        $data = $reject->orderBy('creatime','desc')->paginate(10)->appends($request->all());
+        $data = $reject->where('status','=',2)->orderBy('creatime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['endtime'] =date("Y-m-d H:i:s",$value["endtime"]);

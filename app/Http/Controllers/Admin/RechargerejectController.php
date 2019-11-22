@@ -30,6 +30,7 @@ class RechargerejectController extends Controller
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['savetime'] =date("Y-m-d H:i:s",$value["savetime"]);
+            $data[$key]['czimg']='http://epp.zgzyph.com'.$value["czimg"];
         }
         return view('rechargereject.list',['list'=>$data,'input'=>$request->all()]);
     }

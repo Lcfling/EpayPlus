@@ -32,18 +32,20 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="100">
-             <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="300">
+            <col class="hidden-xs" width="100">
+
         </colgroup>
         <thead>
         <tr>
             <th class="hidden-xs">序号</th>
             <th class="hidden-xs">码商ID</th>
             <th class="hidden-xs">订单号</th>
-            <th class="hidden-xs">提现额度</th>
+            <th class="hidden-xs">提现金额</th>
+            <th class="hidden-xs">到账金额</th>
             <th class="hidden-xs">手机号</th>
             <th class="hidden-xs">微信昵称</th>
             <th class="hidden-xs">开户人</th>
@@ -51,9 +53,9 @@
             <th class="hidden-xs">卡号</th>
             <th class="hidden-xs">申请时间</th>
             <th class="hidden-xs">提现时间</th>
+            <th class="hidden-xs">备注</th>
             <th class="hidden-xs">状态</th>
-             <th class="hidden-xs">备注</th>
-            <th class="hidden-xs">操作</th>
+
         </tr>
         </thead>
         <tbody>
@@ -63,6 +65,7 @@
                 <td class="hidden-xs">{{$info['user_id']}}</td>
                 <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['money']/100}}</td>
+                <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
                 <td class="hidden-xs">{{$info['wx_name']}}</td>
                 <td class="hidden-xs">{{$info['name']}}</td>
@@ -70,23 +73,10 @@
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">{{$info['endtime']}}</td>
-                <td class="hidden-xs">
-                    @if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-default">已驳回</span>
-                    @elseif($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-warm">已打款</span>
-                    @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">确认驳回</span>
-                    @endif
-                </td>
                 <td class="hidden-xs">{{$info['remark'] or '无备注'}}</td>
-                <td>
-                    <div class="layui-inline">
-                        <a class="layui-btn layui-btn-small layui-btn-normal"  onclick="edit({{$info['id']}})">编辑</a>
-                        @if($info['status']==0)
-                            <button class="layui-btn layui-btn-small layui-btn-warm edits-btn1" data-id="{{$info['id']}}" data-desc="确认打款">确认打款</button>
-                            <button class="layui-btn layui-btn-small layui-btn-danger edits-btn2" data-id="{{$info['id']}}" data-desc="确认驳回">确认驳回</button>
-                        @endif
-                    </div>
+                <td class="hidden-xs">
+                    <span class="layui-btn layui-btn-small layui-btn-danger">已驳回</span>
                 </td>
-
             </tr>
         @endforeach
         @if(!$list[0])

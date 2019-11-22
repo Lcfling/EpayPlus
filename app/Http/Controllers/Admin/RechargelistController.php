@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Codecount;
 use Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
@@ -10,7 +11,7 @@ use App\Models\Billflow;
 use App\Models\Rechargelist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Redis;
 class RechargelistController extends Controller
 {
     /**
@@ -43,12 +44,12 @@ class RechargelistController extends Controller
         return view('rechargelist.list',['list'=>$data,'input'=>$request->all()]);
     }
     /**
-     * 通过和驳回
+     * 通过
      */
-    public function enable(StoreRequest $request){
+    public function pass(StoreRequest $request){
         $id = $request->input('id');
-        $status = $request->input('status');
-        $info =$id?Rechargelist::find($id):[];
+
+        $info =Rechargelist::find($id);
 
         $tablepfe=date('Ymd');
         $account =new Billflow;
@@ -60,48 +61,57 @@ class RechargelistController extends Controller
         if(!$islock){
             return ['msg'=>'请勿频繁操作！'];
         }
-        if($status==1){
-            //开启事物
-            DB::beginTransaction();
-            try{
-                $status = Rechargelist::where('id',$request->input('id'))->update(['status'=>$status,'savetime'=>time()]);//改状态
-                if(!$status){
-                    DB::rollBack();
-                    $this->unczlock($id);
-                    return ['msg'=>'审核失败！','status'=>0];
-                }
-                $billflow=$account->insert(['user_id'=>$user_id,'score'=>$score,'status'=>$status,'remark'=>'自动充值','creatime'=>time()]);//插数据
-                if(!$billflow){
-                    DB::rollBack();
-                    $this->unczlock($id);
-                    return ['msg'=>'审核失败！','status'=>0];
-                }
-                $money=DB::table('users_count')->where('user_id','=',$user_id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score")]);//加钱
-                if(!$money){
-                    DB::rollBack();
-                    $this->unczlock($id);
-                    return ['msg'=>'审核失败！','status'=>0];
-                }
-                DB::commit();
-                $this->unczlock($id);
-                return ['msg'=>'审核成功！','status'=>1];
-
-            }catch (Exception $e) {
+        //开启事物
+        DB::beginTransaction();
+        try{
+            $status = Rechargelist::where('id',$request->input('id'))->update(['status'=>1,'savetime'=>time()]);//改状态
+            if(!$status){
                 DB::rollBack();
                 $this->unczlock($id);
-                return ['msg'=>'发生异常！事物进行回滚！','status'=>0];
+                return ['msg'=>'通过失败！','status'=>0];
             }
+            $billflow=$account->insert(['user_id'=>$user_id,'score'=>$score,'status'=>1,'remark'=>'自动充值','creatime'=>time()]);//插数据
+            if(!$billflow){
+                DB::rollBack();
+                $this->unczlock($id);
+                return ['msg'=>'添加充值流水失败！','status'=>0];
+            }
+            $money=Codecount::where('user_id','=',$user_id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score")]);//加钱
+            if(!$money){
+                DB::rollBack();
+                $this->unczlock($id);
+                return ['msg'=>'更改码商帐户失败！','status'=>0];
+            }
+            DB::commit();
+            $this->unczlock($id);
+            return ['msg'=>'充值成功！','status'=>1];
+
+        }catch (Exception $e) {
+            DB::rollBack();
+            $this->unczlock($id);
+            return ['msg'=>'发生异常！事物进行回滚！','status'=>0];
+        }
+
+
+
+    }
+
+    /**
+     * 驳回
+     */
+    public function reject(StoreRequest $request){
+        $id = $request->input('id');
+        $count = Rechargelist::where('id',$request->input('id'))->update(['status'=>2,'savetime'=>time()]);
+        if($count){
+            $this->unczlock($id);
+            return ['msg'=>'驳回成功！','status'=>1];
         }else{
-            $count = Rechargelist::where('id',$request->input('id'))->update(['status'=>$status,'savetime'=>time()]);
-            if($count){
-                $this->unczlock($id);
-                return ['msg'=>'驳回成功！','status'=>1];
-            }else{
-                $this->unczlock($id);
-                return ['msg'=>'驳回失败！','status'=>0];
-            }
+            $this->unczlock($id);
+            return ['msg'=>'驳回失败！','status'=>0];
         }
     }
+
+
     //redis加锁
     private function czlock($functions){
 

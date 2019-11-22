@@ -29,6 +29,7 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
@@ -38,7 +39,8 @@
             <th class="hidden-xs">序号</th>
             <th class="hidden-xs">码商ID</th>
             <th class="hidden-xs">订单号</th>
-            <th class="hidden-xs">提现额度</th>
+            <th class="hidden-xs">提现金额</th>
+            <th class="hidden-xs">到账金额</th>
             <th class="hidden-xs">手机号</th>
             <th class="hidden-xs">微信昵称</th>
             <th class="hidden-xs">开户人</th>
@@ -56,6 +58,7 @@
                 <td class="hidden-xs">{{$info['user_id']}}</td>
                 <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['money']/100}}</td>
+                <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
                 <td class="hidden-xs">{{$info['wx_name']}}</td>
                 <td class="hidden-xs">{{$info['name']}}</td>

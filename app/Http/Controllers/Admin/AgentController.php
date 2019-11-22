@@ -61,27 +61,30 @@ class AgentController extends Controller
         $res2=Agent::add_mobile($mobile);
         if($res1){
             return ['msg'=>'账号已存在！'];
-        }else if($res2){
+        }
+        if($res2){
             return ['msg'=>'手机号已存在！'];
-        }else{
-            $google2fa = new Google2FA();
-            $secretKey=$google2fa->generateSecretKey();
-            $data['ggkey']=$secretKey;
+        }
+        DB::beginTransaction();
+        try{
             $data['password']=bcrypt($data['password']);
             $data['creatime']=time();
             $agent_id=Agent::insertGetId($data);
-            if($agent_id){
-                $res=DB::table('agent_count')->insert(array('agent_id'=>$agent_id,'creatime'=>time()));
-                if($res){
-                    return ['msg'=>'添加成功！','status'=>1];
-                }else{
-                    return ['msg'=>'添加失败！'];
-                }
-            }else{
-                return ['msg'=>'添加失败！'];
+            if(!$agent_id){
+                DB::rollBack();
+                return ['msg'=>'代理添加失败！'];
             }
+            $res=DB::table('agent_count')->insert(array('agent_id'=>$agent_id,'creatime'=>time()));
+            if(!$res){
+                DB::rollBack();
+                return ['msg'=>'代理帐户添加失败！'];
+            }
+            DB::commit();
+            return ['msg'=>'添加成功！','status'=>1];
+        }catch (Exception $e){
+            DB::rollBack();
+            return ['msg'=>'操作异常！请稍后重试！'];
         }
-
     }
     /**
      * 修改数据

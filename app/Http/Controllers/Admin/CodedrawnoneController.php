@@ -5,6 +5,8 @@ created by z
  */
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Billflow;
+use App\Models\Codecount;
 use App\Models\Codedraw;
 use App\Models\Codedrawreject;
 use Illuminate\Http\Request;
@@ -43,19 +45,39 @@ class CodedrawnoneController extends Controller
      */
     public function pass(StoreRequest $request){
         $id=$request->input('id');
-
+        $drawinfo=Codedraw::find($id);
         $islock=$this->codelock($id);
-        if($islock){
-            $res=Codedraw::pass($id);
-            if($res){
+        if(!$islock){
+            return ['msg'=>'请勿频繁操作！'];
+        }
+        DB::beginTransaction();
+        try{
+            if(!$draw=Codedraw::where([["id",$id],['status','in',[1,2]]])->lockForUpdate()->first()){
+                DB::rollBack();
                 $this->uncodelock($id);
-                return ['msg'=>'通过成功！','status'=>1];
-            }else{
+                return ['msg'=>'订单已处理！'];
+            }
+            $status=Codedraw::pass($id);
+            if(!$status){
+                DB::rollBack();
                 $this->uncodelock($id);
                 return ['msg'=>'通过失败！'];
             }
-        }else{
-            return ['msg'=>'请勿频繁操作！'];
+            $drawMoney=$drawinfo['money'];
+            $tradeMoney=$drawinfo['tradeMoney'];
+            $add=Codecount::where('user_id',$drawinfo['user_id'])->increment('drawMoney',$drawMoney,['tradeMoney'=>DB::raw("tradeMoney + $tradeMoney")]);
+            if(!$add){
+                DB::rollBack();
+                $this->uncodelock($id);
+                return ['msg'=>'更改代理帐户失败！'];
+            }
+            DB::commit();
+            $this->uncodelock($id);
+            return ['msg'=>'通过成功！','status'=>1];
+        }catch (Exception $e){
+            DB::rollBack();
+            $this->uncodelock($id);
+            return ['msg'=>'操作异常！请稍后重试！'];
         }
 
     }
@@ -73,35 +95,59 @@ class CodedrawnoneController extends Controller
     public function reject(StoreRequest $request){
         $data=$request->all();
         $id=$data['id'];
-        $key='code_lock_'.$id;
-        $is=Redis::get($key);
-        if(!empty($is)){
-            return ['msg'=>'操作失败！'];
-        }else{
-            $info=Codedraw::find($id);
-            $insert=[
-                'order_sn'=>$info['order_sn'],
-                'user_id'=>$info['user_id'],
-                'name'=>$info['name'],
-                'wx_name'=>$info['wx_name'],
-                'mobile'=>$info['mobile'],
-                'deposit_name'=>$info['deposit_name'],
-                'deposit_card'=>$info['deposit_card'],
-                'money'=>$info['money'],
-                'remark'=>$data['remark'],
-                'creatime'=>$info['creatime'],
-            ];
-            $down=Codedraw::reject($id);
-            if(!$down){
-                return ['msg'=>'操作失败！'];
-            }
-            $ins=Codedrawreject::insert($insert);
-            if(!$ins){
-                return ['msg'=>'操作失败！'];
-            }else{
-                return ['msg'=>'驳回成功！','status'=>1];
-            }
 
+        $drawinfo=Codedraw::find($id);
+
+        $tablepfe=date('Ymd');
+        $account =new Billflow;
+        $account->setTable('account_'.$tablepfe);
+
+        $islock=$this->codelock($id);
+        if(!$islock){
+            return ['msg'=>'请勿频繁操作！'];
+        }
+        DB::beginTransaction();
+        try{
+            if(!$draw=Codedraw::where([["id",$id],['status','in',[1,2]]])->lockForUpdate()->first()){
+                DB::rollBack();
+                $this->uncodelock($id);
+                return ['msg'=>'订单已处理！'];
+            }
+            $status=Codedraw::reject($id,$data['remark']);
+            if(!$status){
+                DB::rollBack();
+                $this->uncodelock($id);
+                return ['msg'=>'驳回失败！'];
+            }
+            $bill=[
+                'order_sn'=>$drawinfo['order_sn'],
+                'user_id'=>$drawinfo['user_id'],
+                'score'=>$drawinfo['money'],
+                'status'=>6,
+                'remark'=>'代理提现驳回',
+                'creatime'=>time()
+            ];
+            $ins=$account->insert($bill);
+            if(!$ins){
+                DB::rollBack();
+                $this->uncodelock($id);
+                return ['msg'=>'码商流水添加失败！'];
+            }
+            $drawMoney=$drawinfo['money'];
+            $tradeMoney=$drawinfo['tradeMoney'];
+            $reduce=Codecount::where('user_id',$drawinfo['user_id'])->decrement('drawMoney',$drawMoney,['tradeMoney'=>DB::raw("tradeMoney - $tradeMoney")]);
+            if(!$reduce){
+                DB::rollBack();
+                $this->uncodelock($id);
+                return ['msg'=>'更改码商帐户失败！'];
+            }
+            DB::commit();
+            $this->uncodelock($id);
+            return ['msg'=>'驳回成功！','status'=>1];
+        }catch (Exception $e){
+            DB::rollBack();
+            $this->uncodelock($id);
+            return ['msg'=>'操作异常！请稍后重试！'];
         }
 
     }

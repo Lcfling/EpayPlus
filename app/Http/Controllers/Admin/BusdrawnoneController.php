@@ -111,10 +111,10 @@ class BusdrawnoneController extends Controller
         $weeksuf = computeWeek(time(),false);
         $busbill=new Busbill();
         $busbill->setTable('business_billflow_'.$weeksuf);
-         $islock=$this->buslock($id);
-         if(!$islock){
+        $islock=$this->buslock($id);
+        if(!$islock){
           return ['msg'=>'请勿频繁操作！'];
-         }
+        }
         DB::beginTransaction();
         try{
             if(!$draw=Busdraw::where([["id",$id],['status','in',[1,2]]])->lockForUpdate()->first()){
@@ -135,14 +135,14 @@ class BusdrawnoneController extends Controller
                         'score'=>$drawinfo['money'],
                         'tradeMoney'=>$drawinfo['tradeMoney'],
                         'status'=>3,
-                        'remark'=>'提现驳回',
+                        'remark'=>'商户提现驳回',
                         'creatime'=>time()
                     ];
                     $ins=$busbill->insert($bill);
                     if(!$ins){
                         DB::rollBack();
                         $this->unbuslock($id);
-                        return ['msg'=>'流水添加失败！'];
+                        return ['msg'=>'商户流水添加失败！'];
                     }else{
                         $drawMoney=$drawinfo['money'];
                         $tradeMoney=$drawinfo['tradeMoney'];

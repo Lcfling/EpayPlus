@@ -5,6 +5,8 @@ created by z
  */
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Agentbill;
+use App\Models\Agentcount;
 use App\Models\Agentdraw;
 use App\Models\Agentdrawreject;
 use Illuminate\Http\Request;
@@ -43,18 +45,39 @@ class AgentdrawnoneController extends Controller
      */
     public function pass(StoreRequest $request){
         $id=$request->input('id');
+        $drawinfo=Agentdraw::find($id);
         $islock=$this->agentlock($id);
-        if($islock){
-            $res=Agentdraw::pass($id);
-            if($res){
+        if(!$islock){
+            return ['msg'=>'请勿频繁操作！'];
+        }
+        DB::beginTransaction();
+        try{
+            if(!$draw=Agentdraw::where([["id",$id],['status','in',[1,2]]])->lockForUpdate()->first()){
+                DB::rollBack();
                 $this->unagentlock($id);
-                return ['msg'=>'通过成功！','status'=>1];
-            }else{
+                return ['msg'=>'订单已处理！'];
+            }
+            $status=Agentdraw::pass($id);
+            if(!$status){
+                DB::rollBack();
                 $this->unagentlock($id);
                 return ['msg'=>'通过失败！'];
             }
-        }else{
-            return ['msg'=>'请勿频繁操作！'];
+            $drawMoney=$drawinfo['money'];
+            $tradeMoney=$drawinfo['tradeMoney'];
+            $add=Agentcount::where('business_code',$drawinfo['business_code'])->increment('drawMoney',$drawMoney,['tradeMoney'=>DB::raw("tradeMoney + $tradeMoney")]);
+            if(!$add){
+                DB::rollBack();
+                $this->unagentlock($id);
+                return ['msg'=>'更改代理帐户失败！'];
+            }
+            DB::commit();
+            $this->unagentlock($id);
+            return ['msg'=>'通过成功！','status'=>1];
+        }catch (Exception $e){
+            DB::rollBack();
+            $this->unagentlock($id);
+            return ['msg'=>'操作异常！请稍后重试！'];
         }
 
     }
@@ -72,33 +95,62 @@ class AgentdrawnoneController extends Controller
    public function reject(StoreRequest $request){
        $data=$request->all();
        $id=$data['id'];
-       $key='agent_lock_'.$id;
-       $is=Redis::get($key);
-       if(!empty($is)){
-           return ['msg'=>'操作失败！'];
-       }else{
-           $info=Agentdraw::find($id);
-           $insert=[
-               'order_sn'=>$info['order_sn'],
-               'agent_id'=>$info['agent_id'],
-               'name'=>$info['name'],
-               'deposit_name'=>$info['deposit_name'],
-               'deposit_card'=>$info['deposit_card'],
-               'money'=>$info['money'],
-               'remark'=>$data['remark'],
-               'creatime'=>$info['creatime'],
-           ];
-           $down=Agentdraw::reject($id);
-           if(!$down){
-               return ['msg'=>'操作失败！'];
-           }
-           $ins=Agentdrawreject::insert($insert);
-           if(!$ins){
-               return ['msg'=>'操作失败！'];
-           }else{
-               return ['msg'=>'驳回成功！','status'=>1];
-           }
+
+       $drawinfo=Agentdraw::find($id);
+
+       $weeksuf = computeWeek(time(),false);
+       $agentbill=new Agentbill();
+       $agentbill->setTable('agent_billflow_'.$weeksuf);
+
+       $islock=$this->unagentlock($id);
+       if(!$islock){
+           return ['msg'=>'请勿频繁操作！'];
        }
+       DB::beginTransaction();
+       try{
+           if(!$draw=Agentdraw::where([["id",$id],['status','in',[1,2]]])->lockForUpdate()->first()){
+               DB::rollBack();
+               $this->unagentlock($id);
+               return ['msg'=>'订单已处理！'];
+           }
+           $status=Agentdraw::reject($id,$data['remark']);
+           if(!$status){
+               DB::rollBack();
+               $this->unagentlock($id);
+               return ['msg'=>'驳回失败！'];
+           }
+           $bill=[
+               'order_sn'=>$drawinfo['order_sn'],
+               'agent_id'=>$drawinfo['agent_id'],
+               'score'=>$drawinfo['money'],
+               'tradeMoney'=>$drawinfo['tradeMoney'],
+               'status'=>3,
+               'remark'=>'代理提现驳回',
+               'creatime'=>time()
+           ];
+           $ins=$agentbill->insert($bill);
+           if(!$ins){
+               DB::rollBack();
+               $this->unagentlock($id);
+               return ['msg'=>'代理流水添加失败！'];
+           }
+           $drawMoney=$drawinfo['money'];
+           $tradeMoney=$drawinfo['tradeMoney'];
+           $reduce=Agentcount::where('business_code',$drawinfo['business_code'])->decrement('drawMoney',$drawMoney,['tradeMoney'=>DB::raw("tradeMoney - $tradeMoney")]);
+           if(!$reduce){
+               DB::rollBack();
+               $this->unagentlock($id);
+               return ['msg'=>'更改代理帐户失败！'];
+           }
+           DB::commit();
+           $this->unagentlock($id);
+           return ['msg'=>'驳回成功！','status'=>1];
+       }catch (Exception $e){
+           DB::rollBack();
+           $this->unagentlock($id);
+           return ['msg'=>'操作异常！请稍后重试！'];
+       }
+
 
    }
 

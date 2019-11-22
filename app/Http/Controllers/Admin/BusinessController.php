@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
 use App\Models\Busbank;
+use App\Models\Buscount;
 use App\Models\Business;
 use Illuminate\Support\Facades\DB;
 use PragmaRX\Google2FA\Google2FA;
@@ -67,36 +68,44 @@ class BusinessController extends Controller
         $res2=Business::add_mobile($mobile);
         if($res1){
             return ['msg'=>'账号已存在！'];
-        }else if($res2){
+        }
+        if($res2){
             return ['msg'=>'手机号已存在！'];
-        }else{
-            $google2fa = new Google2FA();
-            $secretKey=$google2fa->generateSecretKey();
+        }
+        DB::beginTransaction();
+        try{
             $data['password']=bcrypt($data['password']);
             $data['remember_token']='';
             $data['paypassword']='';
             $unicode=$this->unicode();
             $accessKey=md5(md5($unicode));
             $data['accessKey']=$accessKey;
-            $data['ggkey']=$secretKey;
             $data['fee']=$data['fee']/100;
             $data['creatime']=time();
             $data['updatetime']=time();
             $insertID=Business::insertGetId($data);
-            if($insertID){
-                $agent['business_code']=$insertID;
-                $agent['creatime']=time();
-                $res3=DB::table('agent_fee')->insert($agent);
-                DB::table('business_count')->insert(array('business_code'=>$insertID,'creatime'=>time()));
-                if($res3){
-                    return ['msg'=>'添加成功！','status'=>1];
-                }else{
-                    return ['msg'=>'添加失败！'];
-                }
-
-            }else{
-                return ['msg'=>'添加失败！'];
+            if(!$insertID){
+                DB::rollBack();
+                return ['msg'=>'码商添加失败！'];
             }
+            $agent['business_code']=$insertID;
+            $agent['creatime']=time();
+            $res3=DB::table('agent_fee')->insert($agent);
+            if(!$res3){
+                DB::rollBack();
+                return ['msg'=>'费率添加失败！'];
+            }
+            $buscount=Buscount::insert(array('business_code'=>$insertID,'creatime'=>time()));
+            if(!$buscount){
+                DB::rollBack();
+                return ['msg'=>'商户帐户添加失败！'];
+            }
+            DB::commit();
+            return ['msg'=>'添加成功！','status'=>1];
+
+        }catch (Exception $e){
+            DB::rollBack();
+            return ['msg'=>'操作异常！请稍后重试！'];
         }
 
     }

@@ -32,7 +32,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label" style="width: 100px">身份：</label>
         <div class="layui-input-inline">
-            <input type="number" value="{{$info['shenfen'] or ''}}" name="shenfen" lay-verify="shenfen" placeholder="请输入身份(正整数)" autocomplete="off" class="layui-input" @if($id!=0) disabled @endif>
+            <input type="number" value="{{$info['shenfen'] or ''}}" name="shenfen" lay-verify="shenfen" placeholder="请输入身份(1-15)" autocomplete="off" class="layui-input" @if($id!=0) disabled @endif>
         </div>
     </div>
     @if($id==0)
@@ -65,18 +65,14 @@
                     if(value==null||value==''){
                         return '请填写手机号';
                     }
-                    var reg = new RegExp("^1[34578]\\d{9}$");
+                    var reg = new RegExp("^1\\d{10}$");
                     if(!reg.test(value)){
-                        return '请输入正确手机号';
+                        return '请输入11位手机号';
                     }
                 },
                 confirmPass:function(value){
                     if($('input[name=password]').val() !== value)
                         return '两次密码输入不一致！';
-                    var reg1 = new RegExp("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$");
-                    if(!reg1.test(value)){
-                        return '密码为6-12数字字母';
-                    }
                 },
                 shenfen:function(value){
                     if(value==null||value==''){
