@@ -11,7 +11,6 @@ namespace App\Http\Controllers\Code;
 use App\Models\Accountlog;
 use App\Models\Erweima;
 use App\Models\Order;
-use App\Models\Orderrecord;
 use App\Models\Users;
 use App\Models\Userscount;
 use Illuminate\Http\Request;
@@ -87,7 +86,7 @@ class UserController extends CommonController {
             Users::Genericlist($user_id,$order_info['payType'],$erweima_id);
             $order_time=Redis::get("ordertime_".$erweima_id.$order_info['tradeMoney']);
             if ( !empty($order_time) &&$order_time+600>time()){
-                ajaxReturn(null,"该支付码正在使用中,请勿频繁接单!",0);
+                ajaxReturn(null,"已有相同金额订单!",0);
             }
             $erweimajson=Redis::get('erweimainfo_'.$erweima_id);
             $erweimainfo = json_decode($erweimajson,true);
@@ -140,14 +139,18 @@ class UserController extends CommonController {
                 }else{
                     $order =Order::getordersntable($order_sn);
                     //  更改订单状态
-                    $order->where(array("order_sn"=>$order_sn))->update(array("user_id"=>$user_id,"erweima_id"=>$erweima_id));
-                    Orderrecord::where(array("order_sn"=>$order_sn))->update(array("user_id"=>$user_id,"erweima_id"=>$erweima_id));
-                    DB::commit();
+                    $orderstatus = $order->where(array("order_sn"=>$order_sn))->update(array("user_id"=>$user_id,"erweima_id"=>$erweima_id));
+                    if($orderstatus){
+                        DB::commit();
+                    }else{
+                        DB::rollBack();
+                        ajaxReturn(null,"抢单失败!",0);
+                    }
                     Redis::set("ordertime_".$erweima_id.$order_info['tradeMoney'],time());
                     //发送被抢订单信息
                     $this->sendnotify($order_info,2);
                     //发送被抢订单信息
-                    $ourdercount=Orderrecord::where(array("user_id"=>$user_id,"status"=>0,"sk_status"=>0))->count();
+                    $ourdercount=Redis::incr('order_qd_'.$user_id);
                     //获取订单信息
                     $order_infos=$order->where(array("order_sn"=>$order_sn))->first();
                     $this->senduidnotify($order_infos,3,$ourdercount);

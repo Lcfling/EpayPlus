@@ -30,4 +30,19 @@ class Users extends Model {
         return $idsinfo;
     }
 
+
+    /**通用码二维码重新入队
+     * @param $user_id
+     * @param $type
+     * @param $erweima_id
+     * @return bool
+     */
+    public static function Genericlist($user_id,$type,$erweima_id){
+
+        Redis::lRem("erweimas".$type.$user_id,0,$erweima_id);
+        // 二维码存入用户缓冲
+        Redis::rPush('erweimas'.$type.$user_id,$erweima_id);
+        return true;
+    }
+
 }

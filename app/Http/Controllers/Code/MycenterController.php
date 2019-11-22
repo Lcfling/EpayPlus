@@ -729,7 +729,7 @@ class MycenterController extends CommonController {
         }
     }
     /**
-     * 资金列表 type 1 佣金进来  2 冻结中进来
+     * 资金列表 type 1 佣金进来  2 冻结中进来  历史订单传时间searchtime 其他进来不穿时间
      */
     public function acountlist(Request $request) {
         if($request->isMethod('post')) {
@@ -738,32 +738,72 @@ class MycenterController extends CommonController {
 
             if($request->has('searchtime')){
                 $tablesuf = $a['searchtime'];
-            }else{
-                $tablesuf = date('Ymd');
+                if(!$tablesuf){
+                    $tablesuf = date('Ymd');
+                }
             }
+
             $lastid = $a['lastid'];
             $type = $a['type'];
             if($type == 1) {
                 $acountlist = Accountlog::getbrokeragelist($tablesuf,$user_id,$lastid,5);
+                foreach ($acountlist as $k=>&$v) {
+                    $v['creatime'] = date('Y/m/d H:i:s',$v['creatime']);
+                    $v['money'] = $v['score']/100;
+                }
             } elseif($type == 2) {
                 if($lastid){
                     $where =[['dj_status',0],['user_id',$user_id],['id','<',$lastid]];
                 }else{
                     $where =array('user_id'=>$user_id,'dj_status'=>0);
                 }
-                $acountlist = Orderrecord::orderBy('id','desc')->where($where)->limit(10)->get();
+                if($request->has('order_sn')){
+                    $order_sn = $a['order_sn'];
+                    if($order_sn) {
+                        $weeksuf = computeWeek(substr($order_sn,0,8));
+                    }else{
+                        $weeksuf =0;
+                    }
+                }else{
+                    ajaxReturn('','请求数据异常!',0);
+                }
+                $acountlist=Order::getorderinfo($where,10,$weeksuf);
+                foreach ($acountlist as $k=>&$v) {
+                    $v['creatime'] = date('Y/m/d H:i:s',$v['creatime']);
+                    $v['money'] = $v['tradeMoney']/100;
+                }
             } else {
                 $acountlist = Accountlog::getcountlist($tablesuf,$user_id,$lastid);
+                foreach ($acountlist as $k=>&$v) {
+                    $v['creatime'] = date('Y/m/d H:i:s',$v['creatime']);
+                    $v['money'] = abs($v['score']/100);
+                }
             }
-            foreach ($acountlist as $k=>&$v) {
-                $v['creatime'] = date('Y/m/d H:i:s',$v['creatime']);
-                $v['money'] = $v['score']/100;
-            }
+
             ajaxReturn($acountlist,'请求成功!',1);
         } else {
             ajaxReturn('','请求数据异常!',0);
         }
     }
+
+    /**历史资金列表查询时间控制
+     * @param Request $request
+     */
+    public function getdatetime(Request $request){
+        if($request->isMethod('post')) {
+            $data =array(
+                'Y'=>2019,
+                'M'=>11,
+                'D'=>18,
+            );
+            ajaxReturn($data,'请求成功!',1);
+        }else {
+            ajaxReturn('','请求数据异常!',0);
+        }
+
+    }
+
+
     /**生成随机码
      * @param $nums
      * @param $num

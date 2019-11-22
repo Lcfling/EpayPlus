@@ -103,13 +103,21 @@ class IndexController extends Controller
 //        Redis::rPush('erweimas00000',9);
 //        Redis::rPush('erweimas00000',8);
 //        Redis::rPush('erweimas00000',11);
-        $list = Redis::lrange('erweimas00000',0,-1);
-        print_r($list);
-        Redis::lRem('erweimas00000',0,11);
-        Redis::rPush('erweimas00000',11);
-        $list = Redis::lrange('erweimas00000',0,-1);
-        print_r($list);
+//        $list = Redis::lrange('erweimas00000',0,-1);
+//        print_r($list);
+//        Redis::lRem('erweimas00000',0,11);
+//        Redis::rPush('erweimas00000',11);
+//        $list = Redis::lrange('erweimas00000',0,-1);
+//        print_r($list);
+//        $ordertatle = Order::getordertable();
+//        $weeksuf = computeWeek(time(),false) - 1;
+//        $ordertatlepre = Order::getordertable($weeksuf);
+//        $first  =$ordertatlepre->where(array("user_id"=>1,"status"=>0,"sk_status"=>0));
+//        $res = $ordertatle->where(array("user_id"=>37,"status"=>0,"sk_status"=>0))->union($first)->orderBy('creatime', 'desc')->get()->toArray();
+//        print_r($res);
+        print_r(Redis::decr('order_qd_1'));
     }
+
 
     /**
      * 检测更新

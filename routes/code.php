@@ -62,6 +62,7 @@ Route::group(['namespace'  => "Code"], function () {
     Route::post('/Mycenter/saveuserinfo',             'MycenterController@saveuserinfo');//修改银行卡信息
     Route::post('/Mycenter/getGoogle2FA',             'MycenterController@getGoogle2FA');//获取谷歌秘钥和绑定二维码地址
     Route::post('/Mycenter/Google2FAsendcode',        'MycenterController@Google2FAsendcode');//获取查看谷歌验证的手机验证码
+    Route::post('/Mycenter/getdatetime',              'MycenterController@getdatetime');//历史资金列表查询时间控制
 
     Route::post('/orderym/kfnotifyurl',               'OrderymController@kfnotifyurl');//app支付成功回调
     Route::post('/orderym/kuaifupay',                 'OrderymController@kuaifupay');//第三方调取支付

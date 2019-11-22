@@ -9,7 +9,6 @@ namespace App\Http\Controllers\Code;
 use App\Models\Business;
 use App\Models\Erweima;
 use App\Models\Order;
-use App\Models\Orderrecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -99,16 +98,6 @@ class OrderymController extends Controller {
         if($order_id) {
             //订单入队
             Redis::rPush('order_id_'.$order_sn,$order_id);
-            //保存商户订单记录
-            $recorddata =array(
-                'order_sn'=>$order_sn,
-                'business_code'=>$business_code,
-                'payType'=>$datas["payType"],
-                'tradeMoney'=>$datas["tradeMoney"],
-                'submeter_name'=>'order_'.$weeksuf,
-                'creatime'=>$time,
-            );
-            Orderrecord::insert($recorddata);
             $this->getcomonerweimaurl($order_sn);
         } else {
             ajaxReturn('error40005','订单生成失败!',0);

@@ -23,7 +23,7 @@ class Agentfee extends Model {
             $brokerage= $tradeMoney * bcsub(1,$busfee,4);
             Agentfee::setbusbillflow($tradeMoney,$brokerage,$bussiness_code,$order_sn,$paycode);
             //修改商户账户信息
-            Businesscount::where('business_code',$bussiness_code)->increment('balance',$brokerage,['tol_sore'=>DB::raw("tol_sore + $brokerage"),'savetime'=>time()]);
+            Businesscount::where('business_code',$bussiness_code)->increment('balance',$brokerage,['sore_balance'=>DB::raw("sore_balance + $brokerage"),'tol_sore'=>DB::raw("tol_sore + $tradeMoney"),'savetime'=>time()]);
            $agentfeeinfo = Agentfee::where('business_code',$bussiness_code)->first();
            if($agentfeeinfo['agent1_id']){
                $feecha = bcsub($busfee,$agentfeeinfo['agent1_fee'],4);
@@ -134,7 +134,7 @@ class Agentfee extends Model {
      * @param $order_sn
      * @param $paycode
      */
-    private function setbusbillflow($tradeMoney,$brokerage,$bussiness_code,$order_sn,$paycode){
+    private static function setbusbillflow($tradeMoney,$brokerage,$bussiness_code,$order_sn,$paycode){
 
         $data =array(
             'order_sn'=>$order_sn,
@@ -142,7 +142,7 @@ class Agentfee extends Model {
             'tradeMoney'=>$tradeMoney,
             'business_code'=>$bussiness_code,
             'status'=>1,
-            'payType'=>$paycode,
+            'paycode'=>$paycode,
             'remark'=>'支付',
             'creatime'=>time()
         );

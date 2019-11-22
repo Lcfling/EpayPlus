@@ -12,7 +12,6 @@ use App\Models\Czinfo;
 use App\Models\Czrecord;
 use App\Models\Erweima;
 use App\Models\Order;
-use App\Models\Orderrecord;
 use App\Models\Rebate;
 use App\Models\Userscount;
 use Illuminate\Http\Request;
@@ -157,7 +156,7 @@ class OrderjdController extends CommonController {
     public function ordering(Request $request) {
         if($request->isMethod('post')) {
             $user_id =$this->uid;
-            $order_info=Orderrecord::where(array("user_id"=>$user_id,"status"=>0,"sk_status"=>0))->orderBy('id', 'desc')->get();
+            $order_info = Order::getorderinginfo($user_id);
             foreach ($order_info as &$v) {
                 $v['name'] = $this->getname($v['erweima_id']);
                 $v['creatime']= date('Y/m/d H:i:s',$v['creatime']);
@@ -167,6 +166,7 @@ class OrderjdController extends CommonController {
             ajaxReturn('','请求数据异常!',0);
         }
     }
+
     /**
      * 接单订单列表
      */
@@ -174,31 +174,43 @@ class OrderjdController extends CommonController {
         if($request->isMethod('post')) {
             $user_id =$this->uid;//用户id
             $lastid = $request->input('lastid');
+            $order_sn = $request->input('order_sn');
             if($lastid){
                 $where =[['user_id',$user_id],['id','<',$lastid]];
             }else{
                 $where =array('user_id'=>$user_id);
             }
+            $ordertatle = Order::getordertable();
             $bg_time = strtotime(date('Y-m-d'));
-            $recmoney =  Orderrecord::where([['user_id',$user_id],['creatime','>=',$bg_time]])->sum('tradeMoney');
-            $sucmoney =  Orderrecord::where([['user_id',$user_id],['status',1],['creatime','>=',$bg_time]])->sum('tradeMoney');
-            $list=Orderrecord::where($where)->limit(10)->orderBy('id', 'desc')->get();
+            $recmoney =  $ordertatle->where([['user_id',$user_id],['creatime','>=',$bg_time]])->sum('tradeMoney');
+            $sucmoney =  $ordertatle->where([['user_id',$user_id],['status',1],['creatime','>=',$bg_time]])->sum('tradeMoney');
+            if($order_sn) {
+                $weeksuf = computeWeek(substr($order_sn,0,8));
+            }else{
+                $weeksuf =0;
+            }
+            $list=Order::getorderinfo($where,10,$weeksuf);
             foreach ($list as $k =>&$v) {
                 $v['tradeMoney']= $v['tradeMoney']/100;
-                $v['payMoney']= $v['payMoney']/100;
+                $v['sk_money']= $v['sk_money']/100;
                 $v['creatime']= date('Y/m/d H:i:s',$v['creatime']);
                 $v['name'] = $this->getname($v['erweima_id']);
             }
-            $data = array(
+            $lastarr = end($list);
+            $data =array(
+                'list'=>$list,
                 'recmoney'=>$recmoney/100,
                 'sucmoney'=>$sucmoney/100,
-                'list'=>$list
+                'lastid'=>$lastarr['id'],
+                'order_sn'=>$lastarr['order_sn']
             );
             ajaxReturn($data,'请求成功!',1);
         } else {
             ajaxReturn('','请求数据异常!',0);
         }
     }
+
+
 
     /**获取订单详细信息
      * freezenum 冻结金额
@@ -212,7 +224,8 @@ class OrderjdController extends CommonController {
         if($request->isMethod('post')) {
             $user_id =$this->uid;//用户id
             $order_sn = $request->input('order_sn');
-            $orderinfo = Orderrecord::where([['user_id',$user_id],['order_sn',$order_sn]])->select('erweima_id','dj_status')->first();
+            $ordertable =Order::getordersntable($order_sn);
+            $orderinfo = $ordertable->where([['user_id',$user_id],['order_sn',$order_sn]])->select('erweima_id','dj_status')->first();
             if(!$orderinfo){
                 ajaxReturn(null,'无此订单信息!',1);
             }
@@ -254,20 +267,19 @@ class OrderjdController extends CommonController {
             $user_id =$this->uid;//用户id
             $order_sn =$_POST['order_sn'];
             $skmoney=(int)$_POST['skmoney'];
-            $order_info=Orderrecord::where(array('user_id'=>$user_id,'order_sn'=>$order_sn,'sk_status'=>0))->first();
+            $ordertable =Order::getordersntable($order_sn);
+            $order_info=$ordertable->where(array('user_id'=>$user_id,'order_sn'=>$order_sn,'sk_status'=>0))->first();
             if(empty($order_info)) {
                 ajaxReturn(null,'订单已处理!',0);
             }
-            if(Orderrecord::where(array('user_id'=>$user_id,'order_sn'=>$order_sn,'sk_status'=>2))->first()) {
+            if($ordertable->where(array('user_id'=>$user_id,'order_sn'=>$order_sn,'sk_status'=>2))->first()) {
                 ajaxReturn(null,'系统回调成功,您已收款成功,请刷新当前页面!',0);
             }
-            if(Orderrecord::where(array('user_id'=>$user_id,'order_sn'=>$order_sn,'sk_status'=>1))->first()) {
+            if($ordertable->where(array('user_id'=>$user_id,'order_sn'=>$order_sn,'sk_status'=>1))->first()) {
                 ajaxReturn(null,'请勿重复点击!',0);
             }
-            $order = Order::getordersntable($order_sn);
             //更改码商收款金额
-            $orderstatus = $order->where(array('user_id'=>$user_id,'order_sn'=>$order_sn))->update(array('sk_money'=>$skmoney*100,'sk_status'=>1));
-            Orderrecord::where(array('user_id'=>$user_id,'order_sn'=>$order_sn))->update(array('sk_money'=>$skmoney*100,'sk_status'=>1));
+            $orderstatus = $ordertable->where(array('user_id'=>$user_id,'order_sn'=>$order_sn))->update(array('sk_money'=>$skmoney*100,'sk_status'=>1));
             //  判断用户输入金额是否与支付金额一致
             if ( $order_info['tradeMoney'] != $skmoney*100) {
                 ajaxReturn(null,'交易金额不匹配,已提交客服!',0);
@@ -281,6 +293,8 @@ class OrderjdController extends CommonController {
                     $this->csbudan($order_info,$order_sn);
                 }
                 $this->insertrebatte($user_id,$order_info['business_code'],$order_sn,$skmoney * 100,$order_info['payType']);
+                //抢单条数减1
+                Redis::decr('order_qd_'.$user_id);
                 ajaxReturn(null,'手动收款成功!',1);
             } else {
                 ajaxReturn(null,'手动收款失败!',0);
@@ -318,7 +332,6 @@ class OrderjdController extends CommonController {
         $order = Order::getordersntable($order_sn);
         // 修改订单状态
         $order->where(array("order_sn"=>$order_sn))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
-        Orderrecord::where(array("order_sn"=>$order_sn))->update(array("status"=>1,"dj_status"=>2,"pay_time"=>time()));
 //        $this->sfpushfirst($order_sn_info['order_sn']);
     }
     private function csbudan($order_sn_info,$order_sn) {
@@ -341,7 +354,6 @@ class OrderjdController extends CommonController {
         $order = Order::getordersntable($order_sn);
         // 修改订单状态
         $order->where(array("order_sn"=>$order_sn))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
-        Orderrecord::where(array("order_sn"=>$order_sn))->update(array("status"=>1,"dj_status"=>2,"pay_time"=>time()));
 //        $this->sfpushfirst($order_sn_info['order_sn']);
     }
 
@@ -398,7 +410,6 @@ class OrderjdController extends CommonController {
                         file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回失败~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
                         file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
                         Order::where(array('id'=>$v['id'],'status'=>1,'callback_status'=>0))->update(array('callback_status'=>0,'callback_num'=>1,'callback_time'=>time()));
-                        //$Order->where(array('id'=>$v['id'],'status'=>1,'callback_status'=>0))->field("callback_status,callback_num,callback_time")->save(array('callback_status'=>0,'callback_num'=>1,'callback_time'=>time()));
                         ajaxReturn('','回调成功!第三方返回失败');
                     }
                 }
