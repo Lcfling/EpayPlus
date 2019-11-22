@@ -68,7 +68,7 @@
 
             form.on('submit(formDemo)', function(data) {
                 $.ajax({
-                    url:"{{url('/admin/busdrawrenonereject')}}",
+                    url:"{{url('/admin/busdrawnonereject')}}",
                     data:$('form').serialize(),
                     type:'post',
                     dataType:'json',

@@ -65,7 +65,7 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/busdrawnone',     'BusdrawnoneController');//商户提现-审核
     Route::post('/busdrawnone/pass',    'BusdrawnoneController@pass');//通过
     Route::get('/busdrawnone/bohui/{id}',  'BusdrawnoneController@bohui');//驳回-原因页面
-    Route::post('/busdrawrenonereject',    'BusdrawnoneController@reject');//驳回
+    Route::post('/busdrawnonereject',    'BusdrawnoneController@reject');//驳回
 
     Route::resource('/busdrawdone',     'BusdrawdoneController');//通过列表
 
@@ -156,7 +156,9 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/order/csbudan',       'OrderController@csbudan');//订单超时补单
     Route::post('/order/sfpushfirst',   'OrderController@sfpushfirst');//订单手动补单
 
-    Route::resource('/orderlist',       'OrderlistController');//订单处理
+    Route::resource('/orderdone',       'OrderdoneController');//订单处理
+
+    Route::resource('/orderlist',       'OrderlistController');//订单列表
     Route::resource('/buscount',        'BuscountController');//商户账单
     Route::resource('/busbill',         'BusbillController');//商户流水
     Route::resource('/agentcount',      'AgentcountController');//代理账单

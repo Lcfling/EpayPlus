@@ -308,25 +308,25 @@ class CodeuserController extends Controller
                 DB::rollBack();
                 $this->uncodelock($id);
                 return ['msg'=>'上分失败！','status'=>0];
+            }else{
+                $shangfen=$account->insert(['user_id'=>$id,'score'=>$score,'status'=>1,'remark'=>'手动上分','creatime'=>time()]);
+                if(!$shangfen){
+                    DB::rollBack();
+                    $this->uncodelock($id);
+                    return ['msg'=>'上分失败！','status'=>0];
+                }else{
+                    $add=DB::table('users_count')->where('user_id','=',$id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score")]);
+                    if(!$add){
+                        DB::rollBack();
+                        $this->uncodelock($id);
+                        return ['msg'=>'上分失败！','status'=>0];
+                    }else{
+                        DB::commit();
+                        $this->uncodelock($id);
+                        return ['msg'=>'上分成功！','status'=>1];
+                    }
+                }
             }
-
-            $shangfen=$account->insert(['user_id'=>$id,'score'=>$score,'status'=>1,'remark'=>'手动上分','creatime'=>time()]);
-            if(!$shangfen){
-                DB::rollBack();
-                $this->uncodelock($id);
-                return ['msg'=>'上分失败！','status'=>0];
-            }
-
-            $add=DB::table('users_count')->where('user_id','=',$id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score")]);
-            if(!$add){
-                DB::rollBack();
-                $this->uncodelock($id);
-                return ['msg'=>'上分失败！','status'=>0];
-            }
-
-            DB::commit();
-            $this->uncodelock($id);
-            return ['msg'=>'上分成功！','status'=>1];
 
         }catch (Exception $e){
             DB::rollBack();
@@ -362,24 +362,26 @@ class CodeuserController extends Controller
                 DB::rollBack();
                 $this->uncodelock($id);
                 return ['msg'=>'下分失败！','status'=>0];
-            }
-            $xiafen=$account->insert(['user_id'=>$id,'score'=>-$score,'status'=>1,'remark'=>'手动下分','creatime'=>time()]);
-            if(!$xiafen){
-                DB::rollBack();
-                $this->uncodelock($id);
-                return ['msg'=>'下分失败！','status'=>0];
-            }
-            $add=DB::table('users_count')->where('user_id','=',$id)->decrement('balance',$score,['tol_sore'=>DB::raw("tol_sore - $score")]);
+            }else{
+                $xiafen=$account->insert(['user_id'=>$id,'score'=>-$score,'status'=>1,'remark'=>'手动下分','creatime'=>time()]);
+                if(!$xiafen){
+                    DB::rollBack();
+                    $this->uncodelock($id);
+                    return ['msg'=>'下分失败！','status'=>0];
+                }else{
+                    $add=DB::table('users_count')->where('user_id','=',$id)->decrement('balance',$score,['tol_sore'=>DB::raw("tol_sore - $score")]);
+                    if(!$add){
+                        DB::rollBack();
+                        $this->uncodelock($id);
+                        return ['msg'=>'下分失败！','status'=>0];
+                    }else{
+                        DB::commit();
+                        $this->uncodelock($id);
+                        return ['msg'=>'下分成功！','status'=>1];
 
-            if(!$add){
-                DB::rollBack();
-                $this->uncodelock($id);
-                return ['msg'=>'下分失败！','status'=>0];
+                    }
+                }
             }
-
-            DB::commit();
-            $this->uncodelock($id);
-            return ['msg'=>'下分成功！','status'=>1];
 
         }catch (Exception $e){
             DB::rollBack();

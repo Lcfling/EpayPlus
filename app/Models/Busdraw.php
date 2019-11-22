@@ -20,8 +20,8 @@ class Busdraw extends Model
     /**
      * 驳回
      */
-    public static function reject($id){
-        return Busdraw::where('id',$id)->update(['status'=>2,'endtime'=>time()]);
+    public static function reject($id,$remark){
+        return Busdraw::where('id',$id)->update(['status'=>2,'remark'=>$remark,'endtime'=>time()]);
     }
 
 }

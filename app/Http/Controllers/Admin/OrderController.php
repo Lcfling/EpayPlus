@@ -18,7 +18,7 @@ class OrderController extends Controller
      * 数据列表
      */
     public function index(StoreRequest $request){
-
+        //$this->test_table_data();
         if(true==$request->has('creatime')){
             $time = strtotime($request->input('creatime'));
             $weeksuf = computeWeek($time,false);
@@ -65,13 +65,24 @@ class OrderController extends Controller
             }
             exportExcel($head,$excel,'订单记录'.date('YmdHis',time()),'',true);
         }else{
-            $data=$sql->whereIn('status',[2,3])->paginate(10)->appends($request->all());
+            $data=$sql->whereIn('status',[0,2,3])->paginate(10)->appends($request->all());
             foreach ($data as $key=>$value){
                 $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
                 $data[$key]['paytime']=date("Y-m-d H:i:s",$value["paytime"]);
             }
         }
         return view('order.list',['list'=>$data,'input'=>$request->all()]);
+    }
+    /**
+     * test table data
+     */
+    public function test_table_data(){
+        $data=[
+            'order_sn'=>time(),
+        ];
+        for ($i=1;$i<=1000;$i++){
+            DB::table('order_16')->insert($data);
+        }
     }
     /**
      * 码商收款

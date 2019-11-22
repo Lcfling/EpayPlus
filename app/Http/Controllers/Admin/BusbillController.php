@@ -41,7 +41,7 @@ class BusbillController extends Controller
             }
             exportExcel($head,$excel,'商户流水'.date('YmdHis',time()),'',true);
         }else{
-            $data = $busbill->paginate(10)->appends($request->all());
+            $data = $sql->paginate(10)->appends($request->all());
             foreach ($data as $key =>$value){
                 $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
             }

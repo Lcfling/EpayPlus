@@ -8,6 +8,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\StoreRequest;
 use App\Http\Controllers\Controller;
+use App\Models\Busbill;
+use App\Models\Buscount;
 use App\Models\Busdraw;
 use App\Models\Busdrawreject;
 use Illuminate\Http\Request;
@@ -45,21 +47,49 @@ class BusdrawnoneController extends Controller
      */
     public function pass(StoreRequest $request){
         $id=$request->input('id');
+
+        $drawinfo=Busdraw::find($id);
+
         $islock=$this->buslock($id);
-        if($islock){
-            $res=Busdraw::pass($id);
-            if($res){
-                $this->unbuslock($id);
-                return ['msg'=>'通过成功！','status'=>1];
-            }else{
-                $this->unbuslock($id);
-                return ['msg'=>'通过失败！'];
-            }
-        }else{
+        if(!$islock){
             return ['msg'=>'请勿频繁操作！'];
         }
 
+        DB::beginTransaction();
+        try{
+            if(!$draw=Busdraw::where([["id",$id],['status','in',[1,2]]])->lockForUpdate()->first()){
+                DB::rollBack();
+                $this->unbuslock($id);
+                return ['msg'=>'订单已处理！'];
+            }else{
+                $status=Busdraw::pass($id);
+                if(!$status){
+                    DB::rollBack();
+                    $this->unbuslock($id);
+                    return ['msg'=>'通过失败！'];
+                }else{
+                    $drawMoney=$drawinfo['money'];
+                    $tradeMoney=$drawinfo['tradeMoney'];
+                    $add=Buscount::where('business_code',$drawinfo['business_code'])->increment('drawMoney',$drawMoney,['tradeMoney'=>DB::raw("tradeMoney + $tradeMoney")]);
+                    if(!$add){
+                        DB::rollBack();
+                        $this->unbuslock($id);
+                        return ['msg'=>'更改商户帐户失败！'];
+                    }else{
+                        DB::commit();
+                        $this->unbuslock($id);
+                        return ['msg'=>'通过成功！','status'=>1];
+                    }
+                }
+            }
+        }catch (Exception $e){
+            DB::rollBack();
+            $this->unbuslock($id);
+            return ['msg'=>'操作异常！请稍后重试！'];
+        }
+
     }
+
     /**
      * 驳回页面
      */
@@ -76,34 +106,65 @@ class BusdrawnoneController extends Controller
     public function reject(StoreRequest $request){
         $data=$request->all();
         $id=$data['id'];
-        $key='business_lock_'.$id;
-        $is=Redis::get($key);
-        if(!empty($is)){
-            return ['msg'=>'请勿频繁操作！'];
-        }else{
-            $info=Busdraw::find($id);
-            $insert=[
-                'order_sn'=>$info['order_sn'],
-                'business_code'=>$info['business_code'],
-                'name'=>$info['name'],
-                'deposit_name'=>$info['deposit_name'],
-                'deposit_card'=>$info['deposit_card'],
-                'money'=>$info['money'],
-                'remark'=>$data['remark'],
-                'creatime'=>$info['creatime'],
-            ];
-            $down=Busdraw::reject($id);
-            if(!$down){
-                return ['msg'=>'操作失败！'];
-            }
-            $ins=Busdrawreject::insert($insert);
-            if(!$ins){
-                return ['msg'=>'操作失败！'];
-            }else{
-                return ['msg'=>'驳回成功！','status'=>1];
-            }
+        $drawinfo=Busdraw::find($id);
 
+        $weeksuf = computeWeek(time(),false);
+        $busbill=new Busbill();
+        $busbill->setTable('business_billflow_'.$weeksuf);
+         $islock=$this->buslock($id);
+         if(!$islock){
+          return ['msg'=>'请勿频繁操作！'];
+         }
+        DB::beginTransaction();
+        try{
+            if(!$draw=Busdraw::where([["id",$id],['status','in',[1,2]]])->lockForUpdate()->first()){
+                DB::rollBack();
+                $this->unbuslock($id);
+                return ['msg'=>'订单已处理！'];
+            }else{
+                //改状态 插流水 减帐户钱
+                $status=Busdraw::reject($id,$data['remark']);
+                if(!$status){
+                    DB::rollBack();
+                    $this->unbuslock($id);
+                    return ['msg'=>'驳回失败！'];
+                }else{
+                    $bill=[
+                        'order_sn'=>$drawinfo['order_sn'],
+                        'business_code'=>$drawinfo['business_code'],
+                        'score'=>$drawinfo['money'],
+                        'tradeMoney'=>$drawinfo['tradeMoney'],
+                        'status'=>3,
+                        'remark'=>'提现驳回',
+                        'creatime'=>time()
+                    ];
+                    $ins=$busbill->insert($bill);
+                    if(!$ins){
+                        DB::rollBack();
+                        $this->unbuslock($id);
+                        return ['msg'=>'流水添加失败！'];
+                    }else{
+                        $drawMoney=$drawinfo['money'];
+                        $tradeMoney=$drawinfo['tradeMoney'];
+                        $reduce=Buscount::where('business_code',$drawinfo['business_code'])->decrement('drawMoney',$drawMoney,['tradeMoney'=>DB::raw("tradeMoney - $tradeMoney")]);
+                        if(!$reduce){
+                            DB::rollBack();
+                            $this->unbuslock($id);
+                            return ['msg'=>'更改商户帐户失败！'];
+                        }else{
+                            DB::commit();
+                            $this->unbuslock($id);
+                            return ['msg'=>'驳回成功！','status'=>1];
+                        }
+                    }
+                }
+            }
+        }catch (Exception $e){
+            DB::rollBack();
+            $this->unbuslock($id);
+            return ['msg'=>'操作异常！请稍后重试！'];
         }
+
 
     }
 
@@ -113,7 +174,7 @@ class BusdrawnoneController extends Controller
 
         $code=time().rand(100000,999999);
         //随机锁入队
-        Redis::rPush("business_lock_".$functions,$code);
+        Redis::rPush("business_lock_".$functions, $code);
 
         //随机锁出队
         $codes=Redis::LINDEX("business_lock_".$functions,0);

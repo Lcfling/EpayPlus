@@ -62,9 +62,9 @@ class BusdrawrejectController extends Controller
         unset($data['id']);
         $up=Busdrawreject::where('id',$id)->update($data);
         if($up){
-            return ['msg'=>'操作成功！','status'=>1];
+            return ['msg'=>'修改成功！','status'=>1];
         }else{
-            return ['msg'=>'操作失败！'];
+            return ['msg'=>'修改失败！'];
         }
 
     }
@@ -76,9 +76,9 @@ class BusdrawrejectController extends Controller
         $order_sn=$request->input('order_sn');
         $pass=Busdrawreject::where('order_sn',$order_sn)->update(array('status'=>2,'endtime'=>time()));
         if($pass){
-            return ['msg'=>'操作成功！','status'=>1];
+            return ['msg'=>'确认驳回成功！','status'=>1];
         }else{
-            return ['msg'=>'操作失败！'];
+            return ['msg'=>'确认驳回失败！'];
         }
     }
 
@@ -93,12 +93,12 @@ class BusdrawrejectController extends Controller
             $pass2=Busdraw::where('order_sn',$order_sn)->update(array('status'=>1));//提现列表
             if($pass2){
                 Busdraw::where('order_sn',$order_sn)->update(array('endtime'=>time()));//提现列表
-                return ['msg'=>'操作成功！','status'=>1];
+                return ['msg'=>'确认打款成功！','status'=>1];
             }else{
-                return ['msg'=>'操作失败！'];
+                return ['msg'=>'确认打款失败！'];
             }
         }else{
-            return ['msg'=>'操作失败！'];
+            return ['msg'=>'确认打款失败！'];
         }
 
 
