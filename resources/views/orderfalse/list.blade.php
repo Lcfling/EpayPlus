@@ -15,17 +15,17 @@
     <div class="layui-inline">
         <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商号" autocomplete="off" class="layui-input">
     </div>
+{{--    <div class="layui-inline">--}}
+{{--        <select name="status">--}}
+{{--            <option value="">请选择支付状态</option>--}}
+{{--            <option value="0" {{isset($input['status'])&&$input['status']==0?'selected':''}}>未支付</option>--}}
+{{--            <option value="1" {{isset($input['status'])&&$input['status']==1?'selected':''}}>支付成功</option>--}}
+{{--            <option value="2" {{isset($input['status'])&&$input['status']==2?'selected':''}}>过期</option>--}}
+{{--            <option value="3" {{isset($input['status'])&&$input['status']==3?'selected':''}}>取消</option>--}}
+{{--        </select>--}}
+{{--    </div>--}}
     <div class="layui-inline">
-        <select name="status">
-            <option value="">请选择支付状态</option>
-            <option value="0" {{isset($input['status'])&&$input['status']==0?'selected':''}}>未支付</option>
-            <option value="1" {{isset($input['status'])&&$input['status']==1?'selected':''}}>支付成功</option>
-            <option value="2" {{isset($input['status'])&&$input['status']==2?'selected':''}}>过期</option>
-            <option value="3" {{isset($input['status'])&&$input['status']==3?'selected':''}}>取消</option>
-        </select>
-    </div>
-    <div class="layui-inline">
-        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true,min:'2019-11-11'})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
@@ -93,11 +93,8 @@
                     @elseif($info['payType']==2)<span class="layui-btn layui-btn-small layui-btn-normal">支付宝</span>
                     @endif</td>
                 <td class="hidden-xs">
-                    @if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-warm">未支付</span>
-                    @elseif($info['status']==1)<span span class="layui-btn layui-btn-small layui-btn">支付成功</span>
-                    @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-normal">过期</span>
-                    @elseif($info['status']==3)<span class="layui-btn layui-btn-small layui-btn-danger">取消</span>
-                    @endif</td>
+                    <span class="layui-btn layui-btn-small layui-btn-danger">异常</span>
+                </td>
                 <td class="hidden-xs">@if($info['callback_status']==0)<span class="layui-btn layui-btn-small layui-btn-primary">未处理</span>@elseif($info['callback_status']==1)<span span class="layui-btn layui-btn-small layui-btn-warm">推送成功</span>@elseif($info['callback_status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">推送失败</span>@endif</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">@if($info['status']==1){{$info['pay_time']}}@endif</td>

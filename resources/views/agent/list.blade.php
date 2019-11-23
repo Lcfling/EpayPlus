@@ -14,7 +14,7 @@
         <input type="text"  value="{{ $input['agent_name'] or '' }}" name="agent_name" placeholder="请输入代理商昵称" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true,min:'2019-11-11'})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
@@ -118,12 +118,12 @@
                     dataType:'json',
                     success:function(res){
                         if(res.status == 1){
-                            layer.msg(res.msg,{icon:6},function () {
+                            layer.msg(res.msg,{icon:6,time:1000},function () {
                                 location.reload();
                             });
 
                         }else{
-                            layer.msg(res.msg,{shift: 6,icon:5});
+                            layer.msg(res.msg,{icon:5,time:1000});
                         }
                     },
                     error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -154,11 +154,12 @@
                     dataType:'json',
                     success:function(res){
                         if(res.status == 1){
-                            layer.msg(res.msg,{icon:6},function () {
+                            layer.msg(res.msg,{icon:6,time:1000},function () {
                                 location.reload();
                             });
+
                         }else{
-                            layer.msg(res.msg,{shift: 6,icon:5});
+                            layer.msg(res.msg,{icon:5,time:1000});
                         }
                     },
                     error : function(XMLHttpRequest, textStatus, errorThrown) {

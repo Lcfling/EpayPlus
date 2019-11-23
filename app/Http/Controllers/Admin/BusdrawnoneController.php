@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Busbill;
 use App\Models\Buscount;
 use App\Models\Busdraw;
-use App\Models\Busdrawreject;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\DB;

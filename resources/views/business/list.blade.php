@@ -123,12 +123,12 @@
                     dataType:'json',
                     success:function(res){
                         if(res.status == 1){
-                            layer.msg(res.msg,{icon:6},function () {
+                            layer.msg(res.msg,{icon:6,time:1000},function () {
                                 location.reload();
                             });
 
                         }else{
-                            layer.msg(res.msg,{shift: 6,icon:5});
+                            layer.msg(res.msg,{icon:5,time:1000});
                         }
                     },
                     error : function(XMLHttpRequest, textStatus, errorThrown) {

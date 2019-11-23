@@ -1,24 +1,24 @@
 <?php
-
+/**
+ * 订单过期处理
+ */
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\StoreRequest;
-use App\Models\Business;
-use App\Models\Codecount;
-use App\Models\Order;
-
 use App\Http\Controllers\Controller;
-use App\Models\Billflow;
-use App\Models\Rebate;
+use App\Http\Requests\StoreRequest;
 use Illuminate\Support\Facades\DB;
 
+use App\Models\Order;
+use App\Models\Business;
+use App\Models\Codecount;
+use App\Models\Rebate;
 class OrderController extends Controller
 {
     /**
      * 数据列表
      */
     public function index(StoreRequest $request){
-        //$this->test_table_data();
+
         if(true==$request->has('creatime')){
             $time = strtotime($request->input('creatime'));
             $weeksuf = computeWeek($time,false);
@@ -52,38 +52,27 @@ class OrderController extends Controller
             $sql->whereBetween('creatime',[$start,$end]);
         }
         if(true==$request->input('excel')&& true==$request->has('excel')){
-            $head = array('商户ID','平台订单号','码商ID','二维码ID','码商收款','收款金额','实际到账金额','支付类型','支付状态','回调状态','创建时间');
-            $excel = $sql->select('business_code','order_sn','user_id','erweima_id','sk_status','sk_money','tradeMoney','payType','status','callback_status','creatime')->get()->toArray();
+            $head = array('商户ID','平台订单号','商户订单号','码商ID','二维码ID','码商收款','收款金额','实际到账金额','支付类型','支付状态','回调状态','创建时间');
+            $excel = $sql->where('status',2)->select('business_code','order_sn','out_order_sn','user_id','erweima_id','sk_status','sk_money','tradeMoney','payType','status','callback_status','creatime')->get()->toArray();
             foreach ($excel as $key=>$value){
                 $excel[$key]['sk_status']=$this->sk_status($value['sk_status']);
                 $excel[$key]['sk_money']=$value['sk_money']/100;
                 $excel[$key]['tradeMoney']=$value['tradeMoney']/100;
                 $excel[$key]['payType']=$this->payName($value['payType']);
-                $excel[$key]['status']=$this->statusName($value['status']);
-                $excel[$key]['callback_status']=$this->statusName($value['callback_status']);
+                $excel[$key]['status']='过期';
+                $excel[$key]['callback_status']=$this->callback($value['callback_status']);
                 $excel[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
             }
-            exportExcel($head,$excel,'订单记录'.date('YmdHis',time()),'',true);
+            exportExcel($head,$excel,'订单过期记录'.date('YmdHis',time()),'',true);
         }else{
-            $data=$sql->whereIn('status',[0,2,3])->paginate(10)->appends($request->all());
+            $data=$sql->where('status',2)->paginate(10)->appends($request->all());
             foreach ($data as $key=>$value){
                 $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
-                $data[$key]['paytime']=date("Y-m-d H:i:s",$value["paytime"]);
             }
         }
         return view('order.list',['list'=>$data,'input'=>$request->all()]);
     }
-    /**
-     * test table data
-     */
-    public function test_table_data(){
-        $data=[
-            'order_sn'=>time(),
-        ];
-        for ($i=1;$i<=1000;$i++){
-            DB::table('order_16')->insert($data);
-        }
-    }
+
     /**
      * 码商收款
      */
@@ -122,29 +111,7 @@ class OrderController extends Controller
                 break;
         }
     }
-    /**
-     * status判断
-     */
-    protected function statusName($type){
-        switch ($type){
-            case $type==0:
-                $name='未支付';
-                return $name;
-                break;
-            case $type==1:
-                $name='支付成功';
-                return $name;
-                break;
-            case $type==2:
-                $name='过期';
-                return $name;
-                break;
-            case $type==3:
-                $name='取消';
-                return $name;
-                break;
-        }
-    }
+
     /**
      * callback判断
      */
@@ -172,24 +139,25 @@ class OrderController extends Controller
 
         $account =Order::getcounttable($order_sn);
 
-//        $islock=Order::orderlock($order_sn);
-//        if(!$islock){
-//            return ['msg'=>'请勿频繁操作！'];
-//        }
+        $islock=Order::orderlock($order_sn);
+        if(!$islock){
+            return ['msg'=>'请勿频繁操作！'];
+        }
 
         if($account->where(array('order_sn'=>$order_sn,'status'=>4))->first()){
-            //Order::unorderlock($order_sn);
+            Order::unorderlock($order_sn);
             return ['msg'=>'已手动解冻!'];
         }
         if($account->where(array('order_sn'=>$order_sn,'status'=>2))->first()){
-           // Order::unorderlock($order_sn);
+            Order::unorderlock($order_sn);
             return ['msg'=>'已手动扣除!'];
         }
 
         DB::beginTransaction();
         try{
-            if(!$order_info=$order->where([["order_sn",$order_sn],['status','in',[0,2]]])->lockForUpdate()->first()){
+            if(!$order_info=$order->where([["order_sn",$order_sn],['status',2]])->lockForUpdate()->first()){
                 DB::rollBack();
+                Order::unorderlock($order_sn);
                 return ['msg'=>'订单已处理！'];
             }
             $data=[
@@ -205,6 +173,7 @@ class OrderController extends Controller
             $insert=$account->insert($data);
             if(!$insert){
                 DB::rollBack();
+                Order::unorderlock($order_sn);
                 return ['msg'=>'解冻失败！'];
             }else{
                 $info=[
@@ -220,6 +189,7 @@ class OrderController extends Controller
                 $account->insert($info);
                 if(!$account){
                     DB::rollBack();
+                    Order::unorderlock($order_sn);
                     return ['msg'=>'扣除失败！'];
                 }else{
                     $rate=[
@@ -233,21 +203,25 @@ class OrderController extends Controller
                     $rebate=Rebate::insert($rate);
                     if(!$rebate){
                         DB::rollBack();
+                        Order::unorderlock($order_sn);
                         return ['msg'=>'返佣失败！'];
                     }else{
                         $tradeMoney=$order_info['tradeMoney'];
                         $fremoney=Codecount::where('user_id',$order_info['user_id'])->decrement('freeze_money',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
                         if(!$fremoney){
                             DB::rollBack();
+                            Order::unorderlock($order_sn);
                             return ['msg'=>'修改帐户失败！'];
                         }else{
                             $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
                             if(!$djstatus){
                                 DB::rollBack();
+                                Order::unorderlock($order_sn);
                                 return ['msg'=>'更改订单状态失败！'];
                             }else{
                                 DB::commit();
-                                return ['msg'=>'补单成功！','status'=>1];
+                                Order::unorderlock($order_sn);
+                                return $this->ownpushfirst($order_info['order_sn']);
                             }
                         }
                     }
@@ -258,12 +232,11 @@ class OrderController extends Controller
 
         }catch (Exception $e){
             DB::rollBack();
+            Order::unorderlock($order_sn);
             return ['msg'=>'发生异常！事物进行回滚！'];
         }
 
-        // 修改订单状态
-        //$res=$this->ownpushfirst($order_info['order_sn']);
-        //return $res;
+
     }
 
     //  超时补单
@@ -272,17 +245,22 @@ class OrderController extends Controller
 
         // 获取订单信息
         $order =Order::getordersntable($order_sn);
-
         $account =Order::getcounttable($order_sn);
 
+        $islock=Order::orderlock($order_sn);
+        if(!$islock){
+            return ['msg'=>'请勿频繁操作！'];
+        }
+
         if($account->where(array('order_sn'=>$order_sn,'status'=>2))->first()){
-            // Order::unorderlock($order_sn);
+            Order::unorderlock($order_sn);
             return ['msg'=>'已手动扣除!'];
         }
         DB::beginTransaction();
         try{
             if(!$order_info=$order->where([["order_sn",$order_sn],['status',3]])->lockForUpdate()->first()){
                 DB::rollBack();
+                Order::unorderlock($order_sn);
                 return ['msg'=>'订单已处理！'];
             }else{
                 $info=[
@@ -298,6 +276,7 @@ class OrderController extends Controller
                 $account->insert($info);
                 if(!$account){
                     DB::rollBack();
+                    Order::unorderlock($order_sn);
                     return ['msg'=>'扣除失败！'];
                 }else{
                     $rate=[
@@ -311,21 +290,25 @@ class OrderController extends Controller
                     $rebate=Rebate::insert($rate);
                     if(!$rebate){
                         DB::rollBack();
+                        Order::unorderlock($order_sn);
                         return ['msg'=>'返佣失败！'];
                     }else{
                         $tradeMoney=$order_info['tradeMoney'];
                         $fremoney=Codecount::where('user_id',$order_info['user_id'])->decrement('freeze_money',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
                         if(!$fremoney){
                             DB::rollBack();
+                            Order::unorderlock($order_sn);
                             return ['msg'=>'修改帐户失败！'];
                         }else{
                             $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
                             if(!$djstatus){
                                 DB::rollBack();
+                                Order::unorderlock($order_sn);
                                 return ['msg'=>'更改订单状态失败！'];
                             }else{
                                 DB::commit();
-                                return ['msg'=>'超时补单成功！','status'=>1];
+                                Order::unorderlock($order_sn);
+                                return $this->ownpushfirst($order_info['order_sn']);
                             }
                         }
                     }
@@ -333,24 +316,22 @@ class OrderController extends Controller
             }
         }catch (Exception $e){
             DB::rollBack();
+            Order::unorderlock($order_sn);
             return ['msg'=>'发生异常！事物进行回滚！'];
         }
 
 
-        // 修改订单状态
-        // $res=$this->ownpushfirst($order_sn_info['order_sn']);
-        // return $res;
+
     }
 
-    public function ownpushfirst($order_sn){
-        $order_info=DB::table('order_record')->where('order_sn','=',$order_sn)->first();
-        $order_info=get_object_vars($order_info);
-        $order =new Order();
-        $order->setTable($order_info['submeter_name']);
-
-        $orderinfo=$order->where(array("order_sn"=>$order_sn))->get();
-        if($orderinfo){
-            foreach ($orderinfo as $k=>$v){
+    /**
+     * 手动回调
+     */
+    private function ownpushfirst($order_sn) {
+        $ordertable =Order::getordersntable($order_sn);
+        $orderinfo=$ordertable->where(array("order_sn"=>$order_sn))->get();
+        if($orderinfo) {
+            foreach ($orderinfo as $k=>$v) {
                 $url=$v['notifyUrl'];
                 $data=array(
                     'order_sn'=>$v['order_sn'],
@@ -360,35 +341,30 @@ class OrderController extends Controller
                     'status'=>$v['status']
                 );
                 $businessinfo=Business::where(array("business_code"=>$v['business_code']))->first();
-                if(empty($businessinfo)){
+                if(empty($businessinfo)) {
                     return ['msg'=>'商户号不存在!回调失败!'];
                 }
-
                 $data['sign']=$this->getSignK($data,$businessinfo['accessKey']);
                 $res=$this->https_post_kfs($url,$data);
                 file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方订单数据~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
                 file_put_contents('./notifyUrl_sd.txt',$orderinfo.PHP_EOL,FILE_APPEND);
-                if($res == 'success'){
+                if($res == 'success') {
                     file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回成功~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
                     file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
-                    $order->where(array('id'=>$v['id']))->update(array('callback_status'=>1,'callback_num'=>1,'callback_time'=>time()));
-                    //record表更新-code
-                    DB::table('order_record')->where('order_sn','=',$order_sn)->update(array('callback_status'=>1,'callback_num'=>1,'callback_time'=>time()));
+                    $ordertable->where(array('id'=>$v['id']))->update(array('callback_status'=>1,'callback_num'=>1,'callback_time'=>time()));
                     return ['msg'=>'回调成功!','status'=>1];
-                }else{
+                } else {
                     file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回失败~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
                     file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
-                    $order->where(array('id'=>$v['id'],'status'=>1,'callback_status'=>0))->update(array('callback_status'=>0,'callback_num'=>1,'callback_time'=>time()));
-                    DB::table('order_record')->where(array('order_sn'=>$order_sn,'status'=>1,'callback_status'=>0))->update(array('callback_status'=>0,'callback_num'=>1,'callback_time'=>time()));
-                    //record表更新-code
-                    return ['msg'=>'回调成功!第三方返回失败','status'=>1];
+                    $ordertable->where(array('id'=>$v['id'],'status'=>1,'callback_status'=>0))->update(array('callback_status'=>0,'callback_num'=>1,'callback_time'=>time()));
+                    return ['msg'=>'回调成功!第三方返回失败'];
                 }
             }
-        }else{
+        } else {
             return ['msg'=>'订单不存在!回调失败!'];
         }
-
     }
+
 
 
     /**
@@ -396,15 +372,10 @@ class OrderController extends Controller
      */
     public function sfpushfirst(StoreRequest $request){
         $order_sn=$request->input('order_sn');
-
-        $order_info=DB::table('order_record')->where('order_sn','=',$order_sn)->first();
-        $order_info=get_object_vars($order_info);
-        $order =new Order();
-        $order->setTable($order_info['submeter_name']);
-
-        $orderinfo=$order->where(array("order_sn"=>$order_sn))->get();
-        if($orderinfo){
-            foreach ($orderinfo as $k=>$v){
+        $ordertable =Order::getordersntable($order_sn);
+        $orderinfo=$ordertable->where(array("order_sn"=>$order_sn))->get();
+        if($orderinfo) {
+            foreach ($orderinfo as $k=>$v) {
                 $url=$v['notifyUrl'];
                 $data=array(
                     'order_sn'=>$v['order_sn'],
@@ -414,29 +385,26 @@ class OrderController extends Controller
                     'status'=>$v['status']
                 );
                 $businessinfo=Business::where(array("business_code"=>$v['business_code']))->first();
-                if(empty($businessinfo)){
+                if(empty($businessinfo)) {
                     return ['msg'=>'商户号不存在!回调失败!'];
                 }
-
                 $data['sign']=$this->getSignK($data,$businessinfo['accessKey']);
                 $res=$this->https_post_kfs($url,$data);
                 file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方订单数据~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
                 file_put_contents('./notifyUrl_sd.txt',$orderinfo.PHP_EOL,FILE_APPEND);
-                if($res == 'success'){
+                if($res == 'success') {
                     file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回成功~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
                     file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
-                    $order->where(array('id'=>$v['id']))->update(array('callback_status'=>1,'callback_num'=>1,'callback_time'=>time()));
-                    DB::table('order_record')->where('order_sn','=',$order_sn)->update(array('callback_status'=>1,'callback_num'=>1,'callback_time'=>time()));
+                    $ordertable->where(array('id'=>$v['id']))->update(array('callback_status'=>1,'callback_num'=>1,'callback_time'=>time()));
                     return ['msg'=>'回调成功!','status'=>1];
-                }else{
+                } else {
                     file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回失败~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
                     file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
-                    $order->where(array('id'=>$v['id'],'status'=>1,'callback_status'=>0))->update(array('callback_status'=>0,'callback_num'=>1,'callback_time'=>time()));
-                    DB::table('order_record')->where(array('order_sn'=>$order_sn,'status'=>1,'callback_status'=>0))->update(array('callback_status'=>0,'callback_num'=>1,'callback_time'=>time()));
+                    $ordertable->where(array('id'=>$v['id'],'status'=>1,'callback_status'=>0))->update(array('callback_status'=>0,'callback_num'=>1,'callback_time'=>time()));
                     return ['msg'=>'回调成功!第三方返回失败','status'=>1];
                 }
             }
-        }else{
+        } else {
             return ['msg'=>'订单不存在!回调失败!'];
         }
 

@@ -55,7 +55,7 @@ class OptionController extends Controller
             $data['creatime']=time();
             $insert=Option::insert($data);
             if($insert){
-                $key='option_'.$data['key'];
+                $key=$data['key'];
                 $value=$data['value'];
                 Redis::set($key,$value);
                 return ['msg'=>'添加成功！','status'=>1];
@@ -64,6 +64,7 @@ class OptionController extends Controller
             }
 
         }else{
+            Redis::del($data['key']);
             return ['msg'=>'配置已存在！'];
         }
 
@@ -79,13 +80,13 @@ class OptionController extends Controller
         unset($data['_token']);
         unset($data['id']);
         $info = Option::find($id);
-        $key='option_'.$info['key'];
+        $key=$info['key'];
         Redis::del($key);
         $res=$this->edit_unique($id,$data['key']);
         if(!$res){
             $update=Option::where('id',$id)->update($data);
             if($update!==false){
-                $k='option_'.$data['key'];
+                $k=$data['key'];
                 $v=$data['value'];
                 Redis::set($k,$v);
                 return ['msg'=>'修改成功！','status'=>1];
@@ -103,7 +104,7 @@ class OptionController extends Controller
      */
     public function destroy($id){
         $info = Option::find($id);
-        $key='option_'.$info['key'];
+        $key=$info['key'];
         Redis::del($key);
         $res = Option::where('id', '=', $id)->delete();
         if($res){

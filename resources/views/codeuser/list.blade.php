@@ -47,7 +47,7 @@
             <th class="hidden-xs">接单状态</th>
             <th class="hidden-xs">账号状态</th>
             <th class="hidden-xs">佣金总额</th>
-            <th class="hidden-xs">二维码个数</th>
+            <th class="hidden-xs">邀请码个数</th>
             <th class="hidden-xs">注册时间</th>
             <th class="hidden-xs">状态</th>
             <th>操作</th>

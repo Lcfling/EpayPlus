@@ -162,13 +162,13 @@ class CodeuserController extends Controller
         }
     }
     /**
-     * 增加二维码页面
+     * 增加邀请码页面
      */
     public function addqr($user_id){
         $info = $user_id?Codeuser::find($user_id):[];
         return view('codeuser.addqr',['id'=>$user_id,'info'=>$info]);
     }
-    //修改二维码数量
+    //修改邀请码数量
     public function codeaddqr(StoreRequest $request){
         $data=$request->all();
         $id=$data['id'];

@@ -8,6 +8,9 @@
  * @param	string	$split 分隔符
  * @return	bool
  */
+
+use Illuminate\Support\Facades\DB;
+
 if (!function_exists('is_config_id')) {
     function is_config_id($id, $configName, $emptyRetValue = false, $split = ",")
     {
@@ -17,6 +20,13 @@ if (!function_exists('is_config_id')) {
         $ids = explode($split, $str);
         return in_array($id, $ids);
     }
+}
+/**获取角色id
+ * @param $id
+ * @return mixed
+ */
+function getrole($id){
+     return DB::table('admin_role_user')->where('user_id',$id)->value('role_id');
 }
 /**获取周
  * @param $date

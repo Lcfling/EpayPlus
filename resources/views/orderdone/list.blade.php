@@ -4,18 +4,18 @@
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户号" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户ID" autocomplete="off" class="layui-input">
+    </div>
+     <div class="layui-inline">
+        <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商ID" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <input type="text"  value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入平台订单号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <input type="text"  value="{{ $input['out_order_sn'] or '' }}" name="out_order_sn" placeholder="请输入商户订单号" autocomplete="off" class="layui-input">
-    </div>
-    <div class="layui-inline">
-        <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商号" autocomplete="off" class="layui-input">
-    </div>
-    <div class="layui-inline">
+    </div>   
+    <!-- <div class="layui-inline">
         <select name="status">
             <option value="">请选择支付状态</option>
             <option value="0" {{isset($input['status'])&&$input['status']==0?'selected':''}}>未支付</option>
@@ -23,9 +23,9 @@
             <option value="2" {{isset($input['status'])&&$input['status']==2?'selected':''}}>过期</option>
             <option value="3" {{isset($input['status'])&&$input['status']==3?'selected':''}}>取消</option>
         </select>
-    </div>
+    </div> -->
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true,min:'2019-11-11'})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
@@ -39,19 +39,20 @@
     <table class="layui-table" lay-even lay-skin="nob">
         <colgroup>
             <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
-            <col class="hidden-xs" width="250">
+            <col class="hidden-xs" width="300">
         </colgroup>
         <thead>
         <tr>
@@ -92,24 +93,26 @@
                     @if($info['payType']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>
                     @elseif($info['payType']==1)<span class="layui-btn layui-btn-small">微信</span>
                     @elseif($info['payType']==2)<span class="layui-btn layui-btn-small layui-btn-normal">支付宝</span>
-                    @endif</td>
+                    @endif
+                </td>
                 <td class="hidden-xs">
                     @if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-warm">未支付</span>
                     @elseif($info['status']==1)<span span class="layui-btn layui-btn-small layui-btn">支付成功</span>
                     @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-normal">过期</span>
                     @elseif($info['status']==3)<span class="layui-btn layui-btn-small layui-btn-danger">取消</span>
-                    @endif</td>
+                    @endif
+                </td>
                 <td class="hidden-xs">
                     @if($info['callback_status']==0)<span class="layui-btn layui-btn-small layui-btn-primary">未处理</span>
                     @elseif($info['callback_status']==1)<span span class="layui-btn layui-btn-small layui-btn">推送成功</span>
-                    @elseif($info['callback_status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">推送失败</span>@endif</td>
+                    @elseif($info['callback_status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">推送失败</span>
+                    @endif
+                </td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
-                <td class="hidden-xs">@if($info['status']==1){{$info['paytime']}}@endif</td>
+                <td class="hidden-xs">{{$info['pay_time']}}</td>
                 <td style="text-align: center">
                     <div class="layui-inline">
-
                         <button class="layui-btn layui-btn-small layui-btn-warm edits-btn"  data-id="{{$info['order_sn']}}" data-desc="手动回调">手动回调</button>
-
                     </div>
                 </td>
             </tr>
@@ -161,11 +164,15 @@
                             dataType:"json",
                             success:function (res) {
                                 if(res.status==1){
-                                    layer.msg(res.msg,{icon:6});
-                                    location.reload();
+                                    layer.msg(res.msg,{icon:6,time:1000},function () {
+                                        location.reload();
+                                    });
+                                   
                                 }else{
-                                    layer.msg(res.msg,{shift: 6,icon:5});
-                                    location.reload();
+                                    layer.msg(res.msg,{icon:5,time:1000},function(){
+                                         location.reload();
+                                    });
+                                   
                                 }
                             }
                         });

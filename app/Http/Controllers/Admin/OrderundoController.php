@@ -7,7 +7,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class OrderdoneController extends Controller
+class OrderundoController extends Controller
 {
     /**
      * 数据列表
@@ -54,19 +54,18 @@ class OrderdoneController extends Controller
                 $excel[$key]['sk_money']=$value['sk_money']/100;
                 $excel[$key]['tradeMoney']=$value['tradeMoney']/100;
                 $excel[$key]['payType']=$this->payName($value['payType']);
-                $excel[$key]['status']='支付成功';
+                $excel[$key]['status']='取消';
                 $excel[$key]['callback_status']=$this->callback($value['callback_status']);
                 $excel[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
             }
-            exportExcel($head,$excel,'订单成功记录'.date('YmdHis',time()),'',true);
+            exportExcel($head,$excel,'订单取消记录'.date('YmdHis',time()),'',true);
         }else{
-            $data=$sql->where('status',1)->paginate(10)->appends($request->all());
+            $data=$sql->where('status',3)->paginate(10)->appends($request->all());
             foreach ($data as $key=>$value){
                 $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
-                $data[$key]['pay_time']=date("Y-m-d H:i:s",$value["pay_time"]);
             }
         }
-        return view('orderdone.list',['list'=>$data,'input'=>$request->all()]);
+        return view('orderundo.list',['list'=>$data,'input'=>$request->all()]);
     }
     /**
      * 码商收款
