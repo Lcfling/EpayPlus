@@ -16,6 +16,11 @@ class CodedrawdoneController extends Controller
         if(true==$request->has('user_id')){
             $codedraw->where('user_id','=',$request->input('user_id'));
         }
+
+        if(true==$request->has('order_sn')){
+            $codedraw->where('order_sn','=',$request->input('order_sn'));
+        }
+
         if(true==$request->has('creatime')){
             $creatime=$request->input('creatime');
             $start=strtotime($creatime);
@@ -23,12 +28,20 @@ class CodedrawdoneController extends Controller
             $codedraw->whereBetween('creatime',[$start,$end]);
         }
 
+        if(true==$request->has('endtime')){
+            $savetime=$request->input('endtime');
+            $start=strtotime($savetime);
+            $end=strtotime('+1day',$start);
+            $codedraw->whereBetween('endtime',[$start,$end]);
+        }
+
         $data = $codedraw->where('status','=',1)->orderBy('creatime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['endtime'] =date("Y-m-d H:i:s",$value["endtime"]);
         }
-        return view('codedrawdone.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('codedrawdone.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
 
     }
 }

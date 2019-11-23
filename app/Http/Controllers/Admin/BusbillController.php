@@ -46,8 +46,8 @@ class BusbillController extends Controller
                 $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
             }
         }
-
-        return view('busbill.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('busbill.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
 
     }
     /**

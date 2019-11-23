@@ -33,7 +33,8 @@ class AgentbankController extends Controller
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
         }
-        return view('agentbank.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('agentbank.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
     }
     /**
     编辑页

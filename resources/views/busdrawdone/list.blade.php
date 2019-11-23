@@ -4,16 +4,16 @@
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
-        <input type="text" value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户号" autocomplete="off" class="layui-input">
+        <input type="text" value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户ID" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <input type="text" value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入提现订单号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" value="{{ $input['creatime'] or '' }}">
+        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}'})" autocomplete="off" value="{{ $input['creatime'] or '' }}">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="endtime" placeholder="审批日期" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" value="{{ $input['endtime'] or '' }}">
+        <input class="layui-input" name="endtime" placeholder="提现日期" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}'})" autocomplete="off" value="{{ $input['endtime'] or '' }}">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>

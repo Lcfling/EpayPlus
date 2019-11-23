@@ -40,7 +40,8 @@ class CodeuserController extends Controller
         foreach ($data as $key =>$value){
             $data[$key]['reg_time']=date("Y-m-d H:i:s",$value["reg_time"]);
         }
-        return view('codeuser.list',['pager'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('codeuser.list',['pager'=>$data,'min'=>$min,'input'=>$request->all()]);
     }
     /**
      * 编辑页

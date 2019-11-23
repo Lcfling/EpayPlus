@@ -45,7 +45,8 @@ class BusinessController extends Controller
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['updatetime']=date("Y-m-d H:i:s",$value["updatetime"]);
         }
-        return view('business.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('business.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
     }
 
     /**
@@ -74,6 +75,9 @@ class BusinessController extends Controller
         }
         DB::beginTransaction();
         try{
+            $google2fa = new Google2FA();
+            $secretKey=$google2fa->generateSecretKey();
+            $data['ggkey']=$secretKey;
             $data['password']=bcrypt($data['password']);
             $data['remember_token']='';
             $data['paypassword']='';
@@ -86,7 +90,7 @@ class BusinessController extends Controller
             $insertID=Business::insertGetId($data);
             if(!$insertID){
                 DB::rollBack();
-                return ['msg'=>'码商添加失败！'];
+                return ['msg'=>'商户添加失败！'];
             }
             $agent['business_code']=$insertID;
             $agent['creatime']=time();
@@ -126,6 +130,7 @@ class BusinessController extends Controller
         }else if($res2){
             return ['msg'=>'手机号已存在！'];
         }else{
+            $data['updatetime']=time();
             $res=Business::where('business_code',$id)->update($data);
             if($res!==false){
                 return ['msg'=>'修改成功！','status'=>1];
@@ -179,7 +184,7 @@ class BusinessController extends Controller
         unset($data['_token']);
         unset($data['id']);
         $fee=$data['fee']/100;
-        $busfee=Business::where('business_code','=',$id)->update(array('fee'=>$fee));
+        $busfee=Business::where('business_code','=',$id)->update(array('fee'=>$fee,'updatetime'=>time()));
         $agent1_id=$data['agent1_id'];
         $agent1_fee=$data['agent1_fee'];
         $agent2_id=$data['agent2_id'];
@@ -318,7 +323,7 @@ class BusinessController extends Controller
         $id=$data['id'];
         unset($data['_token']);
         $aswitch=$data['aswitch'];
-        $res=Business::where('business_code',$id)->update(array('status'=>$aswitch));
+        $res=Business::where('business_code',$id)->update(array('status'=>$aswitch,'updatetime'=>time()));
         if($res){
             return ['msg'=>'更改成功！','status'=>1];
         }else{

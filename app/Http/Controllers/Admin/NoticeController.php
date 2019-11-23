@@ -34,7 +34,8 @@ class NoticeController extends Controller
         foreach ($data as $key =>$value){
             $data[$key]['creattime']=date("Y-m-d H:i:s",$value["creattime"]);
         }
-        return view('notices.list',['pager'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('notices.list',['pager'=>$data,'min'=>$min,'input'=>$request->all()]);
     }
 
     /**

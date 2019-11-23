@@ -39,7 +39,8 @@ class AgentController extends Controller
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['updatetime']=date("Y-m-d H:i:s",$value["updatetime"]);
         }
-        return view('agent.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('agent.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
     }
     /**
      * 添加/编辑页
@@ -67,6 +68,9 @@ class AgentController extends Controller
         }
         DB::beginTransaction();
         try{
+            $google2fa = new Google2FA();
+            $secretKey=$google2fa->generateSecretKey();
+            $data['ggkey']=$secretKey;
             $data['password']=bcrypt($data['password']);
             $data['creatime']=time();
             $agent_id=Agent::insertGetId($data);
@@ -175,7 +179,7 @@ class AgentController extends Controller
         $id=$data['id'];
         unset($data['_token']);
         $aswitch=$data['aswitch'];
-        $res=Agent::where('id',$id)->update(array('status'=>$aswitch));
+        $res=Agent::where('id',$id)->update(array('status'=>$aswitch,'updatetime'=>time()));
         if($res){
             return ['msg'=>'更改成功！','status'=>1];
         }else{
@@ -190,7 +194,7 @@ class AgentController extends Controller
         $id=$data['id'];
         unset($data['_token']);
         $login=$data['login'];
-        $res=Agent::where('id',$id)->update(array('is_login'=>$login));
+        $res=Agent::where('id',$id)->update(array('is_login'=>$login,'updatetime'=>time()));
         if($res){
             return ['msg'=>'更改成功！','status'=>1];
         }else{

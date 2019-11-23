@@ -2,18 +2,18 @@
 @section('header')
     <div class="layui-inline">
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
-    </div>
+    </div>   
     <div class="layui-inline">
+        <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户ID" autocomplete="off" class="layui-input">
+    </div>
+     <div class="layui-inline">
         <input type="text"  value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入订单号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户号" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}'})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
-    </div>
-    <div class="layui-inline">
-        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
+        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-warm" name="excel" value="excel" lay-submit lay-filter="formDemo">导出EXCEL</button>
@@ -35,8 +35,8 @@
         <thead>
         <tr>
             <th class="hidden-xs">序号</th>
-            <th class="hidden-xs">订单号</th>
-            <th class="hidden-xs">商户ID</th>
+             <th class="hidden-xs">商户ID</th>
+            <th class="hidden-xs">订单号</th>           
             <th class="hidden-xs">扣除后积分</th>
             <th class="hidden-xs">实际支付金额</th>
             <th class="hidden-xs">状态</th>
@@ -49,8 +49,8 @@
         @foreach($list as $info)
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
-                <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['business_code']}}</td>
+                <td class="hidden-xs">{{$info['order_sn']}}</td>                
                 <td class="hidden-xs">{{$info['score']/100}}</td>
                 <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
                 <td class="hidden-xs">@if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>@elseif($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-warm">支付</span>@elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">利润</span>@endif</td>

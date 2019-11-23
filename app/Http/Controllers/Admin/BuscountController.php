@@ -16,18 +16,7 @@ class BuscountController extends Controller
         if(true==$request->has('business_code')){
             $buscount->where('business_count.business_code','=',$request->input('business_code'));
         }
-        if(true==$request->has('creatime')){
-            $creatime=$request->input('creatime');
-            $start=strtotime($creatime);
-            $end=strtotime('+1day',$start);
-            $buscount->whereBetween('business_count.creatime',[$start,$end]);
-        }
-        if(true==$request->has('savetime')){
-            $creatime=$request->input('savetime');
-            $start=strtotime($creatime);
-            $end=strtotime('+1day',$start);
-            $buscount->whereBetween('business_count.savetime',[$start,$end]);
-        }
+
         if(true==$request->input('excel')&& true==$request->has('excel')){
             $head = array('商户ID','余额','总分','创建时间','更新时间');
             $excel = $buscount->select('business_code','balance','tol_sore','creatime','savetime')->get()->toArray();

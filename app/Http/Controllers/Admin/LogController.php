@@ -34,6 +34,7 @@ class LogController extends Controller
         }
         $sql->select('admin_logs.*');
         $pager = $sql->orderBy('admin_logs.id', 'desc')->paginate()->appends($request->all());
-        return view('logs.list', ['pager'=>$pager,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('logs.list', ['pager'=>$pager,'min'=>$min,'input'=>$request->all()]);
     }
 }

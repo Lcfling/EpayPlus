@@ -10,10 +10,10 @@
         <input type="text" value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入提现号" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true,min:'2019-11-11'})" value="{{ $input['creatime'] or '' }}" autocomplete="off">
+        <input class="layui-input" name="creatime" placeholder="申请日期" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}'})" value="{{ $input['creatime'] or '' }}" autocomplete="off">
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="endtime" placeholder="审核日期" onclick="layui.laydate({elem: this, festival: true,min:'2019-11-11'})" value="{{ $input['endtime'] or '' }}" autocomplete="off">
+        <input class="layui-input" name="endtime" placeholder="驳回日期" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}'})" value="{{ $input['endtime'] or '' }}" autocomplete="off">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>

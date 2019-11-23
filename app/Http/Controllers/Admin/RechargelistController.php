@@ -41,7 +41,8 @@ class RechargelistController extends Controller
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['czimg']='http://epp.zgzyph.com'.$value["czimg"];
         }
-        return view('rechargelist.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('rechargelist.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
     }
     /**
      * 通过

@@ -15,7 +15,7 @@
         </select>
     </div>
     <div class="layui-inline">
-        <input class="layui-input" name="begin" placeholder="开始日期" onclick="layui.laydate({elem: this, festival: true})" value="{{ $input['begin'] or '' }}" autocomplete="off">
+        <input class="layui-input" name="begin" placeholder="开始日期" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}'})" value="{{ $input['begin'] or '' }}" autocomplete="off">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>

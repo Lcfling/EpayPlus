@@ -24,8 +24,8 @@ class CodedrawnoneController extends Controller
         if(true==$request->has('user_id')){
             $codedraw->where('user_id','=',$request->input('user_id'));
         }
-        if(true==$request->has('order_no')){
-            $codedraw->where('order_no','=',$request->input('order_no'));
+        if(true==$request->has('order_sn')){
+            $codedraw->where('order_sn','=',$request->input('order_sn'));
         }
         if(true==$request->has('creatime')){
             $creatime=$request->input('creatime');
@@ -37,7 +37,8 @@ class CodedrawnoneController extends Controller
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
         }
-        return view('codedrawnone.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('codedrawnone.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
 
     }
     /**

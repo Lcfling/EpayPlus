@@ -10,7 +10,7 @@
         <input type="text"  value="{{ $input['name'] or '' }}" name="name" placeholder="请输入姓名" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}'})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
@@ -73,10 +73,9 @@
                 layer = layui.layer;
 
             form.render();
-            form.on('submit(formDemo)', function(data) {
-                console.log(data);
+            form.on('submit(formDemo)', function(data) {                
             });
-            //layer.msg(layui.v);
+            
         });
 
         function previewImg(obj) {

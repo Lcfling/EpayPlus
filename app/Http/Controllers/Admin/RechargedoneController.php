@@ -13,7 +13,11 @@ class RechargedoneController extends Controller
      */
     public function index(Request $request){
         $czrecord=Rechargelist::query();
-
+        $kid=Auth::id();
+        $rid=getrole($kid);
+        if($rid==4){
+            $czrecord->where('admin_kefu_id','=',$kid);
+        }
         if(true==$request->has('user_id')){
             $czrecord->where('user_id','=',$request->input('user_id'));
         }
@@ -32,6 +36,7 @@ class RechargedoneController extends Controller
             $data[$key]['savetime'] =date("Y-m-d H:i:s",$value["savetime"]);
             $data[$key]['czimg']='http://epp.zgzyph.com'.$value["czimg"];
         }
-        return view('rechargedone.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('rechargedone.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
     }
 }

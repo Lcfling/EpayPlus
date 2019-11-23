@@ -36,7 +36,8 @@ class CallcenterController extends Controller
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['url']='http://'.$_SERVER['HTTP_HOST'].$value["url"];
         }
-        return view('callcenter.list',['pager'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('callcenter.list',['pager'=>$data,'min'=>$min,'input'=>$request->all()]);
     }
 
     /**

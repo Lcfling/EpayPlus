@@ -45,4 +45,6 @@ return [
     //cannot del
     'cannot_del_admin_ids'          =>  '1',
 
+    //search-min_date
+    'min_date'                      =>'2019-11-11',
 ];

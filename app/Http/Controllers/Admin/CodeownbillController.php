@@ -29,7 +29,8 @@ class CodeownbillController extends Controller
         foreach ($data as $key=>$value){
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
         }
-        return view('codeownbill.list',['list'=>$data,'own_id'=>$id,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('codeownbill.list',['list'=>$data,'own_id'=>$id,'min'=>$min,'input'=>$request->all()]);
     }
 
     public function index(Request $request){

@@ -33,6 +33,7 @@ class QrcodeController extends Controller
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['erweima']='http://epp.zgzyph.com'.$value["erweima"];
         }
-        return view('qrcode.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('qrcode.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
     }
 }

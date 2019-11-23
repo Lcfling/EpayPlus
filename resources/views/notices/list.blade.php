@@ -11,10 +11,10 @@
         <input type="text"  value="{{ $input['content'] or '' }}" name="content" placeholder="请输入内容" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['creattime'] or '' }}" name="creattime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['creattime'] or '' }}" name="creattime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}'})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo1">搜索</button>
+        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
     </div>
 @endsection
 @section('table')
@@ -68,10 +68,9 @@
                 layer = layui.layer;
             laydate({istoday: true});
             form.render();
-            form.on('submit(formDemo)', function(data) {
-                console.log(data);
+            form.on('submit(formDemo)', function(data) {                
             });
-            //layer.msg(layui.v);
+            
         });
     </script>
 @endsection

@@ -31,7 +31,8 @@ class RechargeController extends Controller
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
         }
-        return view('recharge.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('recharge.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
     }
     /**
      * 编辑页

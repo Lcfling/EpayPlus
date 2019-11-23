@@ -14,7 +14,7 @@ class CodecountController extends Controller
     public function index(Request $request){
         $codecount=Codecount::query();
         if(true==$request->has('user_id')){
-            $codecount->where('agent_id','=',$request->input('agent_id'));
+            $codecount->where('user_id','=',$request->input('user_id'));
         }
         if(true==$request->has('creatime')){
             $creatime=$request->input('creatime');
@@ -46,8 +46,8 @@ class CodecountController extends Controller
                 $data[$key]['savetime'] =date("Y-m-d H:i:s",$value["savetime"]);
             }
         }
-
-        return view('codecount.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('codecount.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
 
     }
 }

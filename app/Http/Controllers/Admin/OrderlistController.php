@@ -60,7 +60,8 @@ class OrderlistController extends Controller
                 $data[$key]['pay_time']=date("Y-m-d H:i:s",$value["pay_time"]);
             }
         }
-        return view('orderlist.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('orderlist.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
     }
     /**
      * 码商收款

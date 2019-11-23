@@ -48,8 +48,8 @@ class AgentcountController extends Controller
                 $data[$key]['savetime'] =date("Y-m-d H:i:s",$value["savetime"]);
             }
         }
-
-        return view('agentcount.list',['list'=>$data,'input'=>$request->all()]);
+        $min=config('admin.min_date');
+        return view('agentcount.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
 
     }
 }
