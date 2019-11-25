@@ -65,13 +65,16 @@ class Agentfee extends Model {
                         Agentcount::where('agent_id',$agentfeeinfo['agent2_id'])->increment('balance',$score2,['tol_sore'=>DB::raw("tol_sore + $score2"),'tol_brokerage'=>DB::raw("tol_brokerage + $score2"),'savetime'=>time()]);
                     }
                 }else{
-                    ajaxReturn('','无一级代理商!',0);
+//                    ajaxReturn('','无一级代理商!',0);
+                    return false;
                 }
            }else{
-               ajaxReturn('','无一级代理商!',0);
+//               ajaxReturn('','无一级代理商!',0);
+               return false;
            }
         }else{
-            ajaxReturn('','商户不存在!',0);
+//            ajaxReturn('','商户不存在!',0);
+            return false;
         }
 
     }
