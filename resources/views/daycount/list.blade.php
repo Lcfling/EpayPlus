@@ -1,5 +1,13 @@
 @section('title', '码商')
 @section('header')
+    <div class="layui-inline" style="padding-left: 270px">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="选择日期" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}' })" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
+    </div>
+@endsection
+@section('table')
     <div class="layui-inline" style="width: 30%;margin-left: 30px">
         <fieldset class="layui-elem-field site-demo-button">
             <legend>订单统计</legend>

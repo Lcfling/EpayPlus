@@ -17,17 +17,18 @@ class RechargeController extends Controller
     public function index(Request $request){
         $recharge=Recharge::query();
 
-
         if(true==$request->has('sk_name')){
-            $recharge->where('sk_name','like','%'.$request->input('sk_name').'%');
+            $recharge->where('czinfo.sk_name','like','%'.$request->input('sk_name').'%');
         }
         if(true==$request->has('creatime')){
             $creatime=$request->input('creatime');
             $start=strtotime($creatime);
             $end=strtotime('+1day',$start);
-            $recharge->whereBetween('creatime',[$start,$end]);
+            $recharge->whereBetween('czinfo.creatime',[$start,$end]);
         }
-        $data = $recharge->orderBy('creatime','desc')->paginate(10)->appends($request->all());
+        $data = $recharge->leftJoin('admin_users','czinfo.admin_kefu_id','=','admin_users.id')
+                         ->select('czinfo.*','admin_users.username')
+                         ->orderBy('czinfo.creatime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
         }

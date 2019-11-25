@@ -32,8 +32,13 @@ class BuscountController extends Controller
                              ->select('business_count.*','business.nickname','business.mobile','business.fee')
                              ->orderBy('business_count.business_code','desc')->paginate(10)->appends($request->all());
             foreach ($data as $key =>$value){
-                $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
+                if($data[$key]['fq_num']==0){
+                    $data[$key]['sucrate']=0;
+                }else{
+                    $data[$key]['sucrate']=round($value['done_num']/$value['fq_num']*100,2);
+                }
 
+                $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
             }
         }
 

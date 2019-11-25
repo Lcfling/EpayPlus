@@ -178,6 +178,7 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/agentbank',       'AgentbankController');//代理银行
     Route::resource('/qrcode',          'QrcodeController');//码商--二维码列表
     Route::resource('/datacount',       'DatacountController');//平台数据统计
+    Route::resource('/daycount',        'DaycountController');//平台数据统计
 });
 
 Route::get('/phpinfo',function (Request $request){

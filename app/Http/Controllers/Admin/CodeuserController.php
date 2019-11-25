@@ -311,7 +311,7 @@ class CodeuserController extends Controller
                 $this->uncodelock($id);
                 return ['msg'=>'上分失败！','status'=>0];
             }else{
-                $shangfen=$account->insert(['user_id'=>$id,'score'=>$score,'status'=>1,'remark'=>'手动上分','creatime'=>time()]);
+                $shangfen=$account->insert(['user_id'=>$id,'score'=>$score,'status'=>9,'remark'=>'手动上分','creatime'=>time()]);
                 if(!$shangfen){
                     DB::rollBack();
                     $this->uncodelock($id);
@@ -365,7 +365,7 @@ class CodeuserController extends Controller
                 $this->uncodelock($id);
                 return ['msg'=>'下分失败！','status'=>0];
             }else{
-                $xiafen=$account->insert(['user_id'=>$id,'score'=>-$score,'status'=>1,'remark'=>'手动下分','creatime'=>time()]);
+                $xiafen=$account->insert(['user_id'=>$id,'score'=>-$score,'status'=>10,'remark'=>'手动下分','creatime'=>time()]);
                 if(!$xiafen){
                     DB::rollBack();
                     $this->uncodelock($id);

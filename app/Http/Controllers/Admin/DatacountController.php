@@ -35,9 +35,9 @@ class DatacountController extends Controller
         )->toArray();
         $busnone=Busdraw::where('status',0)->sum('money');//提现中
 
-        $order['tol_sore']=$busall['tol_sore']; //订单金额
-        $order['sore_balance']=$busall['sore_balance']; //扣除费率后
-        $order['order_profit']=$busall['order_profit']; //盈利
+        $order['tol_sore']=$busall['tol_sore']/100; //订单金额
+        $order['sore_balance']=$busall['sore_balance']/100; //扣除费率后
+        $order['order_profit']=$busall['order_profit']/100; //盈利
 
         $bus['drawdone']=$busall['drawMoney']/100; // 总提现
         $bus['balance']=$busall['balance']/100; // 余额/未提现

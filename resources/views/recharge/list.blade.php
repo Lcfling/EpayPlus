@@ -24,6 +24,7 @@
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
             <col width="200">
@@ -32,6 +33,7 @@
         <tr>
             <th class="hidden-xs">序号</th>
             <th class="hidden-xs">客服ID</th>
+            <th class="hidden-xs">客服帐户</th>
             <th class="hidden-xs">收款姓名</th>
             <th class="hidden-xs">收款银行</th>
             <th class="hidden-xs">收款卡号</th>
@@ -46,6 +48,7 @@
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['admin_kefu_id']}}</td>
+                <td class="hidden-xs">{{$info['username']}}</td>
                 <td class="hidden-xs">{{$info['sk_name']}}</td>
                 <td class="hidden-xs">{{$info['sk_bankname']}}</td>
                 <td>{{$info['sk_banknum']}}</td>

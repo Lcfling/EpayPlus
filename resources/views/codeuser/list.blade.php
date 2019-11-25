@@ -64,7 +64,11 @@
                 <td class="hidden-xs">{{$info['rate']*100}}%</td>
                 <td class="hidden-xs">{{$info['rates']*100}}%</td>
                 <td class="hidden-xs">@if($info['take_status']==0)<span class="layui-btn layui-btn-small">未接单</span>@elseif($info['take_status']==1)<span class="layui-btn layui-btn-small layui-btn-warm">已接单</span>@endif</td>
-                <td class="hidden-xs">@if($info['jh_status']==0)<span class="layui-btn layui-btn-small layui-btn-danger">未激活</span>@elseif($info['take_status']==1)<span class="layui-btn layui-btn-small layui-btn-normal">已激活</span>@endif</td>
+                <td class="hidden-xs">
+                    @if($info['jh_status']==0)<span class="layui-btn layui-btn-small layui-btn-danger">未激活</span>
+                    @elseif($info['jh_status']==1)<span class="layui-btn layui-btn-small layui-btn-normal">已激活</span>
+                    @endif
+                </td>
                 <td class="hidden-xs">{{$info['tol_brokerage']/100}}</td>
                 <td class="hidden-xs">{{$info['imsi_num']}}</td>
                 <td class="hidden-xs">{{$info['reg_time']}}</td>
