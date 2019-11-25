@@ -7,22 +7,22 @@
             <blockquote class="layui-elem-quote layui-text" style="veritical-align:middle;">
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">成功订单额</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">11.00元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['order']['tol_sore']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">成功资金额(扣除费率)</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 20px">11.00元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 20px">{{$data['order']['sore_balance']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">成功总盈利</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">11.00元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['order']['order_profit']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商总佣金</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">11.00元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['code']['tol_brokerage']}}元</span>
                 </div>
             </blockquote>
             <br>
@@ -36,7 +36,7 @@
             <blockquote class="layui-elem-quote layui-text" style="veritical-align:middle;">
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">商户总提现</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['bus']['done']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['bus']['drawdone']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
@@ -46,12 +46,12 @@
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">商户提现中</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['bus']['none']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['bus']['drawnone']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">商户提现总手续费</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['bus']['none']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 60px">{{$data['bus']['feemoney']}}元</span>
                 </div>
             </blockquote>
             <br>
@@ -65,7 +65,7 @@
             <blockquote class="layui-elem-quote layui-text" style="veritical-align:middle;">
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">代理总提现</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['agent']['done']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['agent']['drawdone']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
@@ -75,12 +75,12 @@
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">代理提现中</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['agent']['none']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['agent']['drawnone']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">代理提现总手续费</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['bus']['none']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 60px">{{$data['agent']['feemoney']}}元</span>
                 </div>
             </blockquote>
             <br>
@@ -94,7 +94,7 @@
             <blockquote class="layui-elem-quote layui-text" style="veritical-align:middle;">
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商总提现</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['code']['done']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['code']['drawdone']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
@@ -104,12 +104,12 @@
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商提现中</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['code']['none']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['code']['drawnone']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商提现总手续费</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['bus']['none']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 60px">{{$data['code']['feemoney']}}元</span>
                 </div>
             </blockquote>
             <br>
@@ -123,17 +123,17 @@
             <blockquote class="layui-elem-quote layui-text" style="veritical-align:middle;">
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商激活费用</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">11.00元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['code']['active_money']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商激活佣金</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">11.00元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['code']['active_brokerage']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商激活盈利</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">11.00元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['code']['active_profit']}}元</span>
                 </div>
             </blockquote>
             <br>
@@ -147,17 +147,17 @@
             <blockquote class="layui-elem-quote layui-text" style="veritical-align:middle;">
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商线上充值</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['code_charge']['done']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['code']['tol_recharge']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商上分</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 120px">{{$data['code_charge']['shangfen']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 120px">{{$data['code']['shangfen']}}元</span>
                 </div>
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商下分</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 120px">{{$data['code_charge']['xiafen']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 120px">{{$data['code']['xiafen']}}元</span>
                 </div>
             </blockquote>
             <br>
@@ -171,17 +171,17 @@
             <blockquote class="layui-elem-quote layui-text" style="veritical-align:middle;">
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商注册人数</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['code_charge']['done']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['codeuser']['codenum']}}人</span>
                 </div>
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商激活人数</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 120px">{{$data['code_charge']['shangfen']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['codeuser']['active']}}人</span>
                 </div>
 
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">二维码可用数</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 120px">{{$data['code_charge']['xiafen']}}元</span>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['codeuser']['erweima']}}个</span>
                 </div>
             </blockquote>
             <br>

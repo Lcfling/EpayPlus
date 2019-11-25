@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
+use Auth;
 use App\Models\Rechargelist;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;

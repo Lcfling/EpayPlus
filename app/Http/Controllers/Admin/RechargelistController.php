@@ -77,7 +77,7 @@ class RechargelistController extends Controller
                 $this->unczlock($id);
                 return ['msg'=>'添加充值流水失败！','status'=>0];
             }
-            $money=Codecount::where('user_id','=',$user_id)->increment('balance',$score);//加钱
+            $money=Codecount::where('user_id','=',$user_id)->increment('balance',$score,['tol_recharge'=>DB::raw("tol_recharge + $score")]);//加钱
             if(!$money){
                 DB::rollBack();
                 $this->unczlock($id);
@@ -102,6 +102,10 @@ class RechargelistController extends Controller
      */
     public function reject(StoreRequest $request){
         $id = $request->input('id');
+        $islock=$this->czlock($id);
+        if(!$islock){
+            return ['msg'=>'请勿频繁操作！'];
+        }
         $count = Rechargelist::where('id',$request->input('id'))->update(['status'=>2,'savetime'=>time()]);
         if($count){
             $this->unczlock($id);

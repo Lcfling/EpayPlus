@@ -30,6 +30,9 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
         </colgroup>
@@ -43,6 +46,9 @@
             <th class="hidden-xs">冻结金额</th>
             <th class="hidden-xs">提现总金额</th>
             <th class="hidden-xs">提现实际到账总金额</th>
+            <th class="hidden-xs">总充值</th>
+            <th class="hidden-xs">总上分</th>
+            <th class="hidden-xs">总下分</th>
             <th class="hidden-xs">创建时间</th>
             <th class="hidden-xs">更新时间</th>
         </tr>
@@ -58,6 +64,9 @@
                 <td class="hidden-xs">{{$info['freeze_money']/100}}</td>
                 <td class="hidden-xs">{{$info['drawMoney']/100}}</td>
                 <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
+                <td class="hidden-xs">{{$info['tol_recharge']/100}}</td>
+                <td class="hidden-xs">{{$info['shangfen']/100}}</td>
+                <td class="hidden-xs">{{$info['xiafen']/100}}</td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">{{$info['savetime']}}</td>
             </tr>

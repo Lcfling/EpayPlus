@@ -163,7 +163,7 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/order/sfpushfirst',   'OrderController@sfpushfirst');//订单 手动回调
 
     Route::resource('/orderfalse',      'OrderfalseController');//订单异常列表
-    Route::post('/order/falsebudan',       'OrderController@falsebudan');//订单 手动回调
+    Route::post('/order/falsebudan',    'OrderController@falsebudan');//订单 手动回调
     Route::post('/order/jiedong',       'OrderController@jiedong');//订单 手动回调
 
     Route::resource('/orderlist',       'OrderlistController');//订单列表

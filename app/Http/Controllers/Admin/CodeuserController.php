@@ -317,7 +317,7 @@ class CodeuserController extends Controller
                     $this->uncodelock($id);
                     return ['msg'=>'上分失败！','status'=>0];
                 }else{
-                    $add=DB::table('users_count')->where('user_id','=',$id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score")]);
+                    $add=DB::table('users_count')->where('user_id','=',$id)->increment('balance',$score,['tol_sore'=>DB::raw("tol_sore + $score"),'shangfen'=>DB::raw("shangfen + $score")]);
                     if(!$add){
                         DB::rollBack();
                         $this->uncodelock($id);
@@ -371,7 +371,7 @@ class CodeuserController extends Controller
                     $this->uncodelock($id);
                     return ['msg'=>'下分失败！','status'=>0];
                 }else{
-                    $add=DB::table('users_count')->where('user_id','=',$id)->decrement('balance',$score,['tol_sore'=>DB::raw("tol_sore - $score")]);
+                    $add=DB::table('users_count')->where('user_id','=',$id)->decrement('balance',$score,['tol_sore'=>DB::raw("tol_sore - $score"),'xiafen'=>DB::raw("xiafen + $score")]);
                     if(!$add){
                         DB::rollBack();
                         $this->uncodelock($id);

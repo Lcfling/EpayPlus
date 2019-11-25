@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
+use App\Models\Buscount;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Order;
@@ -128,9 +129,9 @@ class OrderController extends Controller
                 break;
         }
     }
-    /**
+    /**过期订单->补单
      * @param $order_sn
-     * 补单操作
+     *
      */
     public function budan(StoreRequest $request){
         $order_sn=$request->input('order_sn');
@@ -146,7 +147,7 @@ class OrderController extends Controller
 
         DB::beginTransaction();
         try{
-            if(!$order_info=$order->where([["order_sn",$order_sn],['status',2]])->lockForUpdate()->first()){
+            if(!$order_info=$order->where([["order_sn",$order_sn],["status",2]])->lockForUpdate()->first()){
                 DB::rollBack();
                 Order::unorderlock($order_sn);
                 return ['msg'=>'订单已处理！'];
@@ -206,7 +207,7 @@ class OrderController extends Controller
             if(!$fremoney){
                 DB::rollBack();
                 Order::unorderlock($order_sn);
-                return ['msg'=>'修改帐户失败！'];
+                return ['msg'=>'修改码商帐户失败！'];
             }
             //更改订单状态
             $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>1,'sk_money'=>$tradeMoney,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
@@ -214,6 +215,12 @@ class OrderController extends Controller
                 DB::rollBack();
                 Order::unorderlock($order_sn);
                 return ['msg'=>'更改订单状态失败！'];
+            }
+            $done_num=Buscount::where(array('business_code'=>$order_info['business_code']))->increment('done_num',1);
+            if(!$done_num){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'增加商户成功订单失败！'];
             }
             DB::commit();
             Order::unorderlock($order_sn);
@@ -227,7 +234,7 @@ class OrderController extends Controller
 
     }
 
-    //  超时补单
+    //  取消订单->超时补单
     public function csbudan(StoreRequest $request){
         $order_sn=$request->input('order_sn');
 
@@ -286,7 +293,7 @@ class OrderController extends Controller
             if(!$fremoney){
                 DB::rollBack();
                 Order::unorderlock($order_sn);
-                return ['msg'=>'修改帐户失败！'];
+                return ['msg'=>'修改码商帐户失败！'];
             }
             //订单状态
             $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>1,'sk_money'=>$tradeMoney,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
@@ -294,6 +301,12 @@ class OrderController extends Controller
                 DB::rollBack();
                 Order::unorderlock($order_sn);
                 return ['msg'=>'更改订单状态失败！'];
+            }
+            $done_num=Buscount::where(array('business_code'=>$order_info['business_code']))->increment('done_num',1);
+            if(!$done_num){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'增加商户成功订单失败！'];
             }
             DB::commit();
             Order::unorderlock($order_sn);
@@ -307,6 +320,10 @@ class OrderController extends Controller
 
     }
 
+    /**异常订单补单
+     * @param StoreRequest $request
+     * @return array
+     */
     public function falsebudan(StoreRequest $request){
         $order_sn=$request->input('order_sn');
         // 获取订单信息
@@ -381,7 +398,7 @@ class OrderController extends Controller
             if(!$fremoney){
                 DB::rollBack();
                 Order::unorderlock($order_sn);
-                return ['msg'=>'修改帐户失败！'];
+                return ['msg'=>'修改码商帐户失败！'];
             }
             //更改订单状态
             $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>1,'sk_money'=>$tradeMoney,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
@@ -389,6 +406,12 @@ class OrderController extends Controller
                 DB::rollBack();
                 Order::unorderlock($order_sn);
                 return ['msg'=>'更改订单状态失败！'];
+            }
+            $done_num=Buscount::where(array('business_code'=>$order_info['business_code']))->increment('done_num',1);
+            if(!$done_num){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'增加商户成功订单失败！'];
             }
             DB::commit();
             Order::unorderlock($order_sn);
@@ -402,9 +425,9 @@ class OrderController extends Controller
 
     }
 
-    /**
+    /**异常订单手动解冻
      * @param StoreRequest $request
-     * @return array手动解冻
+     * @return array
      */
     public function jiedong(StoreRequest $request){
         $order_sn=$request->input('order_sn');
@@ -448,7 +471,7 @@ class OrderController extends Controller
             if(!$fremoney){
                 DB::rollBack();
                 Order::unorderlock($order_sn);
-                return ['msg'=>'修改帐户失败！'];
+                return ['msg'=>'修改码商帐户失败！'];
             }
             //订单状态
             $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>3,"dj_status"=>1));
