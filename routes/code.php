@@ -79,6 +79,13 @@ Route::group(['namespace'  => "Code"], function () {
     Route::get('/Timernotify/bussiness_fy',           'TimernotifyController@bussiness_fy');//商户返佣
     Route::get('/Timernotify/user_fy',                'TimernotifyController@user_fy');//码商返佣
 
+    /**
+     * 定时器创表格 TimercreatetableController
+     */
+    Route::get('/Timercreatetable/createaccount',    'TimercreatetableController@createaccount');//创建码商流水天表
+    Route::get('/Timercreatetable/createorder',      'TimercreatetableController@createorder');//创建订单周表
+    Route::get('/Timercreatetable/createagentbf',    'TimercreatetableController@createagentbf');//创建代理商流水表
+    Route::get('/Timercreatetable/createbusinessbf', 'TimercreatetableController@createbusinessbf');//创建商户流水表
 
     /**
      * OrderjdController

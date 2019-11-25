@@ -118,8 +118,24 @@ class IndexController extends Controller
 //        $ordertable = Order::getordersntable('2019112311014694603248');
 //        $order_infos=$ordertable->where(array("order_sn"=>'2019112311014694603248'))->first();
 //        $this->senduidnotify($order_infos,3,2);
-        $orderjson=Redis::get('orderrecord_2019112311014694603248');
-        print_r($orderjson);
+//        $orderjson=Redis::get('orderrecord_2019112311014694603248');
+//        print_r($orderjson);
+          DB::statement("CREATE TABLE `zf_account_20191129` (
+                                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                                  `user_id` int(11) NOT NULL,
+                                  `score` int(11) NOT NULL DEFAULT '0' COMMENT '积分',
+                                  `order_sn` char(50) NOT NULL DEFAULT '--' COMMENT '平台订单号',
+                                  `erweima_id` int(11) NOT NULL DEFAULT '0' COMMENT '二维码id',
+                                  `business_code` int(20) NOT NULL DEFAULT '0' COMMENT '商户标识',
+                                  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态 1 充值  2 第三方支付扣除  3 冻结  4 解冻 5 佣金  6 提现',
+                                  `payType` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型 1 微信  2支付宝',
+                                  `remark` char(20) DEFAULT NULL COMMENT '备注',
+                                  `creatime` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+                                  PRIMARY KEY (`id`),
+                                  KEY `business_code` (`business_code`) USING BTREE,
+                                  KEY `user_id` (`user_id`) USING BTREE
+                                ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='码商资金流水表';
+                    ");
 
     }
 

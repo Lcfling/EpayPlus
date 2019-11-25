@@ -27,6 +27,7 @@ class OrderjdController extends CommonController {
             $username = htmlformat($_POST['name']);
             //姓名
             $score = (int)($_POST['score']*100);
+            $admin_kefu_id = (int)($_POST['kefu']);
             //金额
             $sk_name = htmlformat($_POST['sk_name']);
             //收款银行姓名
@@ -35,7 +36,6 @@ class OrderjdController extends CommonController {
             $sk_banknum = htmlformat($_POST['sk_banknum']);
             //收款银行卡号
             $code=time().rand(100000,999999);
-            file_put_contents('./FileType.txt',print_r($_POST,true).PHP_EOL,FILE_APPEND);
             Redis::del("app_recharge".$user_id);
             //随机锁入队
             Redis::rPush('app_recharge'.$user_id,$code);
@@ -76,6 +76,7 @@ class OrderjdController extends CommonController {
                     }
                     $data =array(
                         'user_id'=>$user_id,
+                        'admin_kefu_id'=>$admin_kefu_id,
                         'name'=>$username,
                         'score'=>$score,
                         'czimg'=>"/recharge/" . $FileName,
@@ -287,6 +288,8 @@ class OrderjdController extends CommonController {
                     $orderstatus = $ordertable->where(array('user_id'=>$user_id,"status"=>0,'order_sn'=>$order_sn))->update(array('sk_money'=>$skmoney*100,'status'=>4,'sk_status'=>1));
                     if($orderstatus){
                         DB::commit();
+                        //抢单条数减1
+                        Redis::decr('order_qd_'.$user_id);
                         ajaxReturn(null,'交易金额不匹配,已提交客服!',0);
                     }else{
                         DB::rollBack();

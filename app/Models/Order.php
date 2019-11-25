@@ -131,4 +131,43 @@ class Order extends Model {
 
     }
 
+    /**创建订单周表
+     * @param $ordertable
+     * @return bool
+     */
+    public static function createorder($ordertable){
+        $ordertable = 'zf_'.$ordertable;
+        $status =DB::statement("CREATE TABLE $ordertable (
+                                      `id` int(11) NOT NULL AUTO_INCREMENT,
+                                      `out_order_sn` char(50) NOT NULL DEFAULT '--' COMMENT '商户订单号',
+                                      `order_sn` char(50) NOT NULL DEFAULT '--' COMMENT '平台订单号',
+                                      `payType` tinyint(1) NOT NULL DEFAULT '0' COMMENT ' 0 默认  1 微信  2 支付宝',
+                                      `tradeMoney` decimal(11,0) NOT NULL DEFAULT '0' COMMENT '订单金额',
+                                      `sk_money` int(11) DEFAULT '0' COMMENT '收款金额',
+                                      `erweima_id` int(11) NOT NULL DEFAULT '0' COMMENT '二维码id',
+                                      `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '码商id',
+                                      `status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态（0未支付 ，1支付成功 ，2过期  ,3取消）',
+                                      `creatime` int(11) NOT NULL DEFAULT '0' COMMENT '创建订单时间',
+                                      `pay_time` int(11) NOT NULL DEFAULT '0' COMMENT '支付时间',
+                                      `business_code` int(11) NOT NULL DEFAULT '0' COMMENT '商户code',
+                                      `sk_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '码商收款状态 0未收款  1手动收款 2自动收款',
+                                      `dj_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '冻结状态（0冻结 1解冻 2已扣除）',
+                                      `is_shoudong` tinyint(1) DEFAULT '0' COMMENT '是否手动回调 1手动回调',
+                                      `notifyUrl` varchar(255) DEFAULT NULL COMMENT '第三方回调地址',
+                                      `callback_status` tinyint(1) DEFAULT '0' COMMENT '第三方回调状态  1 成功  2推送失败',
+                                      `callback_num` tinyint(1) DEFAULT '0' COMMENT '推送次数',
+                                      `callback_time` int(11) DEFAULT '0' COMMENT '回调时间',
+                                      `chanum` int(11) DEFAULT '0' COMMENT '金额差价',
+                                      `home` varchar(255) DEFAULT '--' COMMENT '订单城市',
+                                      `is_send` tinyint(1) DEFAULT '0' COMMENT '是否已推送给码商接单',
+                                      PRIMARY KEY (`id`),
+                                      KEY `user_id` (`user_id`) USING BTREE,
+                                      KEY `business_code` (`business_code`) USING BTREE,
+                                      KEY `out_order_sn` (`out_order_sn`) USING BTREE,
+                                      KEY `order_sn` (`order_sn`)
+                                    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='订单表';
+                    ");
+        return$status;
+    }
+
 }

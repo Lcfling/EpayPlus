@@ -24,5 +24,29 @@ class Businessbillflow extends Model {
         return $Businessbillflow;
     }
 
+    /**创建订单周表
+     * @param $ordertable
+     * @return bool
+     */
+    public static function createbusinessbillflow($businessbillflow){
+        $businessbillflow = 'zf_'.$businessbillflow;
+        $status =DB::statement("CREATE TABLE $businessbillflow (
+                                      `id` int(11) NOT NULL AUTO_INCREMENT,
+                                      `order_sn` char(50) NOT NULL DEFAULT '--',
+                                      `score` int(11) NOT NULL DEFAULT '0' COMMENT '积分/提现金额',
+                                      `tradeMoney` int(11) DEFAULT '0' COMMENT '扣费率后 分/实际支付金额(扣除手续费后)',
+                                      `business_code` int(20) NOT NULL DEFAULT '0' COMMENT '商户标识',
+                                      `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态 1 支付 2利润3提现',
+                                      `paycode` int(3) NOT NULL DEFAULT '0' COMMENT '类型 1 微信  2支付宝',
+                                      `remark` char(10) NOT NULL COMMENT '备注',
+                                      `creatime` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+                                      PRIMARY KEY (`id`),
+                                      KEY `business_code` (`business_code`) USING BTREE,
+                                      KEY `order_sn` (`order_sn`)
+                                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户支付资金流';
+                    ");
+        return$status;
+    }
+
 
 }
