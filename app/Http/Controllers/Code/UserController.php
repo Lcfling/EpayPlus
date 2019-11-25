@@ -32,11 +32,15 @@ class UserController extends CommonController {
             if ($Userinfo['jh_status'] == 0) {
                 ajaxReturn(null,"账号未激活!",0);
             }
+
             if ($Userinfo["take_status"]==1) {
                 //用户移除接单队列
                 Redis::lRem("jiedans",0,$user_id);
                 Users::where(array("user_id"=>$user_id))->update(['take_status' => 0]);
                 ajaxReturn(null,"关闭接单!");
+            }
+            if (!$Userinfo['home']) {
+                ajaxReturn(null,"未设置接单地区!",0);
             }
             // 查看用户积分余额
             $balance = Userscount::onWriteConnection()->where('user_id',$user_id)->value('balance');
@@ -100,6 +104,17 @@ class UserController extends CommonController {
             if($erweimainfo['code_status'] == 1) {
                 ajaxReturn('error40004','支付码关闭中!'.$erweima_id,0);
             }
+            // 查看用户积分余额
+            $balance =Userscount::onWriteConnection()->where('user_id',$user_id)->value('balance');
+            $yue=bcsub($balance/100,1000,2);
+            if ($yue<$tradeMoney/100) {
+                ajaxReturn(null,"账户余额不足!",0);
+            }
+            //取出订单队列
+            $order_id=Redis::LPOP("order_id_".$order_sn);
+            if (!$order_id>0 || empty($order_id)) {
+                ajaxReturn(null,"订单已被抢!",0);
+            }
 
             DB::beginTransaction();
             try {
@@ -107,12 +122,8 @@ class UserController extends CommonController {
                 $balance =Userscount::onWriteConnection()->where('user_id',$user_id)->lockForUpdate()->value('balance');
                 $yue=bcsub($balance/100,1000,2);
                 if ($yue<$tradeMoney/100) {
+                    DB::rollBack();
                     ajaxReturn(null,"账户余额不足!",0);
-                }
-                //取出订单队列
-                $order_id=Redis::LPOP("order_id_".$order_sn);
-                if (!$order_id>0 || empty($order_id)) {
-                    ajaxReturn(null,"订单已被抢!",0);
                 }
                 $moneystatus =Userscount::where('user_id',$user_id)->decrement('balance',$tradeMoney,['freeze_money'=>DB::raw("freeze_money + $tradeMoney")]);
                 if(!$moneystatus){
@@ -151,9 +162,10 @@ class UserController extends CommonController {
                     $this->sendnotify($order_info,2);
                     //发送被抢订单信息
                     $ourdercount=Redis::incr('order_qd_'.$user_id);
-                    //获取订单信息
-                    $order_infos=$order->where(array("order_sn"=>$order_sn))->first();
-                    $this->senduidnotify($order_infos,3,$ourdercount);
+                    //用于判断二维码失败5次关闭接单
+                    Redis::incr('order_sn_num_'.$erweima_id);
+                    //type3推送
+                    $this->senduidnotify($order_info,3,$ourdercount,$user_id);
                     //返回信息
                     ajaxReturn(null,"抢单成功!");
                 }
@@ -208,13 +220,13 @@ class UserController extends CommonController {
      * @param $ordercount
      * 发送数据
      */
-    private function senduidnotify($orderinfo,$type,$ordercount) {
-        Gateway::$registerAddress = '39.100.237.239:1236';
+    private function senduidnotify($orderinfo,$type,$ordercount,$user_id) {
+        $address = Redis::get('push_map');
+        Gateway::$registerAddress = $address.':1236';
         $data=array(
             'ordercount'=>$ordercount,
             'type'=>$type,
             'data'=>array(
-                'order_id'=>$orderinfo['id'],
                 'payType'=>$orderinfo['payType'],
                 'tradeMoney'=>$orderinfo['tradeMoney'],
                 'order_sn'=>$orderinfo['order_sn'],
@@ -222,7 +234,7 @@ class UserController extends CommonController {
             'home'=>$orderinfo['home']
         );
         $data=json_encode($data);
-        Gateway::sendToUid($orderinfo['user_id'],$data);
+        Gateway::sendToUid($user_id,$data);
     }
     /**
      * @param $orderinfo
@@ -230,7 +242,8 @@ class UserController extends CommonController {
      * 发送数据
      */
     private function sendnotify($orderinfo,$type) {
-        Gateway::$registerAddress = '39.100.237.239:1236';
+        $address = Redis::get('push_map');
+        Gateway::$registerAddress = $address.':1236';
         $data=array(
             'ordercount'=>1,
             'type'=>$type,
@@ -246,19 +259,4 @@ class UserController extends CommonController {
         Gateway::sendToAll($data);
     }
 
-    //抢单队列锁
-    public function OrdersnLock($order_sn,$str){
-
-        Redis::rPush('Order_sn_Lock'.$order_sn,$str);
-        $value=Redis::lIndex('Order_sn_Lock'.$order_sn,0);
-        if($value==$str){
-            return true;
-        }else{
-            return false;
-        }
-    }
-    //抢单队列开锁
-    public function openOrdersnLock($order_sn){
-        Redis::del('Order_sn_Lock'.$order_sn);
-    }
 }

@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
-use GatewayClient\Gateway;
+use \GatewayWorker\Lib\Gateway;
 use PragmaRX\Google2FA\Google2FA;
 use BaconQrCode\Writer;
 
@@ -115,7 +115,36 @@ class IndexController extends Controller
 //        $first  =$ordertatlepre->where(array("user_id"=>1,"status"=>0,"sk_status"=>0));
 //        $res = $ordertatle->where(array("user_id"=>37,"status"=>0,"sk_status"=>0))->union($first)->orderBy('creatime', 'desc')->get()->toArray();
 //        print_r($res);
-        print_r(Redis::decr('order_qd_1'));
+//        $ordertable = Order::getordersntable('2019112311014694603248');
+//        $order_infos=$ordertable->where(array("order_sn"=>'2019112311014694603248'))->first();
+//        $this->senduidnotify($order_infos,3,2);
+        $orderjson=Redis::get('orderrecord_2019112311014694603248');
+        print_r($orderjson);
+
+    }
+
+    /**
+     * @param $orderinfo
+     * @param $type
+     * @param $ordercount
+     * 发送数据
+     */
+    private function senduidnotify($orderinfo,$type,$ordercount) {
+        $address = Redis::get('push_map');
+        Gateway::$registerAddress = $address.':1236';
+        $data=array(
+            'ordercount'=>$ordercount,
+            'type'=>$type,
+            'data'=>array(
+                'order_id'=>$orderinfo['id'],
+                'payType'=>$orderinfo['payType'],
+                'tradeMoney'=>$orderinfo['tradeMoney'],
+                'order_sn'=>$orderinfo['order_sn'],
+                'time'=>$orderinfo['creatime']),
+            'home'=>$orderinfo['home']
+        );
+        $data=json_encode($data);
+        Gateway::sendToUid($orderinfo['user_id'],$data);
     }
 
 
@@ -153,7 +182,7 @@ class IndexController extends Controller
         $data["out_order_sn"] = $_POST['out_order_sn'];
         //订单号
         $data["tradeMoney"] = $_POST['money'];
-        $data["notifyUrl"] = "http://".$_SERVER['HTTP_HOST']."/code/orderym/notifyUrl";
+        $data["notifyUrl"] = "http://".$_SERVER['HTTP_HOST']."/code/index/notifyUrl";
         //回调
         $key = $_POST['accessKey'];
         $data["sign"] = $this->getSign($data,$key);
@@ -170,7 +199,7 @@ class IndexController extends Controller
         $retrun_sign=$retrun_datas['sign'];
         //签名值
         unset($retrun_datas['sign']);
-        $key = '8551e0027ff3a8de9662eb3b8a16c23e';
+        $key = 'f8e09bf4b1cc926c8c03ee33b4829eab';
         $sign =$this->getSign($retrun_datas,$key);
         if($retrun_sign==$sign) {
             echo "success";

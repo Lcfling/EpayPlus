@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Code;
 
 use App\Http\Controllers\Controller;
 use App\Models\Imsi;
+use App\Models\User;
 use App\Models\Users;
+use App\Models\Userscount;
 use App\Models\Verificat;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Http\Request;
@@ -153,6 +155,7 @@ class LoginController extends Controller
                     ajaxReturn(null,'注册失败！',0);
                 }else{
                     Imsi::where(array("code"=>$code))->update(array("bind_id"=>$user_id,"status"=>1,"zytime"=>time()));
+                    Userscount::insert(array("user_id"=>$user_id,"creatime"=>time()));
                     $user_info=Users::where(array("account"=>$mobile))->first();
                     ajaxReturn($user_info,'注册成功！');
                 }

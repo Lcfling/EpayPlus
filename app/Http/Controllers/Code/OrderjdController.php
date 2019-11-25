@@ -268,93 +268,90 @@ class OrderjdController extends CommonController {
             $order_sn =$_POST['order_sn'];
             $skmoney=(int)$_POST['skmoney'];
             $ordertable =Order::getordersntable($order_sn);
-            $order_info=$ordertable->where(array('user_id'=>$user_id,'order_sn'=>$order_sn,'sk_status'=>0))->first();
-            if(empty($order_info)) {
-                ajaxReturn(null,'订单已处理!',0);
-            }
             if($ordertable->where(array('user_id'=>$user_id,'order_sn'=>$order_sn,'sk_status'=>2))->first()) {
                 ajaxReturn(null,'系统回调成功,您已收款成功,请刷新当前页面!',0);
             }
             if($ordertable->where(array('user_id'=>$user_id,'order_sn'=>$order_sn,'sk_status'=>1))->first()) {
                 ajaxReturn(null,'请勿重复点击!',0);
             }
-            //更改码商收款金额
-            $orderstatus = $ordertable->where(array('user_id'=>$user_id,'order_sn'=>$order_sn))->update(array('sk_money'=>$skmoney*100,'sk_status'=>1));
-            //  判断用户输入金额是否与支付金额一致
-            if ( $order_info['tradeMoney'] != $skmoney*100) {
-                ajaxReturn(null,'交易金额不匹配,已提交客服!',0);
-            }
-            if($orderstatus) {
-                // 未超时
-                if (time() - 3600 <$order_info['creatime'] ) {
-                    $this->budan($order_info,$order_sn);
-                } else {
-                    //超时
-                    $this->csbudan($order_info,$order_sn);
+            DB::beginTransaction();
+            try {
+                $order_info=$ordertable->where(array('user_id'=>$user_id,"status"=>0,'order_sn'=>$order_sn))->lockForUpdate()->first();
+                if(empty($order_info)) {
+                    DB::rollBack();
+                    ajaxReturn(null,'订单已处理!',0);
                 }
-                $this->insertrebatte($user_id,$order_info['business_code'],$order_sn,$skmoney * 100,$order_info['payType']);
-                //抢单条数减1
-                Redis::decr('order_qd_'.$user_id);
-                ajaxReturn(null,'手动收款成功!',1);
-            } else {
-                ajaxReturn(null,'手动收款失败!',0);
+                //  判断用户输入金额是否与支付金额一致
+                if ( $order_info['tradeMoney'] != $skmoney*100) {
+                    //更改码商收款金额
+                    $orderstatus = $ordertable->where(array('user_id'=>$user_id,"status"=>0,'order_sn'=>$order_sn))->update(array('sk_money'=>$skmoney*100,'status'=>4,'sk_status'=>1));
+                    if($orderstatus){
+                        DB::commit();
+                        ajaxReturn(null,'交易金额不匹配,已提交客服!',0);
+                    }else{
+                        DB::rollBack();
+                        ajaxReturn(null,'订单已处理!',0);
+                    }
+                }else{
+                    //资金解冻 资金扣除 修改账户 修改订单状态
+                    $tradeMoney =$order_info['tradeMoney'];
+                    $data['score']=$tradeMoney;
+                    $data['user_id'] = $user_id;
+                    $data['status']=4;
+                    $data['erweima_id']=$order_info['erweima_id'];
+                    $data['business_code']=$order_info['business_code'];
+                    $data['order_sn']=$order_sn;
+                    $data['remark']="手动资金解冻";
+                    $data['creatime']=time();
+                    $account = Accountlog::getcounttable($order_sn);
+                    $freezestatus = $account->insert($data);
+                    if(!$freezestatus){
+                        DB::rollBack();
+                        ajaxReturn(null,'资金解冻失败!',0);
+                    }
+                    $info['score']=-$tradeMoney;
+                    $info['user_id'] = $user_id;
+                    $info['status']=2;
+                    $info['erweima_id']=$order_info['erweima_id'];
+                    $info['business_code']=$order_info['business_code'];
+                    $info['order_sn']=$order_sn;
+                    $info['remark']="手动资金扣除";
+                    $info['creatime']=time();
+                    $deductstatus = $account->insert($info);
+                    if(!$deductstatus){
+                        DB::rollBack();
+                        ajaxReturn(null,'资金扣除失败!',0);
+                    }
+                    $countstatus = Userscount::where('user_id',$user_id)->decrement('freeze_money',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
+                    if(!$countstatus){
+                        DB::rollBack();
+                        ajaxReturn(null,'修改账户失败!',0);
+                    }
+                    $pay_time = time();
+                    // 修改订单状态
+                    $orderstatus = $ordertable->where(array("order_sn"=>$order_sn))->update(array("status"=>1,'sk_money'=>$skmoney*100,'sk_status'=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>$pay_time));
+                    if(!$orderstatus){
+                        DB::rollBack();
+                        ajaxReturn(null,'订单状态修改失败!',0);
+                    }else{
+                        DB::commit();
+                    }
+                    $this->insertrebatte($user_id,$order_info['business_code'],$order_sn,$skmoney * 100,$order_info['payType']);
+                    //抢单条数减1
+                    Redis::decr('order_qd_'.$user_id);
+                    $this->sfpushfirst($order_sn);
+                    ajaxReturn(null,'手动收款成功!',1);
+                }
+
+            }
+            catch (Exception $e) {
+                // 数据回滚, 当try中的语句抛出异常。
+                DB::rollBack();
+                ajaxReturn(null,"手动收款失败!",0);
             }
         } else {
             ajaxReturn(null,'请求数据异常!',0);
         }
-    }
-    private function budan($order_sn_info,$order_sn) {
-        /**确认收款 资金解冻 资金扣除 修改订单状态
-         * @param $order_sn_info 订单信息
-         * @param $order_sn 订单号
-         */
-        $tradeMoney =$order_sn_info['tradeMoney'];
-        $data['score']=$order_sn_info['tradeMoney'];
-        $data['user_id'] = $order_sn_info['user_id'];
-        $data['status']=4;
-        $data['erweima_id']=$order_sn_info['erweima_id'];
-        $data['business_code']=$order_sn_info['business_code'];
-        $data['order_sn']=$order_sn_info['order_sn'];
-        $data['remark']="手动资金解冻";
-        $data['creatime']=time();
-        $account = Accountlog::getcounttable($order_sn);
-        $account->insert($data);
-        $info['score']=-$order_sn_info['tradeMoney'];
-        $info['user_id'] = $order_sn_info['user_id'];
-        $info['status']=2;
-        $info['erweima_id']=$order_sn_info['erweima_id'];
-        $info['business_code']=$order_sn_info['business_code'];
-        $info['order_sn']=$order_sn_info['order_sn'];
-        $info['remark']="手动资金扣除";
-        $info['creatime']=time();
-        $account->insert($info);
-        Userscount::where('user_id',$order_sn_info['user_id'])->decrement('freeze_money',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
-        $order = Order::getordersntable($order_sn);
-        // 修改订单状态
-        $order->where(array("order_sn"=>$order_sn))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
-//        $this->sfpushfirst($order_sn_info['order_sn']);
-    }
-    private function csbudan($order_sn_info,$order_sn) {
-        /**确认收款超时 资金扣除
-         * @param $order_sn_info 订单信息
-         * @param $order_sn 订单号
-         */
-        $tradeMoney =$order_sn_info['tradeMoney'];
-        $info['score']=-$tradeMoney;
-        $info['user_id'] = $order_sn_info['user_id'];
-        $info['status']=2;
-        $info['erweima_id']=$order_sn_info['erweima_id'];
-        $info['business_code']=$order_sn_info['business_code'];
-        $info['order_sn']=$order_sn_info['order_sn'];
-        $info['remark']="手动资金扣除";
-        $info['creatime']=time();
-        $account = Accountlog::getcounttable($order_sn);
-        $account->insert($info);
-        Userscount::where('user_id',$order_sn_info['user_id'])->decrement('balance',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
-        $order = Order::getordersntable($order_sn);
-        // 修改订单状态
-        $order->where(array("order_sn"=>$order_sn))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
-//        $this->sfpushfirst($order_sn_info['order_sn']);
     }
 
     /**返佣数据插入
@@ -377,47 +374,43 @@ class OrderjdController extends CommonController {
         Rebate::insert($data);
     }
     /**
-     *第一次 异步回调
+     * 手动回调
      */
     private function sfpushfirst($order_sn) {
-        $key = "36cae679f8cb296d69be4f27bd8cc3d6";
-        if($key == '36cae679f8cb296d69be4f27bd8cc3d6') {
-            $orderinfo=Order::where(array("order_sn"=>$order_sn))->get();
-            if($orderinfo) {
-                foreach ($orderinfo as $k=>$v) {
-                    $url=$v['notifyUrl'];
-                    $data=array(
-                        'order_sn'=>$v['order_sn'],
-                        'out_order_sn'=>$v['out_order_sn'],
-                        'paymoney'=>$v['payMoney'],
-                        'pay_time'=>$v['pay_time'],
-                        'status'=>$v['status']
-                    );
-                    $businessinfo=Business::where(array("business_code"=>$v['business_code']))->first();
-                    if(empty($businessinfo)) {
-                        ajaxReturn('error40003','商户号不存在!',0);
-                    }
-                    $data['sign']=$this->getSignK($data,$businessinfo['accessKey']);
-                    $res=$this->https_post_kfs($url,$data);
-                    file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方订单数据~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
-                    file_put_contents('./notifyUrl_sd.txt',$orderinfo.PHP_EOL,FILE_APPEND);
-                    if($res == 'success') {
-                        file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回成功~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
-                        file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
-                        Order::where(array('id'=>$v['id']))->update(array('callback_status'=>1,'callback_num'=>1,'callback_time'=>time()));
-                        ajaxReturn('','回调成功!');
-                    } else {
-                        file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回失败~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
-                        file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
-                        Order::where(array('id'=>$v['id'],'status'=>1,'callback_status'=>0))->update(array('callback_status'=>0,'callback_num'=>1,'callback_time'=>time()));
-                        ajaxReturn('','回调成功!第三方返回失败');
-                    }
+        $ordertable =Order::getordersntable($order_sn);
+        $orderinfo=$ordertable->where(array("order_sn"=>$order_sn))->get();
+        if($orderinfo) {
+            foreach ($orderinfo as $k=>$v) {
+                $url=$v['notifyUrl'];
+                $data=array(
+                    'order_sn'=>$v['order_sn'],
+                    'out_order_sn'=>$v['out_order_sn'],
+                    'sk_money'=>$v['sk_money'],
+                    'pay_time'=>$v['pay_time'],
+                    'status'=>$v['status']
+                );
+                $businessinfo=Business::where(array("business_code"=>$v['business_code']))->first();
+                if(empty($businessinfo)) {
+                    ajaxReturn('error40003','商户号不存在!',0);
                 }
-            } else {
-                ajaxReturn('','订单不存在',0);
+                $data['sign']=$this->getSignK($data,$businessinfo['accessKey']);
+                $res=$this->https_post_kfs($url,$data);
+                file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方订单数据~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
+                file_put_contents('./notifyUrl_sd.txt',$orderinfo.PHP_EOL,FILE_APPEND);
+                if($res == 'success') {
+                    file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回成功~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
+                    file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
+                    $ordertable->where(array('id'=>$v['id']))->update(array('callback_status'=>1,'callback_num'=>1,'callback_time'=>time()));
+                    ajaxReturn('','回调成功!');
+                } else {
+                    file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回失败~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
+                    file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
+                    $ordertable->where(array('id'=>$v['id'],'status'=>1,'callback_status'=>0))->update(array('callback_status'=>0,'callback_num'=>1,'callback_time'=>time()));
+                    ajaxReturn('','回调成功!第三方返回失败');
+                }
             }
         } else {
-            ajaxReturn('','蛇皮让你蛇皮',0);
+            ajaxReturn('','订单不存在',0);
         }
     }
     /**签名
@@ -488,5 +481,21 @@ class OrderjdController extends CommonController {
     private function getname($erweima_id) {
         $name=Erweima::where(array('id'=>$erweima_id))->value('name');
         return $name;
+    }
+
+    //抢单队列锁
+    private function OrdersnLock($order_sn,$str){
+
+        Redis::rPush('Order_sn_Lock'.$order_sn,$str);
+        $value=Redis::lIndex('Order_sn_Lock'.$order_sn,0);
+        if($value==$str){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    //抢单队列开锁
+    private function openOrdersnLock($order_sn){
+        Redis::del('Order_sn_Lock'.$order_sn);
     }
 }

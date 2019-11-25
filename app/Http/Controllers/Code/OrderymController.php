@@ -7,6 +7,7 @@
  */
 namespace App\Http\Controllers\Code;
 use App\Models\Business;
+use App\Models\Businesscount;
 use App\Models\Erweima;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -96,6 +97,7 @@ class OrderymController extends Controller {
         );
         $order_id = $Order->insertGetId($data);//检测一下是否会出现并发
         if($order_id) {
+            Businesscount::where(array('business_code'=>$business_code))->increment('fq_num');
             //订单入队
             Redis::rPush('order_id_'.$order_sn,$order_id);
             $this->getcomonerweimaurl($order_sn);
@@ -103,6 +105,7 @@ class OrderymController extends Controller {
             ajaxReturn('error40005','订单生成失败!',0);
         }
     }
+
 
     /**获取订单信息
      * @throws \think\db\exception\DataNotFoundException
@@ -166,7 +169,8 @@ class OrderymController extends Controller {
     }
 
     private function sendnotify($orderinfo,$type) {
-        Gateway::$registerAddress = '39.100.237.239:1236';
+        $address = Redis::get('push_map');
+        Gateway::$registerAddress = $address.':1236';
         $data=array(
             'ordercount'=>1,
             'type'=>$type,
