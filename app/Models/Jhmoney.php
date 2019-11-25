@@ -32,7 +32,7 @@ class Jhmoney extends Model {
         }
         $data['user_id']=$user_id;
         $data['score']=$jhmoney[$jhfy];
-        $data['status']=5;
+        $data['status']=8;
         $data['remark']="激活佣金";
         $data['creatime']=time();
         $accounttable->insert($data);

@@ -68,7 +68,7 @@ class Accountlog extends Model {
                                       `order_sn` char(50) NOT NULL DEFAULT '--' COMMENT '平台订单号',
                                       `erweima_id` int(11) NOT NULL DEFAULT '0' COMMENT '二维码id',
                                       `business_code` int(20) NOT NULL DEFAULT '0' COMMENT '商户标识',
-                                      `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态 1 充值  2 第三方支付扣除  3 冻结  4 解冻 5 佣金  6 提现',
+                                      `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态 1 充值  2 第三方支付扣除  3 冻结  4 解冻 5 支付佣金  6 提现   7 账户激活 8 激活佣金 9 上分 10 下分',
                                       `payType` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型 1 微信  2支付宝',
                                       `remark` char(20) DEFAULT NULL COMMENT '备注',
                                       `creatime` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
@@ -76,7 +76,7 @@ class Accountlog extends Model {
                                       KEY `business_code` (`business_code`) USING BTREE,
                                       KEY `user_id` (`user_id`) USING BTREE,
                                       KEY `order_sn` (`order_sn`)
-                                    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='码商资金流水表';
+                                    ) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=utf8 COMMENT='码商资金流水表';
                     ");
         return$status;
     }
