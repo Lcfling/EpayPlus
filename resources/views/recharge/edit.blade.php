@@ -30,10 +30,10 @@
     <div class="layui-form-item">
         <label class="layui-form-label">选择客服：</label>
         <div class="layui-input-block">
-            <select name="kefu_id" required>
+            <select name="admin_kefu_id" required>
                 <option value="">请选择客服</option>
                 @foreach($kefu as $call)
-                    <option value="{{$call['id']}}" @if(isset($info['kefu_id'])and$info['kefu_id']==$call['id']) selected @endif>{{$call['username']}}</option>
+                    <option value="{{$call['id']}}" @if(isset($info['admin_kefu_id'])and$info['admin_kefu_id']==$call['id']) selected @endif>{{$call['username']}}</option>
                 @endforeach
             </select>
         </div>

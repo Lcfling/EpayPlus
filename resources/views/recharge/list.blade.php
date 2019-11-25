@@ -45,7 +45,7 @@
         @foreach($list as $info)
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
-                <td class="hidden-xs">{{$info['kefu_id']}}</td>
+                <td class="hidden-xs">{{$info['admin_kefu_id']}}</td>
                 <td class="hidden-xs">{{$info['sk_name']}}</td>
                 <td class="hidden-xs">{{$info['sk_bankname']}}</td>
                 <td>{{$info['sk_banknum']}}</td>
