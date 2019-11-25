@@ -52,7 +52,7 @@ class OrderController extends Controller
             $sql->whereBetween('creatime',[$start,$end]);
         }
         if(true==$request->input('excel')&& true==$request->has('excel')){
-            $head = array('商户ID','平台订单号','商户订单号','码商ID','二维码ID','码商收款','收款金额','实际到账金额','支付类型','支付状态','回调状态','创建时间');
+            $head = array('商户标识','平台订单号','商户订单号','码商ID','二维码ID','码商收款','收款金额','实际到账金额','支付类型','支付状态','回调状态','创建时间');
             $excel = $sql->where([["status",2],['user_id','>',0]])->where('status',2)->select('business_code','order_sn','out_order_sn','user_id','erweima_id','sk_status','sk_money','tradeMoney','payType','status','callback_status','creatime')->get()->toArray();
             foreach ($excel as $key=>$value){
                 $excel[$key]['sk_status']=$this->sk_status($value['sk_status']);
@@ -144,15 +144,6 @@ class OrderController extends Controller
             return ['msg'=>'请勿频繁操作！'];
         }
 
-        if($account->where(array('order_sn'=>$order_sn,'status'=>4))->first()){
-            Order::unorderlock($order_sn);
-            return ['msg'=>'已手动解冻!'];
-        }
-        if($account->where(array('order_sn'=>$order_sn,'status'=>2))->first()){
-            Order::unorderlock($order_sn);
-            return ['msg'=>'已手动扣除!'];
-        }
-
         DB::beginTransaction();
         try{
             if(!$order_info=$order->where([["order_sn",$order_sn],['status',2]])->lockForUpdate()->first()){
@@ -218,7 +209,7 @@ class OrderController extends Controller
                 return ['msg'=>'修改帐户失败！'];
             }
             //更改订单状态
-            $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
+            $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>1,'sk_money'=>$tradeMoney,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
             if(!$djstatus){
                 DB::rollBack();
                 Order::unorderlock($order_sn);
@@ -249,10 +240,7 @@ class OrderController extends Controller
             return ['msg'=>'请勿频繁操作！'];
         }
 
-        if($account->where(array('order_sn'=>$order_sn,'status'=>2))->first()){
-            Order::unorderlock($order_sn);
-            return ['msg'=>'已手动扣除!'];
-        }
+
         DB::beginTransaction();
         try{
             if(!$order_info=$order->where([["order_sn",$order_sn],['status',3]])->lockForUpdate()->first()){
@@ -294,14 +282,14 @@ class OrderController extends Controller
             }
             //帐户修改
             $tradeMoney=$order_info['tradeMoney'];
-            $fremoney=Codecount::where('user_id',$order_info['user_id'])->decrement('freeze_money',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
+            $fremoney=Codecount::where('user_id',$order_info['user_id'])->decrement('balance',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
             if(!$fremoney){
                 DB::rollBack();
                 Order::unorderlock($order_sn);
                 return ['msg'=>'修改帐户失败！'];
             }
             //订单状态
-            $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
+            $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>1,'sk_money'=>$tradeMoney,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
             if(!$djstatus){
                 DB::rollBack();
                 Order::unorderlock($order_sn);
@@ -317,6 +305,166 @@ class OrderController extends Controller
             return ['msg'=>'发生异常！事物进行回滚！'];
         }
 
+    }
+
+    public function falsebudan(StoreRequest $request){
+        $order_sn=$request->input('order_sn');
+        // 获取订单信息
+
+        $order =Order::getordersntable($order_sn);
+        $account =Order::getcounttable($order_sn);
+
+        $islock=Order::orderlock($order_sn);
+        if(!$islock){
+            return ['msg'=>'请勿频繁操作！'];
+        }
+
+        DB::beginTransaction();
+        try{
+            if(!$order_info=$order->where([["order_sn",$order_sn],['status',4]])->lockForUpdate()->first()){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'订单已处理！'];
+            }
+            $data=[
+                'score'=>$order_info['tradeMoney'],
+                'user_id'=>$order_info['user_id'],
+                'status'=>4,
+                'erweima_id'=>$order_info['erweima_id'],
+                'business_code'=>$order_info['business_code'],
+                'order_sn'=>$order_info['order_sn'],
+                'remark'=>"手动资金解冻",
+                'creatime'=>time(),
+            ];
+            //插入解冻流水
+            $insert=$account->insert($data);
+            if(!$insert){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'解冻失败！'];
+            }
+            $info=[
+                'score'=>$order_info['tradeMoney'],
+                'user_id'=>$order_info['user_id'],
+                'status'=>2,
+                'erweima_id'=>$order_info['erweima_id'],
+                'business_code'=>$order_info['business_code'],
+                'order_sn'=>$order_info['order_sn'],
+                'remark'=>"手动资金扣除",
+                'creatime'=>time(),
+            ];
+            //插入扣除流水
+            $account->insert($info);
+            if(!$account){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'扣除失败！'];
+            }
+            $rate=[
+                'user_id'=>$order_info['user_id'],
+                'business_code'=>$order_info['business_code'],
+                'order_sn'=>$order_info['order_sn'],
+                'tradeMoney'=>$order_info['tradeMoney'],
+                'payType'=>$order_info['payType'],
+                'creatime'=>time(),
+            ];
+            //插入返佣表
+            $rebate=Rebate::insert($rate);
+            if(!$rebate){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'返佣失败！'];
+            }
+            //码商帐户减钱
+            $tradeMoney=$order_info['tradeMoney'];
+            $fremoney=Codecount::where('user_id',$order_info['user_id'])->decrement('freeze_money',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
+            if(!$fremoney){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'修改帐户失败！'];
+            }
+            //更改订单状态
+            $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>1,'sk_money'=>$tradeMoney,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>time()));
+            if(!$djstatus){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'更改订单状态失败！'];
+            }
+            DB::commit();
+            Order::unorderlock($order_sn);
+            return $this->ownpushfirst($order_info['order_sn']);
+
+        }catch (Exception $e){
+            DB::rollBack();
+            Order::unorderlock($order_sn);
+            return ['msg'=>'发生异常！事物进行回滚！'];
+        }
+
+    }
+
+    /**
+     * @param StoreRequest $request
+     * @return array手动解冻
+     */
+    public function jiedong(StoreRequest $request){
+        $order_sn=$request->input('order_sn');
+        // 获取订单信息
+
+        $order =Order::getordersntable($order_sn);
+        $account =Order::getcounttable($order_sn);
+
+        $islock=Order::orderlock($order_sn);
+        if(!$islock){
+            return ['msg'=>'请勿频繁操作！'];
+        }
+
+        DB::beginTransaction();
+        try{
+            if(!$order_info=$order->where([["order_sn",$order_sn],['status',4],['dj_status',0]])->lockForUpdate()->first()){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'订单已处理！'];
+            }
+            $data=[
+                'score'=>$order_info['tradeMoney'],
+                'user_id'=>$order_info['user_id'],
+                'status'=>4,
+                'erweima_id'=>$order_info['erweima_id'],
+                'business_code'=>$order_info['business_code'],
+                'order_sn'=>$order_info['order_sn'],
+                'remark'=>"手动资金解冻",
+                'creatime'=>time(),
+            ];
+            //插入解冻流水
+            $insert=$account->insert($data);
+            if(!$insert){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'解冻失败！'];
+            }
+            //码商帐户减钱
+            $tradeMoney=$order_info['tradeMoney'];
+            $fremoney=Codecount::where('user_id',$order_info['user_id'])->decrement('freeze_money',$tradeMoney,['balance'=>DB::raw("balance + $tradeMoney")]);
+            if(!$fremoney){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'修改帐户失败！'];
+            }
+            //订单状态
+            $djstatus=$order->where(array("order_sn"=>$order_info['order_sn']))->update(array("status"=>3,"dj_status"=>1));
+            if(!$djstatus){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'更改订单状态失败！'];
+            }
+            DB::commit();
+            Order::unorderlock($order_sn);
+            return ['msg'=>'解冻成功！','status'=>1];
+        }catch (Exception $e){
+            DB::rollBack();
+            Order::unorderlock($order_sn);
+            return ['msg'=>'发生异常！事物进行回滚！'];
+        }
     }
 
     /**

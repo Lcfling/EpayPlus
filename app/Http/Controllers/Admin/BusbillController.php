@@ -30,7 +30,7 @@ class BusbillController extends Controller
             $sql->where('business_code','=',$request->input('business_code'));
         }
         if(true==$request->input('excel')&& true==$request->has('excel')){
-            $head = array('订单号','商户ID','扣除后积分','实际支付金额','状态','类型','备注','创建时间');
+            $head = array('订单号','商户标识','扣除后积分','实际支付金额','状态','类型','备注','创建时间');
             $excel = $sql->select('order_sn','business_code','score','tradeMoney','status','paycode','remark','creatime')->get()->toArray();
             foreach ($excel as $key=>$value){
                 $excel[$key]['score']=$value['score']/100;

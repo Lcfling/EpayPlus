@@ -25,11 +25,17 @@ class DatacountController extends Controller
 
         //商户提现
         $bus=[];
-        $busdone=Busdraw::where('status',1)->sum('money');
-        $busbalance=Buscount::count('balance');
-        $busnone=Busdraw::where('status',0)->sum('money');
-        $bus['done']=$busdone/100;
-        $bus['balance']=$busbalance/100;
+        $busall=Buscount::first(
+            array(
+                DB::raw('SUM(drawMoney) as drawMoney'),
+                DB::raw('SUM(balance) as balance'),
+                DB::raw('SUM(drawMoney-tradeMoney) as feeMoney'),
+            )
+        )->toArray();
+        $busnone=Busdraw::where('status',0)->sum('money');//提现中
+
+        $bus['done']=$busall['drawMoney']/100;
+        $bus['balance']=$busall['balance']/100;
         $bus['none']=$busnone/100;
         //代理提现
         $agent=[];
@@ -61,23 +67,7 @@ class DatacountController extends Controller
         return view('datacount.list',['data'=>$data]);
     }
 
-    //流水获取
-    protected function getbill(){
-        static $lastday=array();
-        $date=date('Ymd')-1;
-        $lastday=$this->getdaybill($date);
-        if($lastday===false){
-            return;
-        }
-        $today=$this->getdaybill(date('Ymd'));
-        //redis判断存在
-        //coding
-        $today['code_charge']['shangfen']+=$lastday['code_charge']['shangfen'];
 
-        //coding
-        return $lastday;
-
-    }
     //获取哪一天流水表数据
     protected function getdaybill($date){
         $table='account_'.$date;

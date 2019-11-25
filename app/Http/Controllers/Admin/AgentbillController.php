@@ -32,7 +32,7 @@ class AgentbillController extends Controller
             $sql->where('business_code','=',$request->input('business_code'));
         }
         if(true==$request->input('excel')&& true==$request->has('excel')){
-            $head = array('订单号','代理商ID','商户ID','积分','状态','类型','备注','创建时间');
+            $head = array('订单号','代理商ID','商户标识','积分','状态','类型','备注','创建时间');
             $excel = $sql->select('order_sn','agent_id','business_code','score','status','paycode','remark','creatime')->get()->toArray();
             foreach ($excel as $key=>$value){
                 $excel[$key]['score']=$value['score']/100;

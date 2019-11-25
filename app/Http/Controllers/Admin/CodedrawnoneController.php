@@ -136,7 +136,7 @@ class CodedrawnoneController extends Controller
             }
             $drawMoney=$drawinfo['money'];
             $tradeMoney=$drawinfo['tradeMoney'];
-            $reduce=Codecount::where('user_id',$drawinfo['user_id'])->decrement('drawMoney',$drawMoney,['tradeMoney'=>DB::raw("tradeMoney - $tradeMoney")]);
+            $reduce=Codecount::where('user_id',$drawinfo['user_id'])->increment('balance',$drawMoney);
             if(!$reduce){
                 DB::rollBack();
                 $this->uncodelock($id);

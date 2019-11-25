@@ -8,6 +8,7 @@
  */
 namespace App\Http\Controllers\Admin;
 use App\Models\Admin;
+use App\Models\Buscount;
 use App\Models\Order;
 
 use Gregwar\Captcha\CaptchaBuilder;
@@ -56,13 +57,14 @@ class HomeController extends BaseController
         $weeksuf = computeWeek(time(),false);
         $order=new Order;
         $order->setTable('order_'.$weeksuf);
+
         //top-count
         $total=$order->whereBetween('creatime',[$start,$end])->count('order_sn');//今日全部订单
         $done=$order->whereBetween('creatime',[$start,$end])->where('status','=',1)->count('order_sn');//今日成功订单
         $none=$order->whereBetween('creatime',[$start,$end])->where('status','=',0)->count('order_sn');//今日未支付订单
 
         $done_money=$order->whereBetween('creatime',[$start,$end])->where('status','=',1)->sum('sk_money');//今日成交金额
-        $all_done_money=$order->where('status','=',1)->sum('sk_money');//累计成交金额
+        $all_done_money=Buscount::sum('tol_sore');//累计成交金额
 
         $data['total']=$total;
         $data['done']=$done;

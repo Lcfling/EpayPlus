@@ -30,8 +30,8 @@ class OrderlistController extends Controller
         if(true==$request->has('order_sn')){
             $sql->where('order_sn','=',$request->input('order_sn'));
         }
-        if(true==$request->has('order_sn')){
-            $sql->where('order_sn','=',$request->input('order_sn'));
+        if(true==$request->has('out_order_sn')){
+            $sql->where('out_order_sn','=',$request->input('out_order_sn'));
         }
         if(true==$request->has('user_id')){
             $sql->where('user_id','=',$request->input('user_id'));
@@ -41,7 +41,7 @@ class OrderlistController extends Controller
         }
 
         if(true==$request->input('excel')&& true==$request->has('excel')){
-            $head = array('商户ID','平台订单号','商户订单号','码商ID','二维码ID','码商收款','收款金额','实际到账金额','支付类型','支付状态','回调状态','创建时间');
+            $head = array('商户标识','平台订单号','商户订单号','码商ID','二维码ID','码商收款','收款金额','实际到账金额','支付类型','支付状态','回调状态','创建时间');
             $excel = $sql->select('business_code','order_sn','out_order_sn','user_id','erweima_id','sk_status','sk_money','tradeMoney','payType','status','callback_status','creatime')->get()->toArray();
             foreach ($excel as $key=>$value){
                 $excel[$key]['sk_status']=$this->sk_status($value['sk_status']);

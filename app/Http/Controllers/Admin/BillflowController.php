@@ -36,7 +36,7 @@ class BillflowController extends Controller
             $sql->where('erweima_id','=',$request->input('erweima_id'));
         }
         if(true==$request->input('excel')&& true==$request->has('excel')){
-            $head = array('码商ID','商户ID','订单号','积分','二维码ID','状态','支付类型','备注','创建时间');
+            $head = array('码商ID','商户标识','订单号','积分','二维码ID','状态','支付类型','备注','创建时间');
             $excel = $sql->select('user_id','business_code','order_sn','score','erweima_id','status','payType','remark','creatime')->get()->toArray();
             foreach ($excel as $key=>$value){
                 $excel[$key]['score']=$value['score']/100;

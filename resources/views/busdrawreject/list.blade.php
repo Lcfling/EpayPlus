@@ -39,7 +39,7 @@
         <thead>
         <tr>
             <th class="hidden-xs">序号</th>
-            <th class="hidden-xs">商户ID</th>
+            <th class="hidden-xs">商户标识</th>
             <th class="hidden-xs">提现单号</th>
             <th class="hidden-xs">提现额度</th>
             <th class="hidden-xs">开户人</th>

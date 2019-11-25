@@ -48,6 +48,11 @@
                     <label style="font-size: 15px;">商户提现中</label>
                     <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['bus']['none']}}元</span>
                 </div>
+
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">商户提现总手续费</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['bus']['none']}}元</span>
+                </div>
             </blockquote>
             <br>
         </fieldset>
@@ -72,6 +77,11 @@
                     <label style="font-size: 15px;">代理提现中</label>
                     <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['agent']['none']}}元</span>
                 </div>
+
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">代理提现总手续费</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['bus']['none']}}元</span>
+                </div>
             </blockquote>
             <br>
         </fieldset>
@@ -95,6 +105,11 @@
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">码商提现中</label>
                     <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['code']['none']}}元</span>
+                </div>
+
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">码商提现总手续费</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['bus']['none']}}元</span>
                 </div>
             </blockquote>
             <br>
@@ -149,6 +164,29 @@
         </fieldset>
     </div>
 
+    <div class="layui-inline" style="width: 30%;margin-left: 30px">
+        <fieldset class="layui-elem-field site-demo-button">
+            <legend>码商充值</legend>
+            <br>
+            <blockquote class="layui-elem-quote layui-text" style="veritical-align:middle;">
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">码商注册人数</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['code_charge']['done']}}元</span>
+                </div>
+
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">码商激活人数</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 120px">{{$data['code_charge']['shangfen']}}元</span>
+                </div>
+
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">二维码可用数</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 120px">{{$data['code_charge']['xiafen']}}元</span>
+                </div>
+            </blockquote>
+            <br>
+        </fieldset>
+    </div>
 
 
 @endsection

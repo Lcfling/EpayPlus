@@ -47,7 +47,7 @@ class OrderdoneController extends Controller
             $sql->whereBetween('creatime',[$start,$end]);
         }
         if(true==$request->input('excel')&& true==$request->has('excel')){
-            $head = array('商户ID','平台订单号','商户订单号','码商ID','二维码ID','码商收款','收款金额','实际到账金额','支付类型','支付状态','回调状态','创建时间');
+            $head = array('商户标识','平台订单号','商户订单号','码商ID','二维码ID','码商收款','收款金额','实际到账金额','支付类型','支付状态','回调状态','创建时间');
             $excel = $sql->where([["status",1],['user_id','>',0],['callback_status','in',[0,2]]])->select('business_code','order_sn','out_order_sn','user_id','erweima_id','sk_status','sk_money','tradeMoney','payType','status','callback_status','creatime')->get()->toArray();
             foreach ($excel as $key=>$value){
                 $excel[$key]['sk_status']=$this->sk_status($value['sk_status']);
@@ -60,7 +60,7 @@ class OrderdoneController extends Controller
             }
             exportExcel($head,$excel,'订单成功记录'.date('YmdHis',time()),'',true);
         }else{
-            $data=$sql->where([["status",1],['user_id','>',0],['callback_status','in',[0,2]]])->paginate(10)->appends($request->all());
+            $data=$sql->where([["status",1],['user_id','>',0]])->paginate(10)->appends($request->all());
             foreach ($data as $key=>$value){
                 $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
                 $data[$key]['pay_time']=date("Y-m-d H:i:s",$value["pay_time"]);

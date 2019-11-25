@@ -146,8 +146,7 @@ class BusdrawnoneController extends Controller
                         return ['msg'=>'商户流水添加失败！'];
                     }else{
                         $drawMoney=$drawinfo['money'];
-                        $tradeMoney=$drawinfo['tradeMoney'];
-                        $reduce=Buscount::where('business_code',$drawinfo['business_code'])->decrement('drawMoney',$drawMoney,['tradeMoney'=>DB::raw("tradeMoney - $tradeMoney")]);
+                        $reduce=Buscount::where('business_code',$drawinfo['business_code'])->increment('balance',$drawMoney);
                         if(!$reduce){
                             DB::rollBack();
                             $this->unbuslock($id);

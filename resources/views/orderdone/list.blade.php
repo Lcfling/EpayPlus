@@ -4,7 +4,7 @@
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户ID" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户标识" autocomplete="off" class="layui-input">
     </div>
      <div class="layui-inline">
         <input type="text"  value="{{ $input['user_id'] or '' }}" name="user_id" placeholder="请输入码商ID" autocomplete="off" class="layui-input">
@@ -39,6 +39,8 @@
     <table class="layui-table" lay-even lay-skin="nob">
         <colgroup>
             <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="200">
+            <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
@@ -57,16 +59,18 @@
         <thead>
         <tr>
             <th class="hidden-xs">序号</th>
-            <th class="hidden-xs">商户ID</th>
+            <th class="hidden-xs">商户标识</th>
             <th class="hidden-xs">平台订单号</th>
             <th class="hidden-xs">商户订单号</th>
             <th class="hidden-xs">码商ID</th>
-            <th class="hidden-xs">二维码ID</th>
+            <th class="hidden-xs">码商状态</th>            
             <th class="hidden-xs">码商收款</th>
-            <th class="hidden-xs">收款金额</th>
-            <th class="hidden-xs">实际到账金额</th>
+            <th class="hidden-xs">二维码ID</th>
+            <th class="hidden-xs">订单金额</th>
+            <th class="hidden-xs">收款金额</th>            
             <th class="hidden-xs">支付类型</th>
             <th class="hidden-xs">支付状态</th>
+            <th class="hidden-xs">回调次数</th>
             <th class="hidden-xs">回调状态</th>
             <th class="hidden-xs">创建时间</th>
             <th class="hidden-xs">支付时间</th>
@@ -81,14 +85,21 @@
                 <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['out_order_sn']}}</td>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
-                <td class="hidden-xs">{{$info['erweima_id']}}</td>
+                <td class="hidden-xs">
+                    @if($info['dj_status']==0)<span class="layui-btn layui-btn-small layui-btn-danger">资金冻结</span>
+                    @elseif($info['dj_status']==1)<span class="layui-btn layui-btn-small layui-btn-warm">资金解冻</span>
+                    @elseif($info['dj_status']==2)<span span class="layui-btn layui-btn-small layui-btn">资金扣除</span>
+                    @endif
+                </td> 
                 <td class="hidden-xs">
                     @if($info['sk_status']==0)<span class="layui-btn layui-btn-small layui-btn-danger">未收款</span>
                     @elseif($info['sk_status']==1)<span class="layui-btn layui-btn-small">手动收款</span>
                     @elseif($info['sk_status']==2)<span span class="layui-btn layui-btn-small layui-btn-warm">自动收款</span>
-                    @endif</td>
-                <td class="hidden-xs">{{$info['sk_money']/100}}</td>
+                    @endif
+                </td>
+                <td class="hidden-xs">{{$info['erweima_id']}}</td>
                 <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
+                <td class="hidden-xs">{{$info['sk_money']/100}}</td>                
                 <td class="hidden-xs">
                     @if($info['payType']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>
                     @elseif($info['payType']==1)<span class="layui-btn layui-btn-small">微信</span>
@@ -96,12 +107,9 @@
                     @endif
                 </td>
                 <td class="hidden-xs">
-                    @if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-warm">未支付</span>
-                    @elseif($info['status']==1)<span span class="layui-btn layui-btn-small layui-btn">支付成功</span>
-                    @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-normal">过期</span>
-                    @elseif($info['status']==3)<span class="layui-btn layui-btn-small layui-btn-danger">取消</span>
-                    @endif
+                   <span span class="layui-btn layui-btn-small layui-btn">支付成功</span>
                 </td>
+                <td class="hidden-xs"><span class="layui-btn layui-btn-small layui-btn-warm">回调{{$info['callback_num']}}次</span></td>
                 <td class="hidden-xs">
                     @if($info['callback_status']==0)<span class="layui-btn layui-btn-small layui-btn-primary">未处理</span>
                     @elseif($info['callback_status']==1)<span span class="layui-btn layui-btn-small layui-btn">推送成功</span>

@@ -137,7 +137,7 @@ class AgentdrawnoneController extends Controller
            }
            $drawMoney=$drawinfo['money'];
            $tradeMoney=$drawinfo['tradeMoney'];
-           $reduce=Agentcount::where('business_code',$drawinfo['business_code'])->decrement('drawMoney',$drawMoney,['tradeMoney'=>DB::raw("tradeMoney - $tradeMoney")]);
+           $reduce=Agentcount::where('business_code',$drawinfo['business_code'])->increment('balance',$drawMoney);
            if(!$reduce){
                DB::rollBack();
                $this->unagentlock($id);

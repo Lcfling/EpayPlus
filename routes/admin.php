@@ -162,7 +162,10 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::resource('/orderdone',       'OrderdoneController');//订单成功处理
     Route::post('/order/sfpushfirst',   'OrderController@sfpushfirst');//订单 手动回调
 
-    Route::resource('/orderfalse',      'OrderfalseController');//订单列表
+    Route::resource('/orderfalse',      'OrderfalseController');//订单异常列表
+    Route::post('/order/falsebudan',       'OrderController@falsebudan');//订单 手动回调
+    Route::post('/order/jiedong',       'OrderController@jiedong');//订单 手动回调
+
     Route::resource('/orderlist',       'OrderlistController');//订单列表
 
     Route::resource('/buscount',        'BuscountController');//商户账单

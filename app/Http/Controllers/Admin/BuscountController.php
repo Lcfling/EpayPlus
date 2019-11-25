@@ -18,7 +18,7 @@ class BuscountController extends Controller
         }
 
         if(true==$request->input('excel')&& true==$request->has('excel')){
-            $head = array('商户ID','余额','总分','创建时间','更新时间');
+            $head = array('商户标识','余额','总分','创建时间','更新时间');
             $excel = $buscount->select('business_code','balance','tol_sore','creatime','savetime')->get()->toArray();
             foreach ($excel as $key=>$value){
                 $excel[$key]['balance']=$value['balance']/100;

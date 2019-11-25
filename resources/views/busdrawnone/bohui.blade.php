@@ -1,7 +1,7 @@
 @section('title', '提现驳回')
 @section('content')
     <div class="layui-form-item">
-        <label class="layui-form-label" style="width: 100px">商户ID：</label>
+        <label class="layui-form-label" style="width: 100px">商户标识：</label>
         <div class="layui-input-inline">
             <input type="text" value="{{$info['business_code']}}" class="layui-input" disabled >
         </div>

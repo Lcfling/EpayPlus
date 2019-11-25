@@ -4,7 +4,7 @@
     <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
     </div>
     <div class="layui-inline">
-        <input type="text" lay-verify="business_code" value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户ID" autocomplete="off" class="layui-input">
+        <input type="text" lay-verify="business_code" value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户标识" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <input type="text" value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入提现订单号" autocomplete="off" class="layui-input">
@@ -36,7 +36,7 @@
         <thead>
         <tr>
             <th class="hidden-xs">序号</th>
-            <th class="hidden-xs">商户ID</th>
+            <th class="hidden-xs">商户标识</th>
             <th class="hidden-xs">提现订单号</th>
             <th class="hidden-xs">提现金额</th>
             <th class="hidden-xs">到账金额</th>

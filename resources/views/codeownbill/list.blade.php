@@ -7,7 +7,7 @@
         <input type="text"  value="{{ $own_id or '' }}" name="user_id"  class="layui-input" disabled>
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户ID" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户标识" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <input type="text"  value="{{ $input['order_sn'] or '' }}" name="order_sn" placeholder="请输入订单号" autocomplete="off" class="layui-input">
@@ -36,7 +36,7 @@
         <tr>
             <th class="hidden-xs">序号</th>
             <th class="hidden-xs">码商ID</th>
-            <th class="hidden-xs">商户ID</th>
+            <th class="hidden-xs">商户标识</th>
             <th class="hidden-xs">订单号</th>
             <th class="hidden-xs">积分</th>
             <th class="hidden-xs">二维码ID</th>

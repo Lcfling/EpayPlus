@@ -10,7 +10,7 @@
         <input type="text"  value="{{ $input['agent_id'] or '' }}" name="agent_id" placeholder="请输入代理商ID" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
-        <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户ID" autocomplete="off" class="layui-input">
+        <input type="text"  value="{{ $input['business_code'] or '' }}" name="business_code" placeholder="请输入商户标识" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
@@ -40,7 +40,7 @@
             <th class="hidden-xs">序号</th>
             <th class="hidden-xs">订单号</th>
             <th class="hidden-xs">代理商ID</th>
-            <th class="hidden-xs">商户ID</th>
+            <th class="hidden-xs">商户标识</th>
             <th class="hidden-xs">积分</th>
             <th class="hidden-xs">状态</th>
             <th class="hidden-xs">类型</th>
