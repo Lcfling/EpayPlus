@@ -47,6 +47,35 @@ class Verificat extends Model {
         }
         return $res;
     }
+
+    /**云通信创表发送短信
+     * @param $mobile
+     * @param $code
+     * @param $ip
+     * @return bool|int|mixed|string
+     */
+    public static function createtablesend($mobile,$content){
+
+        $data['username']='fjnphy';
+        $data["password"] = md5(md5("Uj41oPwQ").time());//密码
+        $data["mobile"] = $mobile;//手机号
+        $data["content"] = $content;
+        $data["tKey"]=time();
+        $url = 'http://api.mix2.zthysms.com/v2/sendSms';
+
+        $data=json_encode($data);
+        //   print_r($data);
+        $res = Verificat::https_post_kf($url,$data);
+
+        $res=json_decode($res,true);
+
+        if ($res['code'] == 200){
+            $res=0;
+        }else{
+            $res=false;
+        }
+        return $res;
+    }
     public static function dxbsends($mobile,$code){
 
         $ip=getip();

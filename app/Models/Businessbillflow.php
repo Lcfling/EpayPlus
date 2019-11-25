@@ -32,8 +32,8 @@ class Businessbillflow extends Model {
         $businessbillflow = 'zf_'.$businessbillflow;
         $status =DB::statement("CREATE TABLE $businessbillflow (
                                       `id` int(11) NOT NULL AUTO_INCREMENT,
-                                      `order_sn` char(50) NOT NULL DEFAULT '--',
-                                      `score` int(11) NOT NULL DEFAULT '0' COMMENT '积分/提现金额',
+                                      `order_sn` char(50) NOT NULL DEFAULT '--' COMMENT '订单号',
+                                      `score` decimal(11,0) NOT NULL DEFAULT '0' COMMENT '积分/提现金额',
                                       `tradeMoney` int(11) DEFAULT '0' COMMENT '扣费率后 分/实际支付金额(扣除手续费后)',
                                       `business_code` int(20) NOT NULL DEFAULT '0' COMMENT '商户标识',
                                       `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态 1 支付 2利润3提现',
@@ -43,7 +43,7 @@ class Businessbillflow extends Model {
                                       PRIMARY KEY (`id`),
                                       KEY `business_code` (`business_code`) USING BTREE,
                                       KEY `order_sn` (`order_sn`)
-                                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户支付资金流';
+                                    ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='商户支付资金流';
                     ");
         return$status;
     }

@@ -143,7 +143,7 @@ class Order extends Model {
                                       `order_sn` char(50) NOT NULL DEFAULT '--' COMMENT '平台订单号',
                                       `payType` tinyint(1) NOT NULL DEFAULT '0' COMMENT ' 0 默认  1 微信  2 支付宝',
                                       `tradeMoney` decimal(11,0) NOT NULL DEFAULT '0' COMMENT '订单金额',
-                                      `sk_money` int(11) DEFAULT '0' COMMENT '收款金额',
+                                      `sk_money` decimal(11,0) DEFAULT '0' COMMENT '收款金额',
                                       `erweima_id` int(11) NOT NULL DEFAULT '0' COMMENT '二维码id',
                                       `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '码商id',
                                       `status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态（0未支付 ，1支付成功 ，2过期  ,3取消）',
