@@ -128,36 +128,47 @@ class GenericcodeController extends CommonController {
         $userinfo = $this->member;
         //查询激活信息
         $jhmoney=Jhmoney::first();
-
+        $money = $jhmoney['jhmoney'];
         if ($userinfo['jh_status'] == 1) {
             ajaxReturn($userinfo,"账号已激活!",0);
         }
         DB::beginTransaction();
         // 查看用户积分余额
-        $balance =DB::table('users_count')->where('user_id',$user_id)->value('balance');
-        if ($balance<$jhmoney['jhmoney']) {
+        $balance =DB::table('users_count')->where('user_id',$user_id)->lockForUpdate()->value('balance');
+        if ($balance<$money) {
+            DB::rollBack();
             ajaxReturn($balance,"账户余额不足!",0);
         }
-        DB::table('users_count')->where('user_id',$user_id)->decrement('balance',$jhmoney['jhmoney']);
-        DB::commit();
+        $countstatus = DB::table('users_count')->where('user_id',$user_id)->decrement('balance',$money,['active_money'=>DB::raw("active_money + $money")]);
+        if(!$countstatus){
+            DB::rollBack();
+            ajaxReturn($balance,"更改账户失败!",0);
+        }
         $daytable =Accountlog::getdaytable();
         // 积分扣除
-        $status=$daytable->insert(
+        $accountstatus=$daytable->insert(
             array(
                 'user_id'=>$user_id,
-                'score'=>-$jhmoney['jhmoney'],
+                'score'=>-$money,
                 'status'=>7,
                 'remark'=>'账户激活',
                 'creatime'=>time()
             )
         );
-        if ($status) {
+        if ($accountstatus) {
             //更改账户状态
-            Users::where(array("user_id"=>$user_id))->update(['jh_status' => 1]);
+            $jhstatus = Users::where(array("user_id"=>$user_id))->update(['jh_status' => 1]);
+            if($jhstatus){
+                DB::commit();
+            }else{
+                DB::rollBack();
+                ajaxReturn($balance,"更改激活状态失败!",0);
+            }
             Jhmoney::jihuofy($userinfo['pid'],1);
-            ajaxReturn($status,"激活成功!");
+            ajaxReturn($accountstatus,"激活成功!");
         } else {
-            ajaxReturn($status,"激活失败!",0);
+            DB::rollBack();
+            ajaxReturn($balance,"激活失败!",0);
         }
     }
     /**

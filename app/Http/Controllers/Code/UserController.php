@@ -18,9 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use \GatewayWorker\Lib\Gateway;
 class UserController extends CommonController {
-    public function notifyurl() {
-        echo "success";
-    }
+
     /**
      * 用户开始接单
      */

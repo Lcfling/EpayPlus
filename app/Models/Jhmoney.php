@@ -36,7 +36,7 @@ class Jhmoney extends Model {
         $data['remark']="激活佣金";
         $data['creatime']=time();
         $accounttable->insert($data);
-        Userscount::where(array("user_id"=>$user_id))->increment('balance',$jhmoney[$jhfy],['tol_sore'=>DB::raw("tol_sore + $jhmoney[$jhfy]"),'tol_brokerage'=>DB::raw("tol_brokerage + $jhmoney[$jhfy]")]);
+        Userscount::where(array("user_id"=>$user_id))->increment('balance',$jhmoney[$jhfy],['active_brokerage'=>DB::raw("active_brokerage + $jhmoney[$jhfy]")]);
         $userinfo=Users::where(array("user_id"=>$user_id))->first();
         if ($userinfo['pid']>0) {
             $i++;
