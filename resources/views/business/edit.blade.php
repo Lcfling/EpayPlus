@@ -39,8 +39,7 @@
         <label class="layui-form-label">类型：</label>
         <div class="layui-input-block">
             <select name="paycode" lay-filter="status" lay-verify="status">
-                <option value="">请选择一个内容</option>
-                <option value="0" {{isset($info['paycode'])&&$info['paycode']=='0'?'selected':''}}>默认</option>
+                <option value="">请选择一个内容</option>                
                 <option value="1" {{isset($info['paycode'])&&$info['paycode']=='1'?'selected':''}}>微信商户</option>
                 <option value="2" {{isset($info['paycode'])&&$info['paycode']=='2'?'selected':''}}>支付宝商户</option>
             </select>
@@ -83,6 +82,7 @@
                     if(!reg.test(value)){
                         return '请正确填写账号';
                     }
+
                 },
                 confirmPass:function(value){
                     if($('input[name=password]').val() !== value)

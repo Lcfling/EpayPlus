@@ -17,20 +17,20 @@
     <div class="layui-form-item">
         <label class="layui-form-label">收款银行：</label>
         <div class="layui-input-block">
-            <input type="text" value="{{$info['sk_bankname'] or ''}}" id="sk_bankname" name="sk_bankname" required placeholder="请输入收款银行" autocomplete="off" class="layui-input">
+            <input type="text" value="{{$info['sk_bankname'] or ''}}" id="sk_bankname" name="sk_bankname" required lay-verify="sk_bankname" placeholder="请输入收款银行" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">通道：</label>
         <div class="layui-input-block">
-            <input type="text" value="{{$info['payway'] or ''}}" name="payway" required placeholder="请输入通道名称" autocomplete="off" class="layui-input">
+            <input type="text" value="{{$info['payway'] or ''}}" name="payway" required lay-verify="payway" placeholder="请输入通道名称" autocomplete="off" class="layui-input">
         </div>
     </div>
 
     <div class="layui-form-item">
         <label class="layui-form-label">选择客服：</label>
         <div class="layui-input-block">
-            <select name="admin_kefu_id" required>
+            <select name="admin_kefu_id" required lay-verify="kefu">
                 <option value="">请选择客服</option>
                 @foreach($kefu as $call)
                     <option value="{{$call['id']}}" @if(isset($info['admin_kefu_id'])and$info['admin_kefu_id']==$call['id']) selected @endif>{{$call['username']}}</option>
@@ -50,7 +50,34 @@
             var id = $("input[name='id']").val();
             var index = parent.layer.getFrameIndex(window.name);
             var banklist={!! $banklist!!};//不转义字符
-            //console.log(banklist);
+            
+            form.verify({
+                sk_name:function (value) {
+                    if(value==null||value==''){
+                        return '请输入收款人姓名';
+                    }                    
+                },
+                sk_banknum:function (value) {
+                    if(value==null||value==''){
+                        return '请输入收款卡号';
+                    }                    
+                },
+                sk_bankname:function (value) {
+                    if(value==null||value==''){
+                        return '请输入收款银行';
+                    }                   
+                },
+                payway:function (value) {
+                    if(value==null||value==''){
+                        return '请输入通道名称';
+                    }                    
+                },
+                kefu:function (value) {
+                    if(value==null||value==''){
+                        return '请选择客服';
+                    }                    
+                },
+            });
             $("#sk_banknum").blur(function(){
                 var value=$(this).val();
                 $.post("https://ccdcapi.alipay.com/validateAndCacheCardInfo.json",{cardNo:value,cardBinCheck:'true'},function(res){
@@ -70,9 +97,7 @@
                     }
                 },'json');
             });
-            form.verify({
-                sk_banknum:[/^([1-9]{1})(\d{14}|\d{18})$/,'请填写正确的银行卡号'],
-            });
+            
             if(id==0){
                 form.on('submit(formDemo)', function(data) {
                     $.ajax({

@@ -43,7 +43,7 @@ class DaycountController extends Controller
         $order=new Order;
         $order->setTable('order_'.$weeksuf);
 
-        $orderall=$order->where('status',1)->first(
+        $orderall=$order->where('status',1)->whereBetween('creatime',[$start,$end])->first(
             array(
                 DB::raw('sum(tradeMoney) as tradeMoney'),
                 DB::raw('sum(sk_money) as sk_money'),

@@ -32,6 +32,7 @@
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="200">
 
         </colgroup>
@@ -42,8 +43,9 @@
             <th class="hidden-xs">代理商ID</th>
             <th class="hidden-xs">商户标识</th>
             <th class="hidden-xs">积分</th>
-            <th class="hidden-xs">状态</th>
-            <th class="hidden-xs">类型</th>
+            <th class="hidden-xs">实际积分</th>
+            <th class="hidden-xs">类别</th>
+            <th class="hidden-xs">支付类型</th>
             <th class="hidden-xs">创建时间</th>
         </tr>
         </thead>
@@ -55,8 +57,19 @@
                 <td class="hidden-xs">{{$info['agent_id']}}</td>
                 <td class="hidden-xs">{{$info['business_code']}}</td>
                 <td class="hidden-xs">{{$info['score']/100}}</td>
-               <td class="hidden-xs">@if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>@elseif($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-warm">支付</span>@elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">利润</span>@endif</td>
-                <td class="hidden-xs">@if($info['paycode']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>@elseif($info['paycode']==1)<span class="layui-btn layui-btn-small">微信</span>@elseif($info['paycode']==2)<span class="layui-btn layui-btn-small layui-btn-normal">支付宝</span>@endif</td>
+                <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
+                <td class="hidden-xs">                   
+                    @if($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-primary">支付</span>
+                    @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-normal">利润</span>
+                    @elseif($info['status']==3)<span class="layui-btn layui-btn-small layui-btn-danger">提现</span>
+                    @endif
+                </td>
+                <td class="hidden-xs">
+                    @if($info['paycode']==0)<span class="layui-btn layui-btn-small layui-btn-primary">默认</span>
+                    @elseif($info['paycode']==1)<span class="layui-btn layui-btn-small">微信</span>
+                    @elseif($info['paycode']==2)<span class="layui-btn layui-btn-small layui-btn-normal">支付宝</span>
+                    @endif
+                </td>
                 <td class="hidden-xs">{{$info['creatime']}}</td>
             </tr>
         @endforeach

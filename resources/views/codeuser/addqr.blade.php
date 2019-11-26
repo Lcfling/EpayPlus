@@ -8,9 +8,9 @@
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label" style="width: 100px">二维码数量：</label>
+        <label class="layui-form-label" style="width: 100px">邀请码数量：</label>
         <div class="layui-input-inline">
-            <input type="number"  value="{{$info['imsi_num'] or ''}}" name="imsi_num"  placeholder="请输入二维码数量" autocomplete="off" class="layui-input">
+            <input type="number"  value="{{$info['imsi_num'] or ''}}" name="imsi_num"  placeholder="请输入邀请码数量" autocomplete="off" class="layui-input">
         </div>
     </div>
 
@@ -37,7 +37,8 @@
                         if(res.status == 1){
                             layer.msg(res.msg,{icon:6},function () {
                                 parent.layer.close(index);
-                                window.parent.frames[1].location.reload();
+                                //window.parent.frames[1].location.reload();
+                                parent.location.reload();
                             });
 
                         }else{

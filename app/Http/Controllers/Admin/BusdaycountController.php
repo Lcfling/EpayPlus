@@ -55,7 +55,9 @@ class BusdaycountController extends Controller
         $data=[];
         $busbill=new Busbill();
         $busbill->setTable('business_billflow_'.$weeksuf);
-        $money=$busbill->where(array('business_code'=>$business_code,'status'=>1))->first(
+        $start=strtotime($creatime);
+        $end=strtotime('+1day',$start);
+        $money=$busbill->where(array('business_code'=>$business_code,'status'=>1))->whereBetween('creatime',[$start,$end])->first(
             array(
                 DB::raw('SUM(score) as sk_money'),
                 DB::raw('SUM(tradeMoney) as tradeMoney'),
@@ -74,8 +76,8 @@ class BusdaycountController extends Controller
                 DB::raw('SUM(tradeMoney) as tradeMoney'),
             )
         )->toArray();
-        $data['draw_money']=($draw['money']?$draw['money']:0)/100;
-        $data['tradeMoney']=($draw['tradeMoney']?$draw['tradeMoney']:0)/100;
+        $data['draw_money']=($draw['money']?$draw['money']:0)/100; //提现金额
+        $data['tradeMoney']=($draw['tradeMoney']?$draw['tradeMoney']:0)/100; //到账金额
 
 
         $order=new Order;

@@ -3,7 +3,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">代理商：</label>
         <div class="layui-input-block">
-            <input type="text" value="{{$info['agent_name'] or ''}}" name="agent_name" required lay-verify="nickname" placeholder="请输入商户名" autocomplete="off" class="layui-input" id="nickname">
+            <input type="text" value="{{$info['agent_name'] or ''}}" name="agent_name" required lay-verify="nickname" placeholder="请输入代理名" autocomplete="off" class="layui-input" id="nickname">
         </div>
     </div>
 

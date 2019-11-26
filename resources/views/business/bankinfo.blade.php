@@ -46,6 +46,7 @@
                 layer = layui.layer,
                 $ = layui.jquery;
             form.render();
+            $(".layui-btn").hide();
         });
     </script>
 @endsection
