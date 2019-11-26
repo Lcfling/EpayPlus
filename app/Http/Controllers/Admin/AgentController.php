@@ -73,6 +73,7 @@ class AgentController extends Controller
             $data['ggkey']=$secretKey;
             $data['password']=bcrypt($data['password']);
             $data['creatime']=time();
+            $data['updatetime']=time();
             $agent_id=Agent::insertGetId($data);
             if(!$agent_id){
                 DB::rollBack();

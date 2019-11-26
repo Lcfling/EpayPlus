@@ -1,6 +1,9 @@
-@section('title', '码商')
+@section('title', '日数据')
 @section('header')
-    <div class="layui-inline" style="padding-left: 270px">
+    <div class="layui-inline" style="padding-left: 30px">
+    <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
+    </div>
+    <div class="layui-inline">
         <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="选择日期" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}' })" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">

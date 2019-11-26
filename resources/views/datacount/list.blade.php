@@ -1,5 +1,10 @@
-@section('title', '码商')
+@section('title', '全统计')
 @section('header')
+    <div class="layui-inline" style="padding-left: 30px">
+    <button class="layui-btn layui-btn-small layui-btn-warm freshBtn"><i class="layui-icon">&#x1002;</i></button>
+    </div>
+@endsection
+@section('table')   
     <div class="layui-inline" style="width: 30%;margin-left: 30px">
         <fieldset class="layui-elem-field site-demo-button">
             <legend>订单统计</legend>
@@ -189,8 +194,6 @@
     </div>
 
 
-@endsection
-@section('table')
 
 @endsection
 @section('js')
