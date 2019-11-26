@@ -168,7 +168,8 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
 
     Route::resource('/orderlist',       'OrderlistController');//订单列表
 
-    Route::resource('/buscount',        'BuscountController');//商户账单
+    Route::resource('/buscount',        'BuscountController');//商户总账单
+    Route::resource('/busdaycount',     'BusdaycountController');//商户日账单
     Route::resource('/busbill',         'BusbillController');//商户流水
     Route::resource('/agentcount',      'AgentcountController');//代理账单
     Route::resource('/agentbill',       'AgentbillController');//代理流水

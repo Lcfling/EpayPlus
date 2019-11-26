@@ -45,10 +45,4 @@ class BuscountController extends Controller
         return view('buscount.list',['list'=>$data,'input'=>$request->all()]);
 
     }
-    /**
-     * 总账单统计
-     */
-    protected function allbuscount($business_code){
-
-    }
 }

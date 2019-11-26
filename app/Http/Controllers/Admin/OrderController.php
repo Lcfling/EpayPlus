@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
 use App\Models\Buscount;
+use App\Models\Qrcode;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Order;
@@ -216,6 +217,12 @@ class OrderController extends Controller
                 Order::unorderlock($order_sn);
                 return ['msg'=>'更改订单状态失败！'];
             }
+            $qrcode_score=Qrcode::where(array('id'=>$order_info['erweima_id'],'user_id'=>$order_info['user_id']))->increment('sumscore',$tradeMoney);
+            if(!$qrcode_score){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'更改二维码跑分失败！'];
+            }
             $done_num=Buscount::where(array('business_code'=>$order_info['business_code']))->increment('done_num',1);
             if(!$done_num){
                 DB::rollBack();
@@ -301,6 +308,12 @@ class OrderController extends Controller
                 DB::rollBack();
                 Order::unorderlock($order_sn);
                 return ['msg'=>'更改订单状态失败！'];
+            }
+            $qrcode_score=Qrcode::where(array('id'=>$order_info['erweima_id'],'user_id'=>$order_info['user_id']))->increment('sumscore',$tradeMoney);
+            if(!$qrcode_score){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'更改二维码跑分失败！'];
             }
             $done_num=Buscount::where(array('business_code'=>$order_info['business_code']))->increment('done_num',1);
             if(!$done_num){
@@ -406,6 +419,12 @@ class OrderController extends Controller
                 DB::rollBack();
                 Order::unorderlock($order_sn);
                 return ['msg'=>'更改订单状态失败！'];
+            }
+            $qrcode_score=Qrcode::where(array('id'=>$order_info['erweima_id'],'user_id'=>$order_info['user_id']))->increment('sumscore',$tradeMoney);
+            if(!$qrcode_score){
+                DB::rollBack();
+                Order::unorderlock($order_sn);
+                return ['msg'=>'更改二维码跑分失败！'];
             }
             $done_num=Buscount::where(array('business_code'=>$order_info['business_code']))->increment('done_num',1);
             if(!$done_num){

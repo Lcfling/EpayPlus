@@ -26,6 +26,7 @@
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="200">
         </colgroup>
         <thead>
@@ -35,6 +36,7 @@
             <th class="hidden-xs">姓名</th>
             <th class="hidden-xs">类型</th>
             <th class="hidden-xs">二维码</th>
+            <th class="hidden-xs">总跑分</th>
             <th class="hidden-xs">是否删除</th>
             <th class="hidden-xs">状态</th>
             <th class="hidden-xs">创建时间</th>
@@ -50,6 +52,7 @@
                 <td>
                     <img src="{{$info['erweima']}}" width="50px" onclick="previewImg(this)">
                 </td>
+                <td class="hidden-xs">{{$info['sumscore']/100}}</td>
                 <td class="hidden-xs">@if($info['status']==0)<span class="layui-btn layui-btn-small layui-btn-default">未删除</span>@elseif($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-danger">已删除</span>@endif</td>
                 <td class="hidden-xs">@if($info['code_status']==0)<span class="layui-btn layui-btn-small layui-btn-normal">开启</span>@elseif($info['code_status']==1)<span class="layui-btn layui-btn-small layui-btn-danger">关闭</span>@endif</td>
                 <td>{{$info['creatime']}}</td>

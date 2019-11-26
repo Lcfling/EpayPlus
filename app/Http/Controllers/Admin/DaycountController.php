@@ -51,9 +51,9 @@ class DaycountController extends Controller
             )
         )->toArray();
 
-        $ordernum['tol_sore']=$orderall['tradeMoney']?$orderall['tradeMoney']:0; //订单金额
-        $ordernum['sore_balance']=$orderall['sk_money']?$orderall['sk_money']:0; //收款金额(扣除费率)
-        $ordernum['order_profit']=$orderall['order_profit']?$orderall['order_profit']:0; //盈利
+        $ordernum['tol_sore']=($orderall['tradeMoney']?$orderall['tradeMoney']:0)/100; //订单金额
+        $ordernum['sore_balance']=($orderall['sk_money']?$orderall['sk_money']:0)/100; //收款金额(扣除费率)
+        $ordernum['order_profit']=($orderall['order_profit']?$orderall['order_profit']:0)/100; //盈利
 
         //商户提现
         $bus=[];

@@ -41,7 +41,7 @@
             <th class="hidden-xs">序号</th>
             <th class="hidden-xs">码商ID</th>
             <th class="hidden-xs">余额</th>
-            <th class="hidden-xs">总分</th>
+            <th class="hidden-xs">总跑分</th>
             <th class="hidden-xs">总佣金</th>
             <th class="hidden-xs">冻结金额</th>
             <th class="hidden-xs">提现总金额</th>
