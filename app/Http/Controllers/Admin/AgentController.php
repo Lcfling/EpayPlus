@@ -56,7 +56,7 @@ class AgentController extends Controller
         $data=$request->all();
         unset($data['_token']);
         unset($data['id']);
-        $account=$data['account'];
+        $account=htmlformat($data['account']);
         $mobile=$data['mobile'];
         $res1=Agent::add_account($account);
         $res2=Agent::add_mobile($mobile);

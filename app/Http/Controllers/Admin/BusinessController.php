@@ -63,7 +63,7 @@ class BusinessController extends Controller
         $data=$request->all();
         unset($data['_token']);
         unset($data['id']);
-        $account=$data['account'];
+        $account=htmlformat($data['account']);
         $mobile=$data['mobile'];
         $res1=Business::add_account($account);
         $res2=Business::add_mobile($mobile);

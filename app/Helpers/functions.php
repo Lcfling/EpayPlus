@@ -21,6 +21,12 @@ if (!function_exists('is_config_id')) {
         return in_array($id, $ids);
     }
 }
+/*
+ * 过滤 空格和字符
+ */
+function htmlformat($str){
+    return  preg_replace('/\'/', '', str_replace(" ",'',htmlspecialchars($str)));
+}
 /**获取角色id
  * @param $id
  * @return mixed
