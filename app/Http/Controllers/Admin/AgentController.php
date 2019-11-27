@@ -79,7 +79,7 @@ class AgentController extends Controller
                 DB::rollBack();
                 return ['msg'=>'代理添加失败！'];
             }
-            $res=DB::table('agent_count')->insert(array('agent_id'=>$agent_id,'creatime'=>time()));
+            $res=DB::table('agent_count')->insert(array('agent_id'=>$agent_id,'creatime'=>time(),'savetime'=>time()));
             if(!$res){
                 DB::rollBack();
                 return ['msg'=>'代理帐户添加失败！'];

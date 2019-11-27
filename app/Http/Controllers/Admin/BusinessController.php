@@ -94,6 +94,7 @@ class BusinessController extends Controller
             }
             $agent['business_code']=$insertID;
             $agent['creatime']=time();
+            $agent['savetime']=time();
             $res3=DB::table('agent_fee')->insert($agent);
             if(!$res3){
                 DB::rollBack();

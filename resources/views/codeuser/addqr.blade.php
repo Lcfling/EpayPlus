@@ -36,8 +36,7 @@
                     success:function(res){
                         if(res.status == 1){
                             layer.msg(res.msg,{icon:6},function () {
-                                parent.layer.close(index);
-                                //window.parent.frames[1].location.reload();
+                                parent.layer.close(index);                                
                                 parent.location.reload();
                             });
 
