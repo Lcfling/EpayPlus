@@ -16,7 +16,7 @@
 @section('table')
     <table class="layui-table" lay-even lay-skin="nob">
         <colgroup>
-            <col class="hidden-xs" width="50">
+           
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
@@ -30,7 +30,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">序号</th>
+            
             <th class="hidden-xs">商户标识</th>
             <th class="hidden-xs">商户昵称</th>
             <th class="hidden-xs">商户电话</th>
@@ -46,17 +46,17 @@
         <tbody>
         @foreach($list as $info)
             <tr>
-                <td class="hidden-xs">{{$info['id']}}</td>
+                
                 <td class="hidden-xs">{{$info['business_code']}}</td>
                 <td class="hidden-xs">{{$info['nickname']}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
                 <td class="hidden-xs">{{$info['fee']*100}}%</td>
                 <td class="hidden-xs">{{$info['done_rate']}}%</td>
-                <td class="hidden-xs">{{$info['sk_money']/100}}</td>
-                <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
-                <td class="hidden-xs">{{$info['draw_money']/100}}</td>
-                <td class="hidden-xs">{{$info['trade_Money']/100}}</td>
-                <td class="hidden-xs">{{$info['profit']/100}}</td>
+                <td class="hidden-xs">{{$info['sk_money']}}</td>
+                <td class="hidden-xs">{{$info['tradeMoney']}}</td>
+                <td class="hidden-xs">{{$info['draw_money']}}</td>
+                <td class="hidden-xs">{{$info['trade_Money']}}</td>
+                <td class="hidden-xs">{{$info['profit']}}</td>
             </tr>
         @endforeach
         @if(!$list[0])

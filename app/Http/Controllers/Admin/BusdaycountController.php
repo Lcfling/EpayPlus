@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Busbill;
 use App\Models\Buscount;
 use App\Models\Busdraw;
+use App\Models\Business;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -21,20 +22,17 @@ class BusdaycountController extends Controller
             $time = strtotime($request->input('creatime'));
             $weeksuf = computeWeek($time,false);
         }else{
-            $time=date('Y-m-d');
+            $time=strtotime(date('Y-m-d'));
             $weeksuf = computeWeek(time(),false);
         }
-        $busbill=new Busbill();
-        $table='business_billflow_'.$weeksuf;
-        $busbill->setTable($table);
 
+        $buscount=Business::query();
         if(true==$request->has('business_code')){
-            $busbill->where('business_count.business_code','=',$request->input('business_code'));
+            $buscount->where('business_code','=',$request->input('business_code'));
         }
 
-        $data = $busbill->leftJoin('business',$table.'.business_code','=','business.business_code')
-                         ->select($table.'.*','business.nickname','business.mobile','business.fee')
-                         ->orderBy($table.'.business_code','desc')->paginate(10)->appends($request->all());
+        $data = $buscount->orderBy('business_code','desc')->paginate(10)->appends($request->all());
+
         foreach ($data as $key =>$value){
             $res=$this->daybill($weeksuf,$time,$data[$key]['business_code']);
             $data[$key]['done_rate']=$res['done_rate'];//成功率
@@ -45,7 +43,6 @@ class BusdaycountController extends Controller
             $data[$key]['trade_Money']=$res['tradeMoney'];//到账金额
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
         }
-
         $min=config('admin.min_date');
         return view('busdaycount.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
 
@@ -55,13 +52,13 @@ class BusdaycountController extends Controller
         $data=[];
         $busbill=new Busbill();
         $busbill->setTable('business_billflow_'.$weeksuf);
-        $start=strtotime($creatime);
+        $start=$creatime;
         $end=strtotime('+1day',$start);
         $money=$busbill->where(array('business_code'=>$business_code,'status'=>1))->whereBetween('creatime',[$start,$end])->first(
             array(
-                DB::raw('SUM(score) as sk_money'),
-                DB::raw('SUM(tradeMoney) as tradeMoney'),
-                DB::raw('SUM(score-tradeMoney) as profit'),
+                DB::raw('SUM(tradeMoney) as sk_money'),
+                DB::raw('SUM(score) as tradeMoney'),
+                DB::raw('SUM(tradeMoney-score) as profit'),
             )
         )->toArray();
         $data['sk_money']=($money['sk_money']?$money['sk_money']:0)/100;//收款总额

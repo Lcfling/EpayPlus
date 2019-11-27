@@ -26,9 +26,7 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">           
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="100">
@@ -40,9 +38,7 @@
             <th class="hidden-xs">码商ID</th>
             <th class="hidden-xs">订单号</th>
             <th class="hidden-xs">提现金额</th>
-            <th class="hidden-xs">到账金额</th>
-            <th class="hidden-xs">手机号</th>
-            <th class="hidden-xs">微信昵称</th>
+            <th class="hidden-xs">到账金额</th>            
             <th class="hidden-xs">开户人</th>
             <th class="hidden-xs">开户行</th>
             <th class="hidden-xs">卡号</th>
@@ -58,9 +54,7 @@
                 <td class="hidden-xs">{{$info['user_id']}}</td>
                 <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['money']/100}}</td>
-                <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
-                <td class="hidden-xs">{{$info['mobile']}}</td>
-                <td class="hidden-xs">{{$info['wx_name']}}</td>
+                <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>               
                 <td class="hidden-xs">{{$info['name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_name']}}</td>
                 <td class="hidden-xs">{{$info['deposit_card']}}</td>
@@ -68,7 +62,7 @@
                 <td class="hidden-xs"><span class="layui-btn layui-btn-small layui-btn">未结算</span></td>
                 <td>
                     <div class="layui-inline">
-                        <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['id']}}" data-desc="确认收款">确认收款</button>
+                        <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['id']}}" data-desc="确认收款">确认转款</button>
                        <a class="layui-btn layui-btn-small layui-btn-warm"  onclick="bohui({{$info['id']}})">驳回</a>
                     </div>
                 </td>

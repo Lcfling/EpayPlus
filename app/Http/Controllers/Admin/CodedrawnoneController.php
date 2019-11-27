@@ -53,7 +53,7 @@ class CodedrawnoneController extends Controller
         }
         DB::beginTransaction();
         try{
-            if(!$draw=Codedraw::where([["id",$id],['status','in',[1,2]]])->lockForUpdate()->first()){
+            if(!$draw=Codedraw::where("id",$id)->whereIn('status',[1,2])->lockForUpdate()->first()){
                 DB::rollBack();
                 $this->uncodelock($id);
                 return ['msg'=>'订单已处理！'];
@@ -109,7 +109,7 @@ class CodedrawnoneController extends Controller
         }
         DB::beginTransaction();
         try{
-            if(!$draw=Codedraw::where([["id",$id],['status','in',[1,2]]])->lockForUpdate()->first()){
+            if(!$draw=Codedraw::where("id",$id)->whereIn('status',[1,2])->lockForUpdate()->first()){
                 DB::rollBack();
                 $this->uncodelock($id);
                 return ['msg'=>'订单已处理！'];
@@ -125,7 +125,7 @@ class CodedrawnoneController extends Controller
                 'user_id'=>$drawinfo['user_id'],
                 'score'=>$drawinfo['money'],
                 'status'=>6,
-                'remark'=>'代理提现驳回',
+                'remark'=>'码商提现驳回',
                 'creatime'=>time()
             ];
             $ins=$account->insert($bill);

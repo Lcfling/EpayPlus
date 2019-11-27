@@ -51,7 +51,7 @@
                 <td class="hidden-xs">{{$info['nickname']}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
                 <td class="hidden-xs">{{$info['fee']*100}}%</td>
-                <td class="hidden-xs">{{$info['sucrate']*100}}%</td>
+                <td class="hidden-xs">{{$info['sucrate']}}%</td>
                 <td class="hidden-xs">{{$info['tol_sore']/100}}</td>
                 <td class="hidden-xs">{{$info['sore_balance']/100}}</td>
                 <td class="hidden-xs">{{$info['drawMoney']/100}}</td>

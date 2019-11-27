@@ -118,11 +118,13 @@ class DaycountController extends Controller
         $shangfen=$account->where('status',9)->sum('score');//总上分
         $xiafen=$account->where('status',10)->sum('score');//总下分
 
+        $active=abs($active);
+
         $code['tol_brokerage']=$tol_brokerage/100;  //总支付佣金
 
-        $code['active_money']=abs($active)/100;  //激活费用
+        $code['active_money']=$active/100;  //激活费用
         $code['active_brokerage']=$active_brokerage/100;//激活返佣
-        $code['active_profit']=abs(($active-$active_brokerage))/100;//总激活盈利
+        $code['active_profit']=($active-$active_brokerage)/100;//总激活盈利
 
 
         $code['tol_recharge']=$recharge/100;//总充值
