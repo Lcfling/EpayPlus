@@ -29,7 +29,6 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="200">
             <col class="hidden-xs" width="200">
         </colgroup>
@@ -37,8 +36,7 @@
         <tr>
             <th class="hidden-xs">序号</th>
             <th class="hidden-xs">代理商ID</th>
-            <th class="hidden-xs">余额</th>
-            <th class="hidden-xs">总分</th>
+            <th class="hidden-xs">余额</th>            
             <th class="hidden-xs">总佣金</th>
             <th class="hidden-xs">提现总金额</th>
             <th class="hidden-xs">实际到账总金额</th>
@@ -51,8 +49,7 @@
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['agent_id']}}</td>
-                <td class="hidden-xs">{{$info['balance']/100}}</td>
-                <td class="hidden-xs">{{$info['tol_sore']/100}}</td>
+                <td class="hidden-xs">{{$info['balance']/100}}</td>               
                 <td class="hidden-xs">{{$info['tol_brokerage']/100}}</td>
                 <td class="hidden-xs">{{$info['drawMoney']/100}}</td>
                 <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>

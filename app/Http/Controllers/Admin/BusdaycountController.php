@@ -40,7 +40,7 @@ class BusdaycountController extends Controller
             $data[$key]['tradeMoney']=$res['tradeMoney'];//实收金额
             $data[$key]['profit']=$res['profit'];//收获盈利
             $data[$key]['draw_money']=$res['draw_money'];//提现金额
-            $data[$key]['trade_Money']=$res['tradeMoney'];//到账金额
+            $data[$key]['draw_tradeMoney']=$res['draw_tradeMoney'];//到账金额
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
         }
         $min=config('admin.min_date');
@@ -61,11 +61,12 @@ class BusdaycountController extends Controller
                 DB::raw('SUM(tradeMoney-score) as profit'),
             )
         )->toArray();
+
         $data['sk_money']=($money['sk_money']?$money['sk_money']:0)/100;//收款总额
         $data['tradeMoney']=($money['tradeMoney']?$money['tradeMoney']:0)/100;//实收金额
         $data['profit']=($money['profit']?$money['profit']:0)/100;//收获盈利
 
-        $start=strtotime($creatime);
+        $start=$creatime;
         $end=strtotime('+1day',$start);
         $draw=Busdraw::where(array('business_code'=>$business_code,'status'=>1))->whereBetween('creatime',[$start,$end])->first(
             array(
@@ -74,7 +75,7 @@ class BusdaycountController extends Controller
             )
         )->toArray();
         $data['draw_money']=($draw['money']?$draw['money']:0)/100; //提现金额
-        $data['tradeMoney']=($draw['tradeMoney']?$draw['tradeMoney']:0)/100; //到账金额
+        $data['draw_tradeMoney']=($draw['tradeMoney']?$draw['tradeMoney']:0)/100; //到账金额
 
 
         $order=new Order;
@@ -88,6 +89,7 @@ class BusdaycountController extends Controller
         }else{
             $data['done_rate']=round($done/$total*100,2);
         }
+
         return $data;
 
     }

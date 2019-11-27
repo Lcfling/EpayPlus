@@ -27,7 +27,7 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
-            <col class="hidden-xs" width="100">
+     
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
@@ -40,7 +40,7 @@
             <th class="hidden-xs">帐号</th>
             <th class="hidden-xs">代理商昵称</th>
             <th class="hidden-xs">联系电话</th>
-            <th class="hidden-xs">分红利润</th>
+  
             <th class="hidden-xs">状态</th>
             <th class="hidden-xs">登录</th>
             <th class="hidden-xs">创建时间</th>
@@ -55,7 +55,7 @@
                 <td class="hidden-xs">{{$info['account']}}</td>
                 <td class="hidden-xs">{{$info['agent_name']}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
-                <td class="hidden-xs">{{$info['profit']/100}}</td>
+
                 <td class="hidden-xs">
                     <input type="checkbox" name="status" value="{{$info['id']}}" lay-skin="switch" lay-text="正常|停止" lay-filter="status" {{ $info['status'] == 1 ? 'checked' : '' }}>
                 </td>

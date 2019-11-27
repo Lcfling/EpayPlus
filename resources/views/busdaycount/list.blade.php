@@ -55,7 +55,7 @@
                 <td class="hidden-xs">{{$info['sk_money']}}</td>
                 <td class="hidden-xs">{{$info['tradeMoney']}}</td>
                 <td class="hidden-xs">{{$info['draw_money']}}</td>
-                <td class="hidden-xs">{{$info['trade_Money']}}</td>
+                <td class="hidden-xs">{{$info['draw_tradeMoney']}}</td>
                 <td class="hidden-xs">{{$info['profit']}}</td>
             </tr>
         @endforeach

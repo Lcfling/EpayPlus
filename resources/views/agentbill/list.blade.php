@@ -42,8 +42,8 @@
             <th class="hidden-xs">订单号</th>
             <th class="hidden-xs">代理商ID</th>
             <th class="hidden-xs">商户标识</th>
-            <th class="hidden-xs">积分</th>
             <th class="hidden-xs">实际积分</th>
+            <th class="hidden-xs">扣除后积分</th>
             <th class="hidden-xs">类别</th>
             <th class="hidden-xs">支付类型</th>
             <th class="hidden-xs">创建时间</th>
