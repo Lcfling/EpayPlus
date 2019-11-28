@@ -53,7 +53,7 @@ class CodedrawnoneController extends Controller
         }
         DB::beginTransaction();
         try{
-            if(!$draw=Codedraw::where("id",$id)->whereIn('status',[1,2])->lockForUpdate()->first()){
+            if(!$draw=Codedraw::where(array('id'=>$id,'status'=>0))->lockForUpdate()->first()){
                 DB::rollBack();
                 $this->uncodelock($id);
                 return ['msg'=>'订单已处理！'];
@@ -109,7 +109,7 @@ class CodedrawnoneController extends Controller
         }
         DB::beginTransaction();
         try{
-            if(!$draw=Codedraw::where("id",$id)->whereIn('status',[1,2])->lockForUpdate()->first()){
+            if(!$draw=Codedraw::where(array('id'=>$id,'status'=>0))->lockForUpdate()->first()){
                 DB::rollBack();
                 $this->uncodelock($id);
                 return ['msg'=>'订单已处理！'];

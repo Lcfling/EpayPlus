@@ -58,7 +58,7 @@ class BusdrawnoneController extends Controller
 
         DB::beginTransaction();
         try{
-            if(!$draw=Busdraw::where("id",$id)->whereIn('status',[1,2])->lockForUpdate()->first()){
+            if(!$draw=Busdraw::where(array('id'=>$id,'status'=>0))->lockForUpdate()->first()){
                 DB::rollBack();
                 $this->unbuslock($id);
                 return ['msg'=>'订单已处理！'];
@@ -118,7 +118,7 @@ class BusdrawnoneController extends Controller
         }
         DB::beginTransaction();
         try{
-            if(!$draw=Busdraw::where("id",$id)->whereIn('status',[1,2])->lockForUpdate()->first()){
+            if(!$draw=Busdraw::where(array('id'=>$id,'status'=>0))->lockForUpdate()->first()){
                 DB::rollBack();
                 $this->unbuslock($id);
                 return ['msg'=>'订单已处理！'];

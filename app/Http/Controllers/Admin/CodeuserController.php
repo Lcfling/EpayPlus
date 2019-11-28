@@ -124,7 +124,6 @@ class CodeuserController extends Controller
             $data['shenfen']=intval($data['shenfen']);
             $data['rate']=floatval($data['rate']);
             $data['rates']=floatval($data['rates']);
-            $data['savetime']=time();
             $update=Codeuser::where('user_id',$id)->update($data);
             if($update!==false){
                 return ['msg'=>'修改成功！','status'=>1];
@@ -149,14 +148,14 @@ class CodeuserController extends Controller
     }
 
     /**
-     * 登录
+     * 登录封禁
      */
     public function codeuser_isover(StoreRequest $request){
         $data=$request->all();
         $id=$data['id'];
         unset($data['_token']);
         $is_over=$data['is_over'];
-        $res=Codeuser::where('user_id',$id)->update(array('is_over'=>$is_over,'savetime'=>time()));
+        $res=Codeuser::where('user_id',$id)->update(array('is_over'=>$is_over));
         if($res){
             return ['msg'=>'操作成功！','status'=>1];
         }else{
@@ -175,7 +174,7 @@ class CodeuserController extends Controller
         $data=$request->all();
         $id=$data['id'];
         unset($data['_token']);
-        $res=Codeuser::where('user_id',$id)->update(array('imsi_num'=>intval($data['imsi_num']),'savetime'=>time()));
+        $res=Codeuser::where('user_id',$id)->update(array('imsi_num'=>intval($data['imsi_num'])));
         if($res!==false){
             return ['msg'=>'操作成功！','status'=>1];
         }else{
@@ -222,7 +221,7 @@ class CodeuserController extends Controller
         unset($data['_token']);
         $rate=$data['rate']/100;
         $rates=$data['rates']/100;
-        $res=Codeuser::where('user_id',$id)->update(array('rate'=>$rate,'rates'=>$rates,'savetime'=>time()));
+        $res=Codeuser::where('user_id',$id)->update(array('rate'=>$rate,'rates'=>$rates));
         if($res!==false){
             return ['msg'=>'操作成功！','status'=>1];
         }else{
@@ -240,7 +239,7 @@ class CodeuserController extends Controller
         $id=$data['id'];
         unset($data['_token']);
         $pwd=md5($data['password']);
-        $res=Codeuser::where('user_id',$id)->update(array('password'=>$pwd,'savetime'=>time()));
+        $res=Codeuser::where('user_id',$id)->update(array('password'=>$pwd));
         if($res!==false){
             return ['msg'=>'修改成功！','status'=>1];
         }else{
@@ -259,7 +258,7 @@ class CodeuserController extends Controller
         $id=$data['id'];
         unset($data['_token']);
         $pwd=md5($data['second_pwd']);
-        $res=Codeuser::where('user_id',$id)->update(array('second_pwd'=>$pwd,'savetime'=>time()));
+        $res=Codeuser::where('user_id',$id)->update(array('second_pwd'=>$pwd));
         if($res!==false){
             return ['msg'=>'修改成功！','status'=>1];
         }else{
@@ -277,7 +276,7 @@ class CodeuserController extends Controller
         $id=$data['id'];
         unset($data['_token']);
         $pwd=md5($data['zf_pwd']);
-        $res=Codeuser::where('user_id',$id)->update(array('zf_pwd'=>$pwd,'savetime'=>time()));
+        $res=Codeuser::where('user_id',$id)->update(array('zf_pwd'=>$pwd));
         if($res!==false){
             return ['msg'=>'修改成功！','status'=>1];
         }else{

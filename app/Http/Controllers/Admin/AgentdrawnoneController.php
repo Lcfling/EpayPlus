@@ -53,7 +53,7 @@ class AgentdrawnoneController extends Controller
         }
         DB::beginTransaction();
         try{
-            if(!$draw=Agentdraw::where("id",$id)->whereIn('status',[1,2])->lockForUpdate()->first()){
+            if(!$draw=Agentdraw::where(array('id'=>$id,'status'=>0))->lockForUpdate()->first()){
                 DB::rollBack();
                 $this->unagentlock($id);
                 return ['msg'=>'订单已处理！'];
@@ -109,7 +109,7 @@ class AgentdrawnoneController extends Controller
        }
        DB::beginTransaction();
        try{
-           if(!$draw=Agentdraw::where("id",$id)->whereIn('status',[1,2])->lockForUpdate()->first()){
+           if(!$draw=Agentdraw::where(array('id'=>$id,'status'=>0))->lockForUpdate()->first()){
                DB::rollBack();
                $this->unagentlock($id);
                return ['msg'=>'订单已处理！'];

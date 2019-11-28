@@ -32,8 +32,13 @@
                 </div>
 
                 <div class="layui-form-item">
-                    <label style="font-size: 15px;">码商总佣金</label>
-                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['code']['tol_brokerage']}}元</span>
+                    <label style="font-size: 15px;">码商跑分佣金</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['code']['tol_brokerage']}}元</span>
+                </div>
+
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">代理跑分佣金</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['agent']['tol_brokerage']}}元</span>
                 </div>
             </blockquote>
             <br>
@@ -193,6 +198,11 @@
                 <div class="layui-form-item">
                     <label style="font-size: 15px;">二维码可用数</label>
                     <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 90px">{{$data['codeuser']['erweima']}}个</span>
+                </div>
+
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">码商冻结中金额</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 75px">{{$data['code']['freeze_money']}}元</span>
                 </div>
             </blockquote>
             <br>

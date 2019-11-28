@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\StoreRequest;
+use App\Models\Agentbill;
 use App\Models\Agentcount;
 use App\Models\Agentdraw;
 use App\Models\Billflow;
@@ -88,6 +89,12 @@ class DaycountController extends Controller
         $agent['balance']=$agentbalance/100; // 余额/未提现
         $agent['drawnone']=$agentnone/100; //提现中
         $agent['feemoney']=$agentdraw['feeMoney']/100; //总手续费
+        //代理佣金
+        $agentbill=new Agentbill;
+        $agentbill->setTable('agent_billflow_'.$weeksuf);
+
+        $agent_fanyong=$agentbill->where('status',2)->whereBetween('creatime',[$start,$end])->sum('score');
+        $agent['tol_brokerage']=$agent_fanyong/100;
 
         //码商提现
         $code=[];
@@ -117,8 +124,11 @@ class DaycountController extends Controller
         $recharge=$account->where('status',1)->sum('score');//总充值
         $shangfen=$account->where('status',9)->sum('score');//总上分
         $xiafen=$account->where('status',10)->sum('score');//总下分
+        $freeze=$account->whereIn('status',[3,4])->sum('score');//总冻结
 
         $active=abs($active);
+        $xiafen=abs($xiafen);
+        $freeze=abs($freeze);
 
         $code['tol_brokerage']=$tol_brokerage/100;  //总支付佣金
 
@@ -131,11 +141,13 @@ class DaycountController extends Controller
         $code['shangfen']=$shangfen/100;//总上分
         $code['xiafen']=$xiafen/100;//总下分
 
+        $code['freeze_money']=$freeze/100;//总冻结
+
 
         //码商激活
         $codeuser=[];
         $codenum=Codeuser::whereBetween('reg_time',[$start,$end])->count();
-        $active=Codeuser::where('jh_status',1)->whereBetween('reg_time',[$start,$end])->count();
+        $active=Codeuser::where('jh_status',1)->whereBetween('jh_time',[$start,$end])->count();
         $erweima=Qrcode::where('status',0)->whereBetween('creatime',[$start,$end])->count();
 
         $codeuser['codenum']=$codenum;    //码商注册人数

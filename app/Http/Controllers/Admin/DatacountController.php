@@ -51,6 +51,7 @@ class DatacountController extends Controller
                 DB::raw('SUM(drawMoney) as drawMoney'),
                 DB::raw('SUM(balance) as balance'),
                 DB::raw('SUM(drawMoney-tradeMoney) as feeMoney'),
+                DB::raw('SUM(tol_brokerage) as tol_brokerage'),
             )
         )->toArray();
         $agentnone=Agentdraw::where('status',0)->sum('money');
@@ -59,8 +60,8 @@ class DatacountController extends Controller
         $agent['balance']=$agentall['balance']/100; // 余额/未提现
         $agent['drawnone']=$agentnone/100; //提现中
         $agent['feemoney']=$agentall['feeMoney']/100; //总手续费
-
-        //码商提现-激活-上下分
+        $agent['tol_brokerage']=$agentall['tol_brokerage']/100; //总佣金
+        //码商统计
         $code=[];
 
         $codeall=Codecount::first(
@@ -75,6 +76,7 @@ class DatacountController extends Controller
                 DB::raw('SUM(tol_recharge) as tol_recharge'),
                 DB::raw('SUM(shangfen) as shangfen'),
                 DB::raw('SUM(xiafen) as xiafen'),
+                DB::raw('SUM(freeze_money) as freeze_money'),
             )
         )->toArray();
         $codenone=Codedraw::where('status',0)->sum('money');
@@ -93,6 +95,8 @@ class DatacountController extends Controller
         $code['tol_recharge']=$codeall['tol_recharge']/100;//总充值
         $code['shangfen']=$codeall['shangfen']/100;//总上分
         $code['xiafen']=$codeall['xiafen']/100;//总下分
+
+        $code['freeze_money']=$codeall['freeze_money']/100;//总冻结金额
 
 
         //码商激活

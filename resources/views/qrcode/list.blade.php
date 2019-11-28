@@ -19,7 +19,7 @@
 @section('table')
     <table class="layui-table" lay-even lay-skin="nob">
         <colgroup>
-            <col class="hidden-xs" width="50">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
@@ -31,7 +31,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">序号</th>
+            <th class="hidden-xs">二维码ID</th>
             <th class="hidden-xs">码商ID</th>
             <th class="hidden-xs">姓名</th>
             <th class="hidden-xs">类型</th>

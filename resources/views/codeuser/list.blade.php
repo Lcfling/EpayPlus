@@ -116,7 +116,7 @@
 
             //封禁开关
             form.on('switch(status)', function(obj){
-                layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+                //layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
                 var id=this.value,
                     status=obj.elem.checked;
                 if(status==false){
