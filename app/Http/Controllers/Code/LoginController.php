@@ -92,9 +92,13 @@ class LoginController extends Controller
             if(!isMobile($mobile)) {
                 ajaxReturn('','手机号码格式错误！',0);
             }
+            $userInfo=Users::where(array("account"=>$mobile))->first();
+            if(!$userInfo){
+                ajaxReturn('','账号不存在！',0);
+            }
             $code=rand_string(6,1);
             $ip =$request->ip();
-            Redis::set('login_code_'.$mobile,$code,300);
+            Redis::setex('login_code_'.$mobile,300,$code);
             //todo 发送短信
             $res=Verificat::dxbsend($mobile,$code,$ip);
             if($res=="0") {
@@ -120,6 +124,7 @@ class LoginController extends Controller
         if($request->isMethod('post')) {
             $mobile=(int)$_POST['mobile'];
             $code=htmlformat($_POST['code']);
+            $sendcode=htmlformat($_POST['sendcode']);
             $password=htmlformat($_POST['pwd']);
             $repassword=htmlformat($_POST['repwd']);
 
@@ -143,6 +148,10 @@ class LoginController extends Controller
             if ($codeinfo['status'] == 1){
                 ajaxReturn(null,'邀请码已被占用'.$code,0);
             }
+            $Cachecode=Redis::get('register_code_'.$mobile);
+            if($sendcode!=$Cachecode){
+                ajaxReturn(null,'验证码错误！',0);
+            }
             //判断用户是否存在
             $userInfo=Users::where(array("account"=>$mobile))->first();
             if(!empty($userInfo)){
@@ -159,6 +168,39 @@ class LoginController extends Controller
                     $user_info=Users::where(array("account"=>$mobile))->first();
                     ajaxReturn($user_info,'注册成功！');
                 }
+            }
+        } else {
+            ajaxReturn(null,'请求数据异常!',0);
+        }
+    }
+
+    /**
+     * 账户注册发送验证码
+     */
+    public function regsendcode(Request $request) {
+        if($request->isMethod('post')) {
+            $mobile=(int)$_POST['mobile'];
+            if(!isMobile($mobile)) {
+                ajaxReturn('','手机号码格式错误！',0);
+            }
+            $userInfo=Users::where(array("account"=>$mobile))->first();
+            if($userInfo){
+                ajaxReturn('','账号已存在！',0);
+            }
+            $code=rand_string(6,1);
+            $ip =$request->ip();
+            Redis::setex('register_code_'.$mobile,300,$code);
+            //todo 发送短信
+            $res=Verificat::dxbsend($mobile,$code,$ip);
+            if($res=="0") {
+                Verificat::insertsendcode($code,$mobile,4,$ip,1,'发送成功!');
+                ajaxReturn('','发送成功!',1);
+            } elseif($res=="123") {
+                Verificat::insertsendcode($code,$mobile,4,$ip,0,'一分钟只能发送一条!');
+                ajaxReturn('faild','一分钟只能发送一条!',0);
+            } else {
+                Verificat::insertsendcode($code,$mobile,4,$ip,0,$res);
+                ajaxReturn('faild','发送失败',0);
             }
         } else {
             ajaxReturn(null,'请求数据异常!',0);
@@ -189,8 +231,8 @@ class LoginController extends Controller
         $info['reg_ip']=$info['last_ip']= $ip;
         $info['reg_time']=$info['last_time']=time();
         $info['mobile']=$mobile;
-        $status=Users::insert($info);
-        return $status;
+        $user_id=Users::insertGetId($info);
+        return $user_id;
     }
 
 

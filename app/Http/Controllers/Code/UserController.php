@@ -160,8 +160,6 @@ class UserController extends CommonController {
                     $this->sendnotify($order_info,2);
                     //发送被抢订单信息
                     $ourdercount=Redis::incr('order_qd_'.$user_id);
-                    //用于判断二维码失败5次关闭接单
-                    Redis::incr('order_sn_num_'.$erweima_id);
                     //type3推送
                     $this->senduidnotify($order_info,3,$ourdercount,$user_id);
                     //返回信息

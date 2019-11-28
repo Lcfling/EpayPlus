@@ -31,6 +31,7 @@ Route::group(['namespace'  => "Code"], function () {
     Route::post('/login/mobile',                      'LoginController@mobile');//注册
     Route::post('/login/sendcode',                    'LoginController@sendcode');//短信登录发送验证码
     Route::post('/login/mobilelogin',                 'LoginController@mobilelogin');//手机验证码登陆
+    Route::post('/login/regsendcode',                 'LoginController@regsendcode');//账户注册发送验证码
     /**
      * MycenterController
      */

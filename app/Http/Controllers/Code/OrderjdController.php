@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Code;
 use App\Models\Accountlog;
 use App\Models\Business;
+use App\Models\Businesscount;
 use App\Models\Czinfo;
 use App\Models\Czrecord;
 use App\Models\Erweima;
@@ -275,11 +276,17 @@ class OrderjdController extends CommonController {
             if($ordertable->where(array('user_id'=>$user_id,'order_sn'=>$order_sn,'sk_status'=>1))->first()) {
                 ajaxReturn(null,'请勿重复点击!',0);
             }
+            $status=Redis::get('savesk_status'.$order_sn);
+            if($status==2){
+                ajaxReturn('','蛇皮让你蛇皮!',0);
+            }
+            Redis::set('savesk_status'.$order_sn,2);
             DB::beginTransaction();
             try {
                 $order_info=$ordertable->where(array('user_id'=>$user_id,"status"=>0,'order_sn'=>$order_sn))->lockForUpdate()->first();
                 if(empty($order_info)) {
                     DB::rollBack();
+                    Redis::del("savesk_status".$order_sn);
                     ajaxReturn(null,'订单已处理!',0);
                 }
                 //  判断用户输入金额是否与支付金额一致
@@ -288,11 +295,13 @@ class OrderjdController extends CommonController {
                     $orderstatus = $ordertable->where(array('user_id'=>$user_id,"status"=>0,'order_sn'=>$order_sn))->update(array('sk_money'=>$skmoney*100,'status'=>4,'sk_status'=>1));
                     if($orderstatus){
                         DB::commit();
+                        Redis::del("savesk_status".$order_sn);
                         //抢单条数减1
                         Redis::decr('order_qd_'.$user_id);
                         ajaxReturn(null,'交易金额不匹配,已提交客服!',0);
                     }else{
                         DB::rollBack();
+                        Redis::del("savesk_status".$order_sn);
                         ajaxReturn(null,'订单已处理!',0);
                     }
                 }else{
@@ -310,6 +319,7 @@ class OrderjdController extends CommonController {
                     $freezestatus = $account->insert($data);
                     if(!$freezestatus){
                         DB::rollBack();
+                        Redis::del("savesk_status".$order_sn);
                         ajaxReturn(null,'资金解冻失败!',0);
                     }
                     $info['score']=-$tradeMoney;
@@ -323,11 +333,13 @@ class OrderjdController extends CommonController {
                     $deductstatus = $account->insert($info);
                     if(!$deductstatus){
                         DB::rollBack();
+                        Redis::del("savesk_status".$order_sn);
                         ajaxReturn(null,'资金扣除失败!',0);
                     }
                     $countstatus = Userscount::where('user_id',$user_id)->decrement('freeze_money',$tradeMoney,['tol_sore'=>DB::raw("tol_sore + $tradeMoney")]);
                     if(!$countstatus){
                         DB::rollBack();
+                        Redis::del("savesk_status".$order_sn);
                         ajaxReturn(null,'修改账户失败!',0);
                     }
                     $pay_time = time();
@@ -335,13 +347,17 @@ class OrderjdController extends CommonController {
                     $orderstatus = $ordertable->where(array("order_sn"=>$order_sn))->update(array("status"=>1,'sk_money'=>$skmoney*100,'sk_status'=>1,"is_shoudong"=>1,"dj_status"=>2,"pay_time"=>$pay_time));
                     if(!$orderstatus){
                         DB::rollBack();
+                        Redis::del("savesk_status".$order_sn);
                         ajaxReturn(null,'订单状态修改失败!',0);
                     }else{
                         DB::commit();
                     }
+                    Businesscount::where(array('business_code'=>$order_info['business_code']))->increment('done_num');
+                    Erweima::where(array('id'=>$order_info['erweima_id'],'user_id'=>$user_id))->increment('sumscore',$skmoney*100);
                     $this->insertrebatte($user_id,$order_info['business_code'],$order_sn,$skmoney * 100,$order_info['payType']);
                     //抢单条数减1
                     Redis::decr('order_qd_'.$user_id);
+                    Redis::del("savesk_status".$order_sn);
                     $this->sfpushfirst($order_sn);
                     ajaxReturn(null,'手动收款成功!',1);
                 }
@@ -350,6 +366,7 @@ class OrderjdController extends CommonController {
             catch (Exception $e) {
                 // 数据回滚, 当try中的语句抛出异常。
                 DB::rollBack();
+                Redis::del("savesk_status".$order_sn);
                 ajaxReturn(null,"手动收款失败!",0);
             }
         } else {

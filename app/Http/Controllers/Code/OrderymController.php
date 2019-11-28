@@ -38,14 +38,14 @@ class OrderymController extends Controller {
         file_put_contents('./businesspost.txt',print_r($datas,true).PHP_EOL,FILE_APPEND);
         file_put_contents('./businesspost.txt',"~~~~~~~~~~~~~business_code".date('Y/m/d h:i:s')."~~~~~~~~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
         file_put_contents('./businesspost.txt',print_r($datas['business_code'],true).PHP_EOL,FILE_APPEND);
-        $sign=htmlspecialchars($datas['sign']);
-        $business_code=htmlspecialchars($datas['business_code']);
+        $sign=htmlformat($datas['sign']);
+        $business_code=htmlformat($datas['business_code']);
         if(empty($business_code)) {
             ajaxReturn('error40002','商户号不能为空!',0);
         }
 
         //商户号 不参与签名
-        $out_order_sn = htmlspecialchars($datas['out_order_sn']);
+        $out_order_sn = htmlformat($datas['out_order_sn']);
         //商户订单号
         $type =(int)$datas['payType'];
         $codeType =(int)$datas['codeType'];
@@ -60,7 +60,7 @@ class OrderymController extends Controller {
             ajaxReturn('error40003','商户未启用!',0);
         }
         if ($businessinfo['status'] == 2) {
-            ajaxReturn('error40000','商户已停止!',0);
+            ajaxReturn('error40000','商户已被限制!',0);
         }
         if (!is_numeric($datas['tradeMoney'])) {
             ajaxReturn('error40006','订单金额有误!',0);
@@ -69,10 +69,10 @@ class OrderymController extends Controller {
             ajaxReturn('error40007','支付类型无效!',0);
         }
         if ($codeType != 2) {
-            ajaxReturn('error40008','支付类型无效!',0);
+            ajaxReturn('error40001','二维码类型无效!',0);
         }
         if ($orderlist = $Order->where(array('out_order_sn'=>$out_order_sn,'business_code'=>$business_code,'status'=>[0,2]))->first()) {
-            ajaxReturn('error','已有此订单信息!',0);
+            ajaxReturn('error40008','已有此订单信息!',0);
         }
         if( $sign!=$this->getSignK($datas,$businessinfo['accessKey'])) {
             file_put_contents('./sign.txt',"~~~~~~~~~~~~~~~平台sign".date('Y/m/d h:i:s')."~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
@@ -93,7 +93,7 @@ class OrderymController extends Controller {
             'tradeMoney'=>$datas["tradeMoney"],
             'business_code'=>$business_code,
             'creatime'=>$time,
-            'notifyUrl'=>$datas['notifyUrl'],
+            'notifyUrl'=>$datas['NotifyUrl'],
         );
         $order_id = $Order->insertGetId($data);//检测一下是否会出现并发
         if($order_id) {

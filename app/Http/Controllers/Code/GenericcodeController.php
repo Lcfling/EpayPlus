@@ -145,6 +145,7 @@ class GenericcodeController extends CommonController {
             ajaxReturn($balance,"更改账户失败!",0);
         }
         $daytable =Accountlog::getdaytable();
+        $time = time();
         // 积分扣除
         $accountstatus=$daytable->insert(
             array(
@@ -152,19 +153,19 @@ class GenericcodeController extends CommonController {
                 'score'=>-$money,
                 'status'=>7,
                 'remark'=>'账户激活',
-                'creatime'=>time()
+                'creatime'=>$time
             )
         );
         if ($accountstatus) {
             //更改账户状态
-            $jhstatus = Users::where(array("user_id"=>$user_id))->update(['jh_status' => 1]);
+            $jhstatus = Users::where(array("user_id"=>$user_id))->update(['jh_status' => 1,'jh_time' => $time]);
             if($jhstatus){
                 DB::commit();
             }else{
                 DB::rollBack();
                 ajaxReturn($balance,"更改激活状态失败!",0);
             }
-            Jhmoney::jihuofy($userinfo['pid'],1);
+            Jhmoney::jihuofy($userinfo['pid'],1,$daytable);
             ajaxReturn($accountstatus,"激活成功!");
         } else {
             DB::rollBack();

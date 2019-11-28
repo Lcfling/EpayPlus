@@ -8,7 +8,6 @@
 namespace App\Http\Controllers\Code;
 
 use App\Models\Accountlog;
-use App\Models\Erweimacount;
 use App\Models\Imsi;
 use App\Models\Order;
 use App\Models\Orderrecord;
@@ -21,7 +20,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use App\Models\Erweima;
 use App\Models\Withdraw;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use PragmaRX\Google2FA\Google2FA;
+use Illuminate\Support\Facades\Schema;
 class MycenterController extends CommonController {
 
     /**
@@ -127,9 +128,10 @@ class MycenterController extends CommonController {
             $user_id = $this->uid;
             $scoreinfo = Userscount::gettolscore($user_id);
             $balance = $scoreinfo['balance'];//余额
-            $tolscore = $scoreinfo['tol_sore'];//总分
-            $tolbrokerage = $scoreinfo['tol_brokerage'];//总利润
-            $daybrokerage = $scoreinfo['day_brokerage'];//当天利润
+            $tolscore = $scoreinfo['tol_sore'];//总跑分
+            $tolbrokerage = $scoreinfo['tol_brokerage'] + $scoreinfo['active_brokerage'];//总利润
+            $accounttable = Accountlog::getdaytable();
+            $daybrokerage =  $accounttable->where([['user_id',$user_id],['status','in',[5,8]]])->sum('score');//当天利润
             $djmoney = $scoreinfo['freeze_money'];//冻结金额
             $wxQRnum =Erweima::where(array('user_id'=>$user_id,'status'=>0,'type'=>1))->count();
             $zfbQRnum =Erweima::where(array('user_id'=>$user_id,'status'=>0,'type'=>2))->count();
@@ -187,7 +189,7 @@ class MycenterController extends CommonController {
             $money = (int)($data['money'] * 100);
             $scoreinfo = Userscount::gettolscore($user_id);
             $userinfo =Users::where(array('user_id'=>$user_id))->first();
-            if($money > $scoreinfo['tol_sore']) {
+            if($money > $scoreinfo['balance']) {
                 ajaxReturn('','提现金额大于总金额!',0);
             }
             if(empty($userinfo->zf_pwd)) {
@@ -224,17 +226,22 @@ class MycenterController extends CommonController {
             }
             DB::beginTransaction();
             // 查看用户积分余额
-            $balance =Userscount::onWriteConnection()->where('user_id',$user_id)->value('balance');
+            $balance =Userscount::onWriteConnection()->where('user_id',$user_id)->lockForUpdate()->value('balance');
             if($money > $balance) {
+                DB::rollBack();
                 ajaxReturn('','提现金额大于总金额!',0);
             }
-            Userscount::where('user_id',$user_id)->decrement('balance',$money);
-            DB::commit();
+            $usercount = Userscount::where('user_id',$user_id)->decrement('balance',$money);
+            if(!$usercount){
+                DB::rollBack();
+                ajaxReturn('','账户更改失败!',0);
+            }
             $data =array(
                 'user_id'=>$user_id,
                 'order_sn'=>getorderId_three(),
                 'mobile'=>$userinfo['mobile'],
                 'money'=>$money,
+                'tradeMoney'=>$money * 0.95,
                 'wx_name'=>$userinfo['wx_name'],
                 'name'=>$userinfo['name'],
                 'deposit_name'=>$userinfo['deposit_name'],
@@ -252,7 +259,11 @@ class MycenterController extends CommonController {
                 );
                 $daytable =Accountlog::getdaytable();
                 $daytable->insert($data1);
+                DB::commit();
                 ajaxReturn('','已提交!',1);
+            }else{
+                DB::rollBack();
+                ajaxReturn('','提现存储失败!',0);
             }
         } else {
             ajaxReturn('','请求数据异常!',0);
@@ -398,8 +409,7 @@ class MycenterController extends CommonController {
                 foreach ($qrcodeinfo as $k=>&$v) {
                     $v['creatime'] = date('Y/m/d H:i:s',$v['creatime']);
                     //已跑总额
-                    $sumscore=Erweimacount::where(array("user_id"=>$user_id,"erweima_id"=>$v['id']))->value("sumscore");
-                    $v['sumscore']=abs($sumscore/100);
+                    $v['sumscore']=abs($v['sumscore']/100);
                     //拼接图片地址
                     $v['erweima']=$this->imgurl.$v['erweima'];
                 }
@@ -425,9 +435,8 @@ class MycenterController extends CommonController {
                 foreach ($qrcodeinfo as $k=>&$v) {
                     $v['creatime'] = date('Y/m/d H:i:s',$v['creatime']);
                     $v['savetime'] = date('Y/m/d H:i:s',$v['savetime']);
-                    //已跑总额
-                    $sumscore=Erweimacount::where(array("user_id"=>$user_id,"erweima_id"=>$v['id']))->value("sumscore");
-                    $v['sumscore']=abs($sumscore/100);
+                    //已跑总额user_id
+                    $v['sumscore']=abs($v['sumscore']/100);
                     //拼接图片地址
                     $v['erweima']=$this->imgurl.$v['erweima'];
                 }
@@ -601,16 +610,16 @@ class MycenterController extends CommonController {
     public function changepro(Request $request) {
         if($request->isMethod('post')) {
             $useinfo =$this->member;
-            $pronum = (double)$_POST['pronum'];
+            $pronum = (double)$request->input('pronum') /100;
             $bind_id = (int)$_POST['bind_id'];
             if($pronum < 0.002  ) {
                 ajaxReturn('','费率不能低于0.2%!',0);
             }
-            if($pronum >= $useinfo['rate'] ) {
-                ajaxReturn('','费率不能超过自己的!',0);
+            if($pronum*10000 >= $useinfo['rate']*10000 ) {
+                ajaxReturn('','费率需低于自己的!',0);
             }
             $bind_info=Users::where(array('user_id'=>$bind_id))->first();
-            if ($bind_info['rate'] >=$pronum) {
+            if ($bind_info['rate']*10000 >=$pronum*10000) {
                 ajaxReturn('','费率不能低于或者等于当前的费率!',0);
             }
             $saverate =Users::where(array('user_id'=>$bind_id))->update(array('rate'=>$pronum));
@@ -630,16 +639,16 @@ class MycenterController extends CommonController {
     public function changepros(Request $request) {
         if($request->isMethod('post')) {
             $useinfo =$this->member;
-            $pronums = (double)$_POST['pronums'];
+            $pronums = (double)$request->input('pronums')/100;
             $bind_id = (int)$_POST['bind_id'];
             if( $pronums<0.002 ) {
                 ajaxReturn('','费率不能低于0.2%!',0);
             }
-            if( $pronums >= $useinfo['rates']) {
-                ajaxReturn('','费率不能超过自己的!',0);
+            if( $pronums*10000 >= $useinfo['rates']*10000) {
+                ajaxReturn('','费率需低于自己的!',0);
             }
             $bind_info=Users::where(array('user_id'=>$bind_id))->first();
-            if ($bind_info['rates'] >=$pronums) {
+            if ($bind_info['rates']*10000 >=$pronums*10000) {
                 ajaxReturn('','费率不能低于或者等于当前的费率!',0);
             }
             $saverate =Users::where(array('user_id'=>$bind_id))->update(array('rates'=>$pronums));
@@ -740,6 +749,9 @@ class MycenterController extends CommonController {
                 $tablesuf = $a['searchtime'];
                 if(!$tablesuf){
                     $tablesuf = date('Ymd');
+                }
+                if(!Schema::hasTable('account_'.$tablesuf)){
+                    ajaxReturn('','无当天数据!',0);
                 }
             }
 

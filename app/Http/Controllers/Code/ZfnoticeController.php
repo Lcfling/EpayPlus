@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Code;
 use App\Models\Index;
 use App\Models\Kefu;
 use App\Models\Message;
+use App\Models\Notice;
 use Illuminate\Http\Request;
 class ZfnoticeController extends CommonController {
     /**
@@ -17,7 +18,7 @@ class ZfnoticeController extends CommonController {
      */
     public function index(Request $request) {
         if($request->isMethod('post')) {
-            $messageinfo =Index::orderBy('creatime','desc')->get();
+            $messageinfo =Notice::orderBy('creatime','desc')->get();
             foreach ($messageinfo as $k=>&$v) {
                 $v['creatime']= date('Y/m/d H:i:s',$v['creatime']);
             }
@@ -69,7 +70,7 @@ class ZfnoticeController extends CommonController {
      * 公告
      */
     public function getnotice() {
-        $list = Index::orderBy('id','desc')->limit(1)->first();
+        $list = Notice::orderBy('id','desc')->limit(1)->first();
         ajaxReturn($list,'请求成功!',1);
     }
 }
