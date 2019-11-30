@@ -18,9 +18,9 @@ class ZfnoticeController extends CommonController {
      */
     public function index(Request $request) {
         if($request->isMethod('post')) {
-            $messageinfo =Notice::orderBy('creatime','desc')->get();
+            $messageinfo =Notice::orderBy('creattime','desc')->get();
             foreach ($messageinfo as $k=>&$v) {
-                $v['creatime']= date('Y/m/d H:i:s',$v['creatime']);
+                $v['creattime']= date('Y/m/d H:i:s',$v['creattime']);
             }
             $data =array(
                 'messageinfo'=>$messageinfo

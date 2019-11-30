@@ -121,14 +121,16 @@ class IndexController extends Controller
 //        $this->senduidnotify($order_infos,3,2);
 //        $orderjson=Redis::get('orderrecord_2019112311014694603248');
 //        print_r($orderjson);
-        $rates = 0.0145;
-        $pronums = '1.45';
-        $pronums = htmlformat($pronums/100);
-        if( $pronums >= $rates) {
-            ajaxReturn('','费率需低于自己的!',0);
-        }else{
-            ajaxReturn('','费率设置不正常!',0);
-        }
+//        $rates = 0.0145;
+//        $pronums = '1.45';
+//        $pronums = htmlformat($pronums/100);
+//        if( $pronums >= $rates) {
+//            ajaxReturn('','费率需低于自己的!',0);
+//        }else{
+//            ajaxReturn('','费率设置不正常!',0);
+//        }
+
+        $free = Redis::get('free_time');
 
     }
 
@@ -208,7 +210,7 @@ class IndexController extends Controller
         $retrun_sign=$retrun_datas['sign'];
         //签名值
         unset($retrun_datas['sign']);
-        $key = 'f8e09bf4b1cc926c8c03ee33b4829eab';
+        $key = '79422227c50783fe5838874f39bdaae8';
         $sign =$this->getSign($retrun_datas,$key);
         if($retrun_sign==$sign) {
             echo "success";

@@ -29,9 +29,13 @@ class CommonController extends Controller {
         if(!$userInfo) {
             ajaxReturn(null, '用户不存在!', 2);
         }
+        if ($userInfo['is_over'] == 1){
+            ajaxReturn(null,'此账号已被封禁!',2);
+        }
         if ($userInfo['token'] == '') {
             ajaxReturn(null, '登录失效,请重新登录!', 2);
         }
+
         if ($userInfo['token'] === $token) {
             $this->uid = $user_id;
             $this->member = $userInfo;

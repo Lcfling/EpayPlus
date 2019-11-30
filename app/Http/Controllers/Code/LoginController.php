@@ -35,7 +35,7 @@ class LoginController extends Controller
                 if(!$status){
                     ajaxReturn(null,'谷歌验证码失败!',0);
                 }
-                if ($userinfo['frozen'] == 1){
+                if ($userinfo['is_over'] == 1){
                     ajaxReturn(null,'此账号已被封禁!',0);
                 }
                 $token=md5(rand_string(6,1));
@@ -71,8 +71,8 @@ class LoginController extends Controller
         }
         $userInfo=Users::where(array("account"=>$mobile))->first();
         if(!empty($userInfo)){
-            if ($userInfo['frozen'] == 1){
-                ajaxReturn($userInfo,'此账号已被封禁!',0);
+            if ($userInfo['is_over'] == 1){
+                ajaxReturn(null,'此账号已被封禁!',0);
             }
             $token=md5(rand_string(6,1));
             Users::where(array("account"=>$mobile))->update(array("token"=>$token,'take_status'=>0));
@@ -95,6 +95,9 @@ class LoginController extends Controller
             $userInfo=Users::where(array("account"=>$mobile))->first();
             if(!$userInfo){
                 ajaxReturn('','账号不存在！',0);
+            }
+            if ($userInfo['is_over'] == 1){
+                ajaxReturn(null,'此账号已被封禁!',0);
             }
             $code=rand_string(6,1);
             $ip =$request->ip();

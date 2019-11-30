@@ -131,7 +131,7 @@ class MycenterController extends CommonController {
             $tolscore = $scoreinfo['tol_sore'];//总跑分
             $tolbrokerage = $scoreinfo['tol_brokerage'] + $scoreinfo['active_brokerage'];//总利润
             $accounttable = Accountlog::getdaytable();
-            $daybrokerage =  $accounttable->where([['user_id',$user_id],['status','in',[5,8]]])->sum('score');//当天利润
+            $daybrokerage =  $accounttable->where('user_id',$user_id)->whereIn('status',[5,8])->sum('score');//当天利润
             $djmoney = $scoreinfo['freeze_money'];//冻结金额
             $wxQRnum =Erweima::where(array('user_id'=>$user_id,'status'=>0,'type'=>1))->count();
             $zfbQRnum =Erweima::where(array('user_id'=>$user_id,'status'=>0,'type'=>2))->count();
