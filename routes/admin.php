@@ -28,7 +28,12 @@ use Illuminate\Http\Request;
 Route::get('/verify',                   'Admin\HomeController@verify');
 //登陆模块
 Route::group(['namespace'  => "Auth"], function () {
-    Route::get('/login',                     'LoginController@showLoginForm')->name('login');
+    Route::get('/register',             'BindController@index');    //绑定谷歌验证码
+    Route::post('/valAccount',          'BindController@checkAccount'); //效验账号是否存在
+    Route::post('/valUser',             'BindController@checkUserLogin');//效验账号密码的真实性
+    Route::post('/sendSMS',             'BindController@sendSMS');//发送验证码
+    Route::post('/bindCode',            'BindController@bindCode');//绑定加效验
+    Route::get('/login',                'LoginController@showLoginForm')->name('login');//登录
     Route::post('/login',               'LoginController@login');
     Route::get('/logout',               'LoginController@logout')->name('logout');
 });

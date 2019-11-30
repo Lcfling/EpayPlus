@@ -117,52 +117,7 @@
                 </div>
             </div>
         </div>
-        <div class="welcome-edge col-lg-3">
-            <!--联系-->
-            <div class="panel panel-default contact-panel">
-                <div class="panel-header">服务器信息</div>
-                <br>
-                <div class="layui-form layui-form-pane">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">服务器环境</label>
-                        <div class="layui-input-block">
-                            <input type="text" value="{{$sysinfo['web_server']}}" class="layui-input" disabled>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">IP地址</label>
-                        <div class="layui-input-block">
-                            <input type="text" value="{{$sysinfo['ip']}}" class="layui-input" disabled>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">服务器域名</label>
-                        <div class="layui-input-block">
-                            <input type="text" value="{{$sysinfo['domain']}}" class="layui-input" disabled>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">PHP版本</label>
-                        <div class="layui-input-block">
-                            <input type="text" value="{{$sysinfo['phpv']}}" class="layui-input" disabled>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">数据库信息</label>
-                        <div class="layui-input-block">
-                            <input type="text" value="{{$sysinfo['mysql_version']}}" class="layui-input" disabled>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">当前时间</label>
-                        <div class="layui-input-block">
-                            <input type="text" value="{{$sysinfo['time']}}" class="layui-input" disabled>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+        
     </div>
 </div>
 <script src="/static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>

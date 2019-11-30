@@ -15,4 +15,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     protected $fillable = ['username', 'email', 'mobile', 'password'];
     protected $hidden = ['password', 'remember_token'];
     protected $userInfo;
+
+    public static function getUserInfo($account){
+        $user =User::where('username','=',$account)->first();
+        return $user;
+    }
 }

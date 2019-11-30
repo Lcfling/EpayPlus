@@ -23,6 +23,9 @@
                     <input type="password" value="{{ old('password') }}" name="password" required lay-verify="password" placeholder="密码" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-form-item">
+                    <input type="password" value="{{ old('ggkey') }}" name="ggkey" lay-verify="ggkey" placeholder="谷歌验证码" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-item">
                     <div class="layui-inline">
                         <input type="text" name="verity" lay-verify="verity" placeholder="验证码" autocomplete="off" class="layui-input">
                     </div>
@@ -44,9 +47,10 @@
                         <button type="reset" class="layui-btn layui-btn-primary">取消</button>
                     </div>
                 </div>
+                <a href="{{url('/admin/register')}}" style="color: #1E9FFF">绑定谷歌验证码</a>
             </form>
         </div>
-        <p class="copyright">Copyright 2017-{{date("Y",time())}} by FZS</p>
+        <p class="copyright">Copyright 2019-{{date("Y",time())}} by EPP</p>
     </div>
 </div>
 <script src="/static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
@@ -57,6 +61,7 @@
         form.verify({
             username: [/(.+){2,12}$/, '用户名必须2到12位'],
             password: [/(.+){6,12}$/, '密码必须6到12位'],
+            ggkey:[/^\d{6}$/,'格式错误'],
             verity: [/(.+){4}$/, '验证码必须是4位'],
         });
     });

@@ -8,9 +8,11 @@
  */
 namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Log;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use PragmaRX\Google2FA\Google2FA;
 class LoginController extends Controller
 {
     /*
@@ -44,6 +46,15 @@ class LoginController extends Controller
     }
     public function login(Request $request)
     {
+        //判断账号是否存在
+        $count = User::where('username','=',$request->input('username'))->first();
+        if(!$count){
+            return redirect('/admin/login')->withErrors([trans('fzs.login.false_account')]);
+        }
+        $user = new User();
+        if(!$this->verifyGooglex($request->input('ggkey'),htmlformat($request->input('username')))){
+            return redirect('/admin/login')->withErrors([trans('fzs.login.false_ggkey')]);
+        }
         if($request->input('verity')==session('code'))return $this->doLogin($request);
         else return redirect('/admin/login')->withErrors([trans('fzs.login.false_verify')]);
     }
@@ -67,4 +78,14 @@ class LoginController extends Controller
         return $this->oriAuthenticated($request, $user);
     }
 
+    protected function verifyGooglex($code,$account){
+        $userInfo=User::getUserInfo($account);
+        $secret=$code;
+        $google2fa = new Google2FA();
+        if($google2fa->verifyKey($userInfo["ggkey"], $secret)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
