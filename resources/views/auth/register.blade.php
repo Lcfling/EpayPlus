@@ -200,7 +200,7 @@
                 _this.setAttribute('class','layui-btn layui-btn-sm');
                 //修改文本
                 _this.value="点击发送";
-                count = 30;
+                count = 60;
             }else{
                 _this.value="重新发送"+(count-1)+"s";
                 count--;
