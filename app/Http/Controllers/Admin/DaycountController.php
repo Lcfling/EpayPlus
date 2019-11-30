@@ -7,12 +7,12 @@ use App\Models\Agentbill;
 use App\Models\Agentcount;
 use App\Models\Agentdraw;
 use App\Models\Billflow;
+use App\Models\Busbill;
 use App\Models\Buscount;
 use App\Models\Busdraw;
 use App\Models\Codecount;
 use App\Models\Codedraw;
 use App\Models\Codeuser;
-use App\Models\Order;
 use App\Models\Qrcode;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -41,19 +41,19 @@ class DaycountController extends Controller
         //订单
         $ordernum=[];
 
-        $order=new Order;
-        $order->setTable('order_'.$weeksuf);
+        $busbill=new Busbill();
+        $busbill->setTable('business_billflow_'.$weeksuf);
 
-        $orderall=$order->where('status',1)->whereBetween('creatime',[$start,$end])->first(
+        $orderall=$busbill->where('status',1)->whereBetween('creatime',[$start,$end])->first(
             array(
-                DB::raw('sum(tradeMoney) as tradeMoney'),
-                DB::raw('sum(sk_money) as sk_money'),
-                DB::raw('sum(tradeMoney-sk_money) as order_profit'),
+                DB::raw('SUM(tradeMoney) as sk_money'),
+                DB::raw('SUM(score) as tradeMoney'),
+                DB::raw('SUM(tradeMoney-score) as order_profit'),
             )
         )->toArray();
 
-        $ordernum['tol_sore']=($orderall['tradeMoney']?$orderall['tradeMoney']:0)/100; //订单金额
-        $ordernum['sore_balance']=($orderall['sk_money']?$orderall['sk_money']:0)/100; //收款金额(扣除费率)
+        $ordernum['tol_sore']=($orderall['sk_money']?$orderall['sk_money']:0)/100; //订单金额
+        $ordernum['sore_balance']=($orderall['tradeMoney']?$orderall['tradeMoney']:0)/100; //收款金额(扣除费率)
         $ordernum['order_profit']=($orderall['order_profit']?$orderall['order_profit']:0)/100; //盈利
 
         //商户提现

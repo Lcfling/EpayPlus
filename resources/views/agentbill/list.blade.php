@@ -30,7 +30,7 @@
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
-            <col class="hidden-xs" width="150">
+
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="200">
@@ -43,7 +43,7 @@
             <th class="hidden-xs">代理商ID</th>
             <th class="hidden-xs">商户标识</th>
             <th class="hidden-xs">实际积分</th>
-            <th class="hidden-xs">扣除后积分</th>
+
             <th class="hidden-xs">类别</th>
             <th class="hidden-xs">支付类型</th>
             <th class="hidden-xs">创建时间</th>
@@ -57,7 +57,7 @@
                 <td class="hidden-xs">{{$info['agent_id']}}</td>
                 <td class="hidden-xs">{{$info['business_code']}}</td>
                 <td class="hidden-xs">{{$info['score']/100}}</td>
-                <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>
+
                 <td class="hidden-xs">                   
                     @if($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-primary">支付</span>
                     @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn-normal">利润</span>
@@ -76,7 +76,6 @@
         @if(!$list[0])
             <tr><td colspan="6" style="text-align: center;color: orangered;">暂无数据</td></tr>
         @endif
-        </tbody>
         </tbody>
     </table>
     <div class="page-wrap">

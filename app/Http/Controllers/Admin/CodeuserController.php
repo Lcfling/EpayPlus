@@ -162,6 +162,7 @@ class CodeuserController extends Controller
             return ['msg'=>'操作失败！'];
         }
     }
+
     /**
      * 增加邀请码页面
      */

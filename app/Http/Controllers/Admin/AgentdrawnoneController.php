@@ -124,7 +124,6 @@ class AgentdrawnoneController extends Controller
                'order_sn'=>$drawinfo['order_sn'],
                'agent_id'=>$drawinfo['agent_id'],
                'score'=>$drawinfo['money'],
-               'tradeMoney'=>$drawinfo['tradeMoney'],
                'status'=>3,
                'remark'=>'代理提现驳回',
                'creatime'=>time()

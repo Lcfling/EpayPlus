@@ -106,7 +106,7 @@
                 var id=this.value,
                     status=obj.elem.checked;
                 if(status==false){
-                    var aswitch=0;
+                    var aswitch=2;
                 }else if(status==true){
                     aswitch=1;
                 }

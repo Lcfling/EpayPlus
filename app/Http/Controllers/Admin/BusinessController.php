@@ -94,13 +94,12 @@ class BusinessController extends Controller
             }
             $agent['business_code']=$insertID;
             $agent['creatime']=time();
-            $agent['savetime']=time();
             $res3=DB::table('agent_fee')->insert($agent);
             if(!$res3){
                 DB::rollBack();
                 return ['msg'=>'费率添加失败！'];
             }
-            $buscount=Buscount::insert(array('business_code'=>$insertID,'creatime'=>time()));
+            $buscount=Buscount::insert(array('business_code'=>$insertID,'creatime'=>time(),'savetime'=>time()));
             if(!$buscount){
                 DB::rollBack();
                 return ['msg'=>'商户帐户添加失败！'];

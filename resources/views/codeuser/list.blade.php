@@ -49,7 +49,7 @@
             <th class="hidden-xs">佣金总额</th>
             <th class="hidden-xs">邀请码个数</th>
             <th class="hidden-xs">注册时间</th>
-            <th class="hidden-xs">状态</th>
+            <th class="hidden-xs">登录</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -73,7 +73,7 @@
                 <td class="hidden-xs">{{$info['imsi_num']}}</td>
                 <td class="hidden-xs">{{$info['reg_time']}}</td>
                 <td class="hidden-xs">
-                    <input type="checkbox" name="status" value="{{$info['user_id']}}" lay-skin="switch" lay-text="开启|封禁" lay-filter="status" {{ $info['is_over'] == 0 ? 'checked' : '' }}>
+                    <input type="checkbox" name="status" value="{{$info['user_id']}}" lay-skin="switch" lay-text="允许|禁止" lay-filter="status" {{ $info['is_over'] == 0 ? 'checked' : '' }}>
                 </td>
                 <td>
                     <div class="layui-inline">
@@ -137,12 +137,12 @@
                     dataType:'json',
                     success:function(res){
                         if(res.status == 1){
-                            layer.msg(res.msg,{icon:6},function () {
+                            layer.msg(res.msg,{icon:6,time:1000},function () {
                                 location.reload();
                             });
 
                         }else{
-                            layer.msg(res.msg,{shift: 6,icon:5});
+                            layer.msg(res.msg,{shift: 6,icon:5,time:1000});
                         }
                     },
                     error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -150,6 +150,7 @@
                     }
                 });
             });
+
         });
         function showinfo(id) {
             var id=id;
