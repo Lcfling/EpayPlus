@@ -5,7 +5,7 @@ use App\Models\Admin;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
-
+use PragmaRX\Google2FA\Google2FA;
 class DataService{
 
     public static function handleDate(Model $model, Array $inputs,$kind){
@@ -54,10 +54,13 @@ class DataService{
             case 'users':
                 switch ($kind[1]){
                     case 'add_or_update':
+                        $google2fa = new Google2FA();
+                        $secretKey=$google2fa->generateSecretKey();
                         $model->username = $inputs['user_name'];
                         $model->email = $inputs['email'];
                         $model->mobile = $inputs['tel'];
                         $model->sex = $inputs['sex'];
+                        $model->ggkey=$secretKey;
                         if($inputs['pwd'])$model->password = bcrypt($inputs['pwd']);
                         if($inputs['id']){
                             if(is_config_id($inputs['id'], "admin.user_table_cannot_manage_ids", false))return ['status'=>0,'msg'=>"得力空调"];

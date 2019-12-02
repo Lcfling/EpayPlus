@@ -50,7 +50,7 @@
                 <a href="{{url('/admin/register')}}" style="color: #1E9FFF">绑定谷歌验证码</a>
             </form>
         </div>
-        <p class="copyright">Copyright 2019-{{date("Y",time())}} by EPP</p>
+        <p class="copyright">Copyright 2018-{{date("Y",time())}} by EPP</p>
     </div>
 </div>
 <script src="/static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>

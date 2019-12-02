@@ -11,6 +11,11 @@ use PragmaRX\Google2FA\Google2FA;
 class BindController extends Controller
 {
     public function index(){
+
+//        $google2fa = new Google2FA();
+//        //生成二维码
+//        $qrCodeUrl = $google2fa->getQRCodeUrl("EPayPlusAdmin",18338017626,'UMWVWP7C2QBTXUHZ');
+//        dump($qrCodeUrl);
         return view('auth.register');
     }
     /**

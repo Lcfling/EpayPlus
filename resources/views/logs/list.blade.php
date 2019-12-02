@@ -25,20 +25,24 @@
     <table class="layui-table" lay-even lay-skin="nob">
         <colgroup>
             <col class="hidden-xs" width="50">
-            <col class="hidden-xs" width="80">
-            <col>
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
-            <col width="200">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="200">
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">用户ID</th>
-            <th>内容</th>
+            <th class="hidden-xs">用户名</th>
+            <th class="hidden-xs">用户身份</th>
+            <th class="hidden-xs">内容</th>
             <th class="hidden-xs">URL</th>
             <th class="hidden-xs">IP</th>
-            <th>创建时间</th>
+            <th class="hidden-xs">创建时间</th>
         </tr>
         </thead>
         <tbody>
@@ -46,10 +50,12 @@
             <tr>
                 <td class="hidden-xs">{{$list['id']}}</td>
                 <td class="hidden-xs">{{$list['admin_id']}}</td>
-                <td>{{$list['log_info']}}</td>
+                <td class="hidden-xs">{{$list['name']}}</td>
+                <td class="hidden-xs">{{$list['shenfen']}}</td>
+                <td class="hidden-xs">{{$list['log_info']}}</td>
                 <td class="hidden-xs">{{$list['log_url']}}</td>
                 <td class="hidden-xs">{{$list['log_ip']}}</td>
-                <td>{{$list['log_time']}}</td>
+                <td class="hidden-xs">{{$list['log_time']}}</td>
             </tr>
         @endforeach
         @if(!$pager[0])

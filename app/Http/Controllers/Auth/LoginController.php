@@ -46,6 +46,7 @@ class LoginController extends Controller
     }
     public function login(Request $request)
     {
+
         //判断账号是否存在
         $count = User::where('username','=',$request->input('username'))->first();
         if(!$count){

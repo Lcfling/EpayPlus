@@ -36,7 +36,7 @@
                 </div>
             </form>
         </div>
-        <p class="copyright">Copyright 2017-{{date("Y",time())}} by FZS</p>
+        <p class="copyright">Copyright 2018-{{date("Y",time())}} by EPP</p>
     </div>
 </div>
 <script src="/static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
@@ -128,9 +128,9 @@
                                 moveType:1,//拖拽模式 0或1
                                 content:'<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">' +
                                     /*'<form class="layui-form" id="layui-form">' +*/
-                                    '<div class="layui-form-item"><input type="text" name="account" id="account" readonly="readonly" value="'+account+'" class="layui-input"></div>' +
-                                    '<div class="layui-form-item"><input type="text" name="mobile" id="mobile" placeholder="手机号" class="layui-input"></div>' +
-                                    '<div class="layui-form-item"><input type="text" name="code" id="code" placeholder="验证码" class="layui-input" style="width: 60%;float: left;">' +
+                                    '<div class="layui-form-item"><input type="text" name="account" id="account" readonly="readonly" value="'+account+'" class="layui-input" autocomplete="off"></div>' +
+                                    '<div class="layui-form-item"><input type="text" name="mobile" id="mobile" placeholder="手机号" class="layui-input" autocomplete="off"></div>' +
+                                    '<div class="layui-form-item"><input type="text" name="code" id="code" placeholder="验证码" class="layui-input" autocomplete="off" style="width: 60%;float: left;">' +
                                     '<input type="button" class="layui-btn layui-btn-sm" style="float: right;" onclick="sendMsgCode(this)" value="点击发送">' +
                                     '</div>' +
                                     '<div class="layui-form-item">' +

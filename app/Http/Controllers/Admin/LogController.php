@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Log;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 class LogController extends Controller
 {
     /**
@@ -34,7 +35,13 @@ class LogController extends Controller
         }
         $sql->select('admin_logs.*');
         $pager = $sql->orderBy('admin_logs.id', 'desc')->paginate()->appends($request->all());
+        foreach ($pager as $key =>$value){
+            $res=Log::getName($pager[$key]['id'],$pager[$key]['admin_id']);
+            $pager[$key]['name']=$res['name'];
+            $pager[$key]['shenfen']=$res['shenfen'];
+        }
         $min=config('admin.min_date');
         return view('logs.list', ['pager'=>$pager,'min'=>$min,'input'=>$request->all()]);
     }
+
 }
