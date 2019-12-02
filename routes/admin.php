@@ -51,8 +51,13 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/saveinfo/{type}',     'UserController@saveInfo');
     Route::resource('/roles',           'RoleController');
     Route::resource('/permissions',     'PermissionController');
-    Route::resource('/options',         'OptionController');//系统设置
+
+    Route::resource('/options',         'OptionController');//系统设置-缓存设置
     Route::post('/optionsUpdate',       'OptionController@update');
+    Route::resource('/version',         'VersionController');//系统设置-版本控制
+    Route::post('/versionUpdate',       'VersionController@update');
+    Route::post('/version_isopen',      'VersionController@is_open');//开关
+
     Route::resource('/notices',         'NoticeController');//公告
     Route::post('/noticesUpdate',       'NoticeController@update');
     Route::resource('/callcenter',      'CallcenterController');//客服

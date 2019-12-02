@@ -28,7 +28,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs" style="text-align: center">客服昵称</th>
             <th class="hidden-xs" style="text-align: center">客服二维码</th>
             <th class="hidden-xs" style="text-align: center">创建时间</th>

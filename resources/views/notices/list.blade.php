@@ -28,7 +28,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="hidden-xs">ID</th>
+            <th class="hidden-xs">序号</th>
             <th class="hidden-xs">标题</th>
             <th class="hidden-xs" style="text-align: center">内容</th>
             <th class="hidden-xs" style="text-align: center">创建时间</th>
