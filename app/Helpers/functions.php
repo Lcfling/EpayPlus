@@ -218,11 +218,11 @@ function verifyGooglex($secret,$ggkey){
  * @param $tablesuf 订单表后缀
  * @return string
  */
-function getUniqueId_six($paycode,$business_code,$tablesuf) {
-    $uniqueid =incr_num('UniqueId',1,5);
-    $order_no = date('Ymd').'e'.$tablesuf.'e'.$paycode .date('His').substr($business_code, -3).$uniqueid;
-    return $order_no;
-}
+//function getUniqueId_six($paycode,$business_code,$tablesuf) {
+//    $uniqueid =incr_num('UniqueId',1,5);
+//    $order_no = date('Ymd').'e'.$tablesuf.'e'.$paycode .date('His').substr($business_code, -3).$uniqueid;
+//    return $order_no;
+//}
 
 /**
  * 生成自增长数字
@@ -234,29 +234,29 @@ function getUniqueId_six($paycode,$business_code,$tablesuf) {
  * @return int $num;
  * @author leeyi <leeyisoft@qq.com>
  */
-function incr_num($key = 'ddg', $step = 1, $expires = 0) {
-    $cache_key = 'incrnum:'.$key.'_setp:'.$step;
-    $num       = Redis::incrBy($cache_key, (int)$step);
-    if ($expires>0) {
-        $pexpire     = 'pexpire';
-        $millisecond = $expires*1000;
-    } else {
-        $pexpire     = 'pexpireAt';
-        $millisecond = $this->get_time_235959()*1000+999;
-    }
-    if (2>$num) {
-        Redis::$pexpire($cache_key, $millisecond); // 设置过期时间
-    }
-    return $num;
-}
+//function incr_num($key = 'ddg', $step = 1, $expires = 0) {
+//    $cache_key = 'incrnum:'.$key.'_setp:'.$step;
+//    $num       = Redis::incrBy($cache_key, (int)$step);
+//    if ($expires>0) {
+//        $pexpire     = 'pexpire';
+//        $millisecond = $expires*1000;
+//    } else {
+//        $pexpire     = 'pexpireAt';
+//        $millisecond = $this->get_time_235959()*1000+999;
+//    }
+//    if (2>$num) {
+//        Redis::$pexpire($cache_key, $millisecond); // 设置过期时间
+//    }
+//    return $num;
+//}
 /**
  * 根据给定时间戳，获取当天时间最后一秒的时间戳
  * @author leeyi <leeyisoft@qq.com>
  */
-function get_time_235959($time = '') {
-    $time = empty($time) ? time() : intval($time);
-    return strtotime(date('Y-m-d 00:00:00', $time+86400))-1;
-}
+//function get_time_235959($time = '') {
+//    $time = empty($time) ? time() : intval($time);
+//    return strtotime(date('Y-m-d 00:00:00', $time+86400))-1;
+//}
 
 /**检测数组value值的重复
  * @param $array

@@ -7,6 +7,7 @@
  */
 namespace App\Http\Controllers\Code;
 
+use App\Models\Adminvesion;
 use App\Models\Czrecord;
 use App\Models\Erweima;
 use App\Models\Order;
@@ -119,7 +120,7 @@ class IndexController extends Controller
 //        $ordertable = Order::getordersntable('2019112311014694603248');
 //        $order_infos=$ordertable->where(array("order_sn"=>'2019112311014694603248'))->first();
 //        $this->senduidnotify($order_infos,3,2);
-//        $orderjson=Redis::get('orderrecord_2019112311014694603248');
+//        $orderjson=Redis::get('orderrecord_2019120218170937415849');
 //        print_r($orderjson);
 //        $rates = 0.0145;
 //        $pronums = '1.45';
@@ -130,7 +131,6 @@ class IndexController extends Controller
 //            ajaxReturn('','费率设置不正常!',0);
 //        }
 
-        $free = Redis::get('free_time');
 
     }
 
@@ -165,17 +165,18 @@ class IndexController extends Controller
 
     public function update(){
         $v=$_POST['currentversion'];
-        $data['force']='1';
-        $data['detail']='版本更新信息';
-        $data['force']='2';
-        ajaxReturn($data,'版本更新',1);
-        $data['url']='http://download.fir.im/apps/5dad930cf9454818b513fdcd/install?download_token=2d45ab6fe012f8d8bf70d9049bfee334';
-
-        if($v=="1.0.6"){
+        $data['url']='http://api.fir.im/apps/5de232f223389f7650b40b83/download_token?api_token=54c747713b04dfdd977694cf34eba79e';
+        $zxinfo =Adminvesion::where('is_open',1)->orderBy('creatime','desc')->first();
+        $version_no =$zxinfo['version_no'];
+        $data['detail'] =$zxinfo['detail'];
+        /**
+         * force 0 非强制更新 1 强制更新 2不更新
+         */
+        if($v==$version_no){
             $data['force']='2';
             ajaxReturn($data,'最新版本',1);
         }else{
-            $data['force']='1';
+            $data['force']=$zxinfo['force'];
             ajaxReturn($data,'版本更新',1);
         }
     }

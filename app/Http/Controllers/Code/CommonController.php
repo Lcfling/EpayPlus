@@ -16,8 +16,8 @@ class CommonController extends Controller {
     protected $uid='';
     protected $member = array();
     public $redis=null;
-    public $imgurl="http://epp.zgzyph.com";
-    public $kefuurl="http://eppht.zgzyph.com";
+    public $imgurl="http://119.28.226.32";
+    public $kefuurl="http://129.226.112.218";
     public function __construct() {
         $this->checkLogin();
     }

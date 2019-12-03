@@ -30,7 +30,7 @@ class Verificat extends Model {
         $data['username']='fjnphy';
         $data["password"] = md5(md5("Uj41oPwQ").time());//密码
         $data["mobile"] = $mobile;//手机号
-        $data["content"] = '【EPP】您的验证码为'.$code.'，在5分钟内有效。';
+        $data["content"] = '【小白兔】您的验证码为'.$code.'，在5分钟内有效。';
         $data["tKey"]=time();
         $url = 'http://api.mix2.zthysms.com/v2/sendSms';
 

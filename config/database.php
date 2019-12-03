@@ -42,17 +42,17 @@ return [
 
         'mysql' => [
             'read' => [
-                'host' => ['47.92.80.31'],
+                'host' => ['129.226.112.218'],
             ],
             'write' => [
-                'host' => ['39.100.237.239'],
+                'host' => ['119.28.226.32'],
             ],
 
             'sticky'    => false,
             'driver'    => 'mysql',
-            'database'  => 'epayplus',
-            'username'  => 'epayplus',
-            'password'  => 'lcf2954626',
+            'database'  => 'rabbit',
+            'username'  => 'rabbit',
+            'password'  => 'eGpCtxbW5LE4Jcxf',
             'charset'   => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix'    => 'zf_',
@@ -92,7 +92,7 @@ return [
         'default' => [
 
             'host' => env('REDIS_HOST', '127.0.0.1'),
-            'password' => env('REDIS_PASSWORD', null),
+            'password' => env('REDIS_PASSWORD', 'rabbit2019'),
             'port' => env('REDIS_PORT', 6379),
             'database' => 0,
             'prefix' => "EPP_",
