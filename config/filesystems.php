@@ -71,6 +71,17 @@ return [
             'bucket' => env('AWS_BUCKET'),
         ],
 
+        'oss'=>[
+            'driver'=>'oss',
+            'access_id'  =>'LTAI4FfcBM22o1AFqNJg8MGJ',
+            'access_key'=>'LPtiCchA579ZtczSIUeW7ZPu86XmmG',
+            'bucket'=>'epayplus',
+            'endpoint'=>'oss-cn-qingdao.aliyuncs.com',
+            'cdnDomain'=>'epayplus.oss-cn-qingdao.aliyuncs.com',
+            'debug'=>'',
+
+        ],
+
     ],
 
 ];

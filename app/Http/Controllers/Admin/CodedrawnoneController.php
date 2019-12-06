@@ -124,6 +124,7 @@ class CodedrawnoneController extends Controller
                 'order_sn'=>$drawinfo['order_sn'],
                 'user_id'=>$drawinfo['user_id'],
                 'score'=>$drawinfo['money'],
+                'tradeMoney'=>$drawinfo['tradeMoney'],
                 'status'=>6,
                 'remark'=>'码商提现驳回',
                 'creatime'=>time()

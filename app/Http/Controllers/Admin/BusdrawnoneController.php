@@ -133,8 +133,8 @@ class BusdrawnoneController extends Controller
                     $bill=[
                         'order_sn'=>$drawinfo['order_sn'],
                         'business_code'=>$drawinfo['business_code'],
-                        'tradeMoney'=>$drawinfo['money'],
-                        'score'=>$drawinfo['tradeMoney'],
+                        'score'=>$drawinfo['money'],
+                        'tradeMoney'=>$drawinfo['tradeMoney'],
                         'status'=>3,
                         'remark'=>'商户提现驳回',
                         'creatime'=>time()

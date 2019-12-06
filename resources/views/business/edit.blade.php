@@ -96,7 +96,7 @@
                     if(value==null||value==''){
                         return '请填写正确手机号';
                     }
-                    var reg = new RegExp("^1[34578]\\d{9}$");
+                    var reg = new RegExp("^1\\d{10}$");
                     if(!reg.test(value)){
                         return '请输入正确手机号';
                     }

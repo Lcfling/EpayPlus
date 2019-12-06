@@ -10,7 +10,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label" style="width: 100px">邀请码数量：</label>
         <div class="layui-input-inline">
-            <input type="number"  value="{{$info['imsi_num'] or ''}}" name="imsi_num"  placeholder="请输入邀请码数量" autocomplete="off" class="layui-input">
+            <input type="number" name="imsi_num"  placeholder="请输入邀请码数量" autocomplete="off" class="layui-input">
         </div>
     </div>
 

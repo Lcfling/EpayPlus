@@ -41,59 +41,22 @@ return [
 
         'mysql' => [
             'read' => [
-                'host' => ['47.92.80.31'],
+                'host' => ['129.226.112.218'],
             ],
             'write' => [
-                'host' => ['39.100.237.239'],
+                'host' => ['119.28.226.32'],
             ],
-            'sticky'    => true,
+
+            'sticky'    => false,
             'driver'    => 'mysql',
-            'database'  => 'epayplus',
-            'username'  => 'epayplus',
-            'password'  => 'lcf2954626',
+            'database'  => 'rabbit',
+            'username'  => 'rabbit',
+            'password'  => 'eGpCtxbW5LE4Jcxf',
             'charset'   => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix'    => 'zf_',
+
         ],
-
-//        'mysql' => [
-//            'driver' => 'mysql',
-//            'host' => env('DB_HOST', '114.67.97.70'),
-//            'port' => env('DB_PORT', '3306'),
-//            'database' => env('DB_DATABASE', 'epayplus'),
-//            'username' => env('DB_USERNAME', 'epayplus'),
-//            'password' => env('DB_PASSWORD', 'lcf2954626'),
-//            'unix_socket' => env('DB_SOCKET', ''),
-//            'charset' => 'utf8mb4',
-//            'collation' => 'utf8mb4_unicode_ci',
-//            'prefix' => 'zf_',
-//            'strict' => true,
-//            'engine' => null,
-//        ],
-
-//        'pgsql' => [
-//            'driver' => 'pgsql',
-//            'host' => env('DB_HOST', '127.0.0.1'),
-//            'port' => env('DB_PORT', '5432'),
-//            'database' => env('DB_DATABASE', 'forge'),
-//            'username' => env('DB_USERNAME', 'forge'),
-//            'password' => env('DB_PASSWORD', ''),
-//            'charset' => 'utf8',
-//            'prefix' => '',
-//            'schema' => 'public',
-//            'sslmode' => 'prefer',
-//        ],
-//
-//        'sqlsrv' => [
-//            'driver' => 'sqlsrv',
-//            'host' => env('DB_HOST', 'localhost'),
-//            'port' => env('DB_PORT', '1433'),
-//            'database' => env('DB_DATABASE', 'forge'),
-//            'username' => env('DB_USERNAME', 'forge'),
-//            'password' => env('DB_PASSWORD', ''),
-//            'charset' => 'utf8',
-//            'prefix' => '',
-//        ],
 
     ],
 
@@ -126,9 +89,8 @@ return [
         'client' => 'phpredis',
 
         'default' => [
-
-            'host' => env('REDIS_HOST', '39.100.237.239'),
-            'password' => env('REDIS_PASSWORD', null),
+            'host' => env('REDIS_HOST', '119.28.226.32'),
+            'password' => env('REDIS_PASSWORD', 'rabbit2019'),
             'port' => env('REDIS_PORT', 6379),
             'database' => 0,
             'prefix' => "EPP_",

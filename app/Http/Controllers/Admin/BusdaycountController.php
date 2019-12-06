@@ -56,8 +56,8 @@ class BusdaycountController extends Controller
         $end=strtotime('+1day',$start);
         $money=$busbill->where(array('business_code'=>$business_code,'status'=>1))->whereBetween('creatime',[$start,$end])->first(
             array(
-                DB::raw('SUM(tradeMoney) as sk_money'),
-                DB::raw('SUM(score) as tradeMoney'),
+                DB::raw('SUM(score) as sk_money'),
+                DB::raw('SUM(tradeMoney) as tradeMoney'),
                 DB::raw('SUM(tradeMoney-score) as profit'),
             )
         )->toArray();

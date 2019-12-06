@@ -243,6 +243,8 @@ class BusinessController extends Controller
                         $fee=[
                             'agent1_id'=>intval($agent1_id),
                             'agent1_fee'=>$agent1_fee,
+                            'agent2_id'=>$agent2_id,
+                            'agent2_fee'=>$agent2_fee,
                         ];
                         $up2=DB::table('agent_fee')->where('business_code','=',$id)->update($fee);
                         if($up2!==false&&$busfee!==false){

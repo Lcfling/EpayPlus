@@ -124,6 +124,7 @@ class AgentdrawnoneController extends Controller
                'order_sn'=>$drawinfo['order_sn'],
                'agent_id'=>$drawinfo['agent_id'],
                'score'=>$drawinfo['money'],
+               'tradeMoney'=>$drawinfo['tradeMoney'],
                'status'=>3,
                'remark'=>'代理提现驳回',
                'creatime'=>time()
@@ -135,7 +136,6 @@ class AgentdrawnoneController extends Controller
                return ['msg'=>'代理流水添加失败！'];
            }
            $drawMoney=$drawinfo['money'];
-           $tradeMoney=$drawinfo['tradeMoney'];
            $reduce=Agentcount::where('business_code',$drawinfo['business_code'])->increment('balance',$drawMoney);
            if(!$reduce){
                DB::rollBack();
