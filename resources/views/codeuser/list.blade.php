@@ -38,7 +38,7 @@
         <thead>
         <tr>
             <th class="hidden-xs">序号</th>
-            <th class="hidden-xs">手机号</th>
+            <th class="hidden-xs">账号</th>
             <th class="hidden-xs">上级ID</th>
             <th class="hidden-xs">身份</th>
             <th class="hidden-xs">剩余分数</th>
@@ -57,7 +57,7 @@
         @foreach($pager as $info)
             <tr>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
-                <td class="hidden-xs">{{$info['mobile']}}</td>
+                <td class="hidden-xs">{{$info['account']}}</td>
                 <td class="hidden-xs">{{$info['pid']}}</td>
                 <td class="hidden-xs">{{$info['shenfen']}}</td>
                 <td class="hidden-xs">{{$info['balance']/100}}</td>

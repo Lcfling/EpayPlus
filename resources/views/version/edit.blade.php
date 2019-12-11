@@ -21,8 +21,8 @@
         <div class="layui-input-inline">
             <select name="force" lay-verify="required">
                 <option value="">请选择类型</option>
-                <option value="0" @if($info['force']==0) selected @endif>非强制更新</option>
-                <option value="1" @if($info['force']==1) selected @endif>强制更新</option>
+                <option value="0" @if(isset($info['force'])&&$info['force']==0) selected @endif>非强制更新</option>
+                <option value="1" @if(isset($info['force'])&&$info['force']==1) selected @endif>强制更新</option>
             </select>
         </div>
     </div>

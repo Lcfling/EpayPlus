@@ -47,5 +47,5 @@ return [
 
     //search-min_date
     'min_date'                      =>'2019-11-11',
-    'zhu_img'                       =>'http://119.28.226.32'
+    'zhu_img'                       =>'http://47.56.151.208'
 ];

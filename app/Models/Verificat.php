@@ -7,6 +7,7 @@
  */
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Request;
 class Verificat extends Model {
@@ -19,7 +20,7 @@ class Verificat extends Model {
      * @param $ip
      * @return bool|int|mixed|string
      */
-    public static function dxbsend($mobile,$code,$ip){
+    public static function yxtsend($mobile,$code,$ip){
         $status=Redis::get('sendsms_lock_'.$ip);
         if($status==2){
             return 123;
@@ -29,7 +30,7 @@ class Verificat extends Model {
         $data['username']='fjnphy';
         $data["password"] = md5(md5("Uj41oPwQ").time());//密码
         $data["mobile"] = $mobile;//手机号
-        $data["content"] = '【EPP】您的验证码为'.$code.'，在5分钟内有效。';
+        $data["content"] = '【小白兔】您的验证码为'.$code.'，在5分钟内有效。';
         $data["tKey"]=time();
         $url = 'http://api.mix2.zthysms.com/v2/sendSms';
 
@@ -46,26 +47,57 @@ class Verificat extends Model {
         }
         return $res;
     }
-    public static function dxbsends($mobile,$code){
 
-        $ip=getip();
-        $status=Cac()->get('sendsms_lock_'.$ip);
-        if($status==1){
-            return 123;
+    /**云通信创表发送短信
+     * @param $mobile
+     * @param $code
+     * @param $ip
+     * @return bool|int|mixed|string
+     */
+    public static function createtablesend($mobile,$content){
+
+        $data['username']='fjnphy';
+        $data["password"] = md5(md5("Uj41oPwQ").time());//密码
+        $data["mobile"] = $mobile;//手机号
+        $data["content"] = $content;
+        $data["tKey"]=time();
+        $url = 'http://api.mix2.zthysms.com/v2/sendSms';
+
+        $data=json_encode($data);
+        //   print_r($data);
+        $res = Verificat::https_post_kf($url,$data);
+
+        $res=json_decode($res,true);
+
+        if ($res['code'] == 200){
+            $res=0;
+        }else{
+            $res=false;
         }
-        Cac()->set('sendsms_lock_'.$ip,1,60);
+        return $res;
+    }
 
-        //http://api.smsbao.com/sms?u=USERNAME&p=PASSWORD&m=PHONE&c=CONTENT
-        //return "0";
+    /**短信宝发送验证码
+     * @param $mobile
+     * @param $code
+     * @return bool|int|string
+     */
+    public  static function dxbsend($mobile,$code,$ip){
+
+        $status=Redis::get('sendsms_lock_'.$ip);
+        if($status==2){
+            return 10001;
+        }
+
+        Redis::setex('sendsms_lock_'.$ip,60,2);
+
         $username='q17152437247';
         $password=md5('qwer1234');
 
-
-        $content=urlencode('【天马】您的验证码为'.$code.'，在5分钟内有效。');
+        $content=urlencode('【orange】您的验证码为'.$code.'，在5分钟内有效。');
         $host="http://api.smsbao.com/sms?u=".$username."&p=".$password."&m=".$mobile."&c=".$content;
         $res=file_get_contents($host);
         return $res;
-        //return false;
     }
     /**存储手机验证码发送记录
      * @param $code

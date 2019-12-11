@@ -124,7 +124,6 @@ class CodedrawnoneController extends Controller
                 'order_sn'=>$drawinfo['order_sn'],
                 'user_id'=>$drawinfo['user_id'],
                 'score'=>$drawinfo['money'],
-                'tradeMoney'=>$drawinfo['tradeMoney'],
                 'status'=>6,
                 'remark'=>'码商提现驳回',
                 'creatime'=>time()
@@ -136,7 +135,6 @@ class CodedrawnoneController extends Controller
                 return ['msg'=>'码商流水添加失败！'];
             }
             $drawMoney=$drawinfo['money'];
-            $tradeMoney=$drawinfo['tradeMoney'];
             $reduce=Codecount::where('user_id',$drawinfo['user_id'])->increment('balance',$drawMoney);
             if(!$reduce){
                 DB::rollBack();

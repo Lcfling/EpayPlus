@@ -22,6 +22,7 @@ class CodeuserController extends Controller
      * 数据列表
      */
     public function index(Request $request){
+
         $codeuser=Codeuser::query();
 
         if(true==$request->has('user_id')){
