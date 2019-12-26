@@ -108,6 +108,20 @@ class DatacountController extends Controller
         $codeuser['codenum']=$codenum;    //码商注册人数
         $codeuser['active']=$active;  //码商激活人数
         $codeuser['erweima']=$erweima;  //二维码未删除
+
+
+        //平台合算
+        $plat=[];
+        //卡上余额
+        $card_balance=($codeall['tol_recharge']+$codeall['shangfen']-$codeall['xiafen'])-($busall['drawMoney']-$busall['feeMoney'])-($agentall['drawMoney']-$agentall['feeMoney'])-($codeall['drawMoney']-$codeall['feeMoney']);
+        //平台盈利
+        $plat_profit=($busall['order_profit']-$codeall['tol_brokerage']-$agentall['tol_brokerage'])+($busall['feeMoney']+$agentall['feeMoney']+$codeall['feeMoney']+$codeall['active_profit']);
+        //沉淀资金
+        $down_money=$busall['balance']+$busnone+$agentall['balance']+$agentnone+$codeall['balance']+$codenone+$codeall['freeze_money'];
+
+        $plat['card_balance']=$card_balance/100;
+        $plat['plat_profit']=$plat_profit/100;
+        $plat['down_money']=$down_money/100;
         //数据统计
         $data=[];
         $data['order']=$order;
@@ -115,6 +129,7 @@ class DatacountController extends Controller
         $data['agent']=$agent;
         $data['code']=$code;
         $data['codeuser']=$codeuser;
+        $data['plat']=$plat;
         return view('datacount.list',['data'=>$data]);
     }
 

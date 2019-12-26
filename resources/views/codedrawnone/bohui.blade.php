@@ -81,6 +81,7 @@
             var index = parent.layer.getFrameIndex(window.name);
 
             form.on('submit(formDemo)', function(data) {
+                var index = layer.load(0, {shade: [0.1,'#fff']});
                 $.ajax({
                     url:"{{url('/admin/codedrawnonereject')}}",
                     data:$('form').serialize(),

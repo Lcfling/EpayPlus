@@ -15,6 +15,9 @@
     <div class="layui-inline">
         <input type="text"  value="{{ $input['erweima_id'] or '' }}" name="erweima_id" placeholder="请输入二维码ID" autocomplete="off" class="layui-input">
     </div>
+    <div class="layui-inline" style="padding-left: 50px">
+        <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}'})" autocomplete="off" class="layui-input">
+    </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
     </div>
@@ -56,11 +59,15 @@
                 <td class="hidden-xs">{{$info['erweima_id']}}</td>
                 <td class="hidden-xs">
                     @if($info['status']==1)<span class="layui-btn layui-btn-small layui-btn-primary">充值</span>
-                    @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn">第三方支付</span>
+                    @elseif($info['status']==2)<span class="layui-btn layui-btn-small layui-btn">第三方支付扣除</span>
                     @elseif($info['status']==3)<span class="layui-btn layui-btn-small layui-btn-disabled">冻结</span>
-                    @elseif($info['status']==4)<span class="layui-btn layui-btn-small layui-btn-warm">充值解冻</span>
-                    @elseif($info['status']==5)<span class="layui-btn layui-btn-small layui-btn-normal">佣金</span>
+                    @elseif($info['status']==4)<span class="layui-btn layui-btn-small layui-btn-warm">解冻</span>
+                    @elseif($info['status']==5)<span class="layui-btn layui-btn-small layui-btn-normal">支付佣金</span>
                     @elseif($info['status']==6)<span class="layui-btn layui-btn-small layui-btn-danger">提现</span>
+                    @elseif($info['status']==7)<span class="layui-btn layui-btn-small layui-btn">帐户激活</span>
+                    @elseif($info['status']==8)<span class="layui-btn layui-btn-small layui-btn-normal">激活佣金</span>
+                    @elseif($info['status']==9)<span class="layui-btn layui-btn-small layui-btn-warm">上分</span>
+                    @elseif($info['status']==10)<span class="layui-btn layui-btn-small layui-btn-danger">下分</span>
                     @endif
                 </td>
                 <td class="hidden-xs">

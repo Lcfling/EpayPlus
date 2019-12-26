@@ -47,10 +47,12 @@ class AgentdrawnoneController extends Controller
     public function pass(StoreRequest $request){
         $id=$request->input('id');
         $drawinfo=Agentdraw::find($id);
+       
         $islock=$this->agentlock($id);
         if(!$islock){
             return ['msg'=>'请勿频繁操作！'];
         }
+
         DB::beginTransaction();
         try{
             if(!$draw=Agentdraw::where(array('id'=>$id,'status'=>0))->lockForUpdate()->first()){
@@ -66,7 +68,7 @@ class AgentdrawnoneController extends Controller
             }
             $drawMoney=$drawinfo['money'];
             $tradeMoney=$drawinfo['tradeMoney'];
-            $add=Agentcount::where('business_code',$drawinfo['business_code'])->increment('drawMoney',$drawMoney,['tradeMoney'=>DB::raw("tradeMoney + $tradeMoney")]);
+            $add=Agentcount::where('agent_id',$drawinfo['agent_id'])->increment('drawMoney',$drawMoney,['tradeMoney'=>DB::raw("tradeMoney + $tradeMoney")]);
             if(!$add){
                 DB::rollBack();
                 $this->unagentlock($id);
@@ -103,7 +105,7 @@ class AgentdrawnoneController extends Controller
        $agentbill=new Agentbill();
        $agentbill->setTable('agent_billflow_'.$weeksuf);
 
-       $islock=$this->unagentlock($id);
+       $islock=$this->agentlock($id);
        if(!$islock){
            return ['msg'=>'请勿频繁操作！'];
        }
@@ -124,6 +126,7 @@ class AgentdrawnoneController extends Controller
                'order_sn'=>$drawinfo['order_sn'],
                'agent_id'=>$drawinfo['agent_id'],
                'score'=>$drawinfo['money'],
+               'tradeMoney'=>-$drawinfo['tradeMoney'],
                'status'=>3,
                'remark'=>'代理提现驳回',
                'creatime'=>time()
@@ -135,8 +138,7 @@ class AgentdrawnoneController extends Controller
                return ['msg'=>'代理流水添加失败！'];
            }
            $drawMoney=$drawinfo['money'];
-           $tradeMoney=$drawinfo['tradeMoney'];
-           $reduce=Agentcount::where('business_code',$drawinfo['business_code'])->increment('balance',$drawMoney);
+           $reduce=Agentcount::where('agent_id',$drawinfo['agent_id'])->increment('balance',$drawMoney);
            if(!$reduce){
                DB::rollBack();
                $this->unagentlock($id);

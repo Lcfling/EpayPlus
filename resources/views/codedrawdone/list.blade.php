@@ -55,7 +55,7 @@
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
-                <td class="hidden-xs">{{$info['order_no']}}</td>
+                <td class="hidden-xs">{{$info['order_sn']}}</td>
                 <td class="hidden-xs">{{$info['money']/100}}</td>
                 <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>                
                 <td class="hidden-xs">{{$info['name']}}</td>

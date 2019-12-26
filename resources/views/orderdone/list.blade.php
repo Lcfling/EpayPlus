@@ -72,6 +72,7 @@
             <th class="hidden-xs">支付状态</th>
             <th class="hidden-xs">回调次数</th>
             <th class="hidden-xs">回调状态</th>
+           
             <th class="hidden-xs">创建时间</th>
             <th class="hidden-xs">支付时间</th>
             <th class="hidden-xs" style="text-align: center">操作</th>
@@ -116,6 +117,7 @@
                     @elseif($info['callback_status']==2)<span class="layui-btn layui-btn-small layui-btn-danger">推送失败</span>
                     @endif
                 </td>
+                
                 <td class="hidden-xs">{{$info['creatime']}}</td>
                 <td class="hidden-xs">{{$info['pay_time']}}</td>
                 <td style="text-align: center">

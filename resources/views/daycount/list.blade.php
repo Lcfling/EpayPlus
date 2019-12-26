@@ -7,7 +7,14 @@
         <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="选择日期" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}' })" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
+        <input type="text"  value="{{ $input['startime'] or '' }}" name="startime" placeholder="选择开始时间" onclick="layui.laydate({elem: this, format:'YYYY-MM-DD hh:mm:ss',istime:true,min:'{{$today}}' ,max:'{{$nextday}}' })" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
+        <input type="text"  value="{{ $input['endtime'] or '' }}" name="endtime" placeholder="选择结束时间" onclick="layui.laydate({elem: this,format:'YYYY-MM-DD hh:mm:ss',istime:true,min:'{{$today}}' ,max:'{{$nextday}}'})" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
+        <button id="res" class="layui-btn layui-btn-primary">重置</button>
     </div>
 @endsection
 @section('table')
@@ -209,6 +216,29 @@
         </fieldset>
     </div>
 
+    <div class="layui-inline" style="width: 30%;margin-left: 30px">
+        <fieldset class="layui-elem-field site-demo-button">
+            <legend>账单核算</legend>
+            <br>
+            <blockquote class="layui-elem-quote layui-text" style="veritical-align:middle;">
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">卡上余额</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 120px">{{$data['plat']['card_balance']}}元</span>
+                </div>
+
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">平台盈利</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 120px">{{$data['plat']['plat_profit']}}元</span>
+                </div>
+
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">总沉淀资金</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['plat']['down_money']}}元</span>
+                </div>
+            </blockquote>
+            <br>
+        </fieldset>
+    </div>
 
 @endsection
 @section('table')
@@ -220,11 +250,16 @@
             var form = layui.form(),
                 $ = layui.jquery,
                 laydate = layui.laydate,
-                layer = layui.layer
-            ;
+                layer = layui.layer;
+
             laydate({istoday: true});
             form.render();
             form.on('submit(formDemo)', function(data) {
+            });
+            $('#res').click(function () {
+                $("input[name='startime']").val('');
+                $("input[name='endtime']").val('');
+                $('form').submit();
             });
         });
     </script>

@@ -117,7 +117,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
 </div>
 <script src="/static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>

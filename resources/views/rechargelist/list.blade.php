@@ -98,6 +98,7 @@
                 var that = $(this);
                 var id=$(this).attr('data-id');
                 layer.confirm('确定要通过吗?',{title:'提示'},function () {
+                    var index = layer.load(0, {shade: [0.1,'#fff']});
                     $.ajax({
                         headers: {
                             'X-CSRF-TOKEN': $('#token').val()
@@ -113,6 +114,7 @@
                             if(res.status == 1){
                                 layer.msg(res.msg,{icon:6,time:1000},function () {
                                     location.reload();
+
                                 });
 
                             }else{
@@ -127,6 +129,7 @@
                 var that = $(this);
                 var id=$(this).attr('data-id');
                 layer.confirm('确定要驳回吗?',{title:'提示'},function () {
+                    var index = layer.load(0, {shade: [0.1,'#fff']});
                     $.ajax({
                         headers: {
                             'X-CSRF-TOKEN': $('#token').val()

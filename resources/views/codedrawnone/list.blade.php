@@ -63,7 +63,7 @@
                 <td>
                     <div class="layui-inline">
                         <button class="layui-btn layui-btn-small layui-btn-normal edits-btn1" data-id="{{$info['id']}}" data-desc="确认收款">确认转款</button>
-                       <a class="layui-btn layui-btn-small layui-btn-warm"  onclick="bohui({{$info['id']}})">驳回</a>
+                        <a class="layui-btn layui-btn-small layui-btn-warm"  onclick="bohui({{$info['id']}})">驳回</a>
                     </div>
                 </td>
             </tr>
@@ -93,6 +93,7 @@
                 var that = $(this);
                 var id=$(this).attr('data-id');
                 layer.confirm('确定要通过吗？',{title:'提示'},function (index) {
+                        var index = layer.load(0, {shade: [0.1,'#fff']});
                         $.ajax({
                             headers: {
                                 'X-CSRF-TOKEN': $('#token').val()

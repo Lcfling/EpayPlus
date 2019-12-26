@@ -22,6 +22,7 @@ class CodeuserController extends Controller
      * 数据列表
      */
     public function index(Request $request){
+       
         $codeuser=Codeuser::query();
 
         if(true==$request->has('user_id')){
@@ -36,12 +37,24 @@ class CodeuserController extends Controller
             $end=strtotime('+1day',$start);
             $codeuser->whereBetween('users.reg_time',[$start,$end]);
         }
-        $data = $codeuser->orderBy('reg_time','reg_time')->leftJoin('users_count','users.user_id','=','users_count.user_id')->select('users.*','users_count.balance','users_count.tol_brokerage')->paginate(10)->appends($request->all());
+        $data = $codeuser->orderBy('reg_time','reg_time')->leftJoin('users_count','users.user_id','=','users_count.user_id')->select('users.*','users_count.balance','users_count.tol_brokerage','users_count.tol_brokerage','active_brokerage')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
+            $num=$this->getImsiNum($value['user_id']);
+            $data[$key]['imsi_num']=$value['imsi_num']-$num;
+            $data[$key]['tol_brokerage']=$value['tol_brokerage']+$value['active_brokerage'];
             $data[$key]['reg_time']=date("Y-m-d H:i:s",$value["reg_time"]);
         }
         $min=config('admin.min_date');
-        return view('codeuser.list',['pager'=>$data,'min'=>$min,'input'=>$request->all()]);
+
+        $jiedan=[];
+        $is=Codeuser::where('take_status',1)->count();
+        $no=Codeuser::where('take_status',0)->count();
+        $jiedan['is']=$is;
+        $jiedan['no']=$no;
+        return view('codeuser.list',['pager'=>$data,'min'=>$min,'jiedan'=>$jiedan,'input'=>$request->all()]);
+    }
+    protected function getImsiNum($user_id){
+        return DB::table('imsi')->where(array('user_id'=>$user_id))->count();
     }
     /**
      * 编辑页
@@ -175,8 +188,9 @@ class CodeuserController extends Controller
         $data=$request->all();
         $id=$data['id'];
         unset($data['_token']);
-        $res=Codeuser::where('user_id',$id)->update(array('imsi_num'=>intval($data['imsi_num'])));
-        if($res!==false){
+        $imsi_num=intval($data['imsi_num']);
+        $res=Codeuser::where('user_id',$id)->increment('imsi_num',$imsi_num);
+        if($res){
             return ['msg'=>'操作成功！','status'=>1];
         }else{
             return ['msg'=>'操作失败！'];

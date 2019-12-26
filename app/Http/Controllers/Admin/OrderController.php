@@ -32,6 +32,13 @@ class OrderController extends Controller
         $order->setTable('order_'.$weeksuf);
         $sql=$order->orderBy('creatime','desc');
 
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $sql->whereBetween('creatime',[$start,$end]);
+        }
+
         if(true==$request->has('business_code')){
             $sql->where('business_code','=',$request->input('business_code'));
         }
@@ -514,14 +521,15 @@ class OrderController extends Controller
      */
     private function ownpushfirst($order_sn) {
         $ordertable =Order::getordersntable($order_sn);
-        $orderinfo=$ordertable->where(array("order_sn"=>$order_sn))->get();
+        $orderinfo=$ordertable->setConnection('mysql2')->where(array("order_sn"=>$order_sn))->get();
+
         if($orderinfo) {
             foreach ($orderinfo as $k=>$v) {
                 $url=$v['notifyUrl'];
                 $data=array(
                     'order_sn'=>$v['order_sn'],
                     'out_order_sn'=>$v['out_order_sn'],
-                    'sk_money'=>$v['sk_money'],
+                    'paymoney'=>$v['sk_money'],
                     'pay_time'=>$v['pay_time'],
                     'status'=>$v['status']
                 );
@@ -531,16 +539,18 @@ class OrderController extends Controller
                 }
                 $data['sign']=$this->getSignK($data,$businessinfo['accessKey']);
                 $res=$this->https_post_kfs($url,$data);
-                file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方订单数据~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
-                file_put_contents('./notifyUrl_sd.txt',$orderinfo.PHP_EOL,FILE_APPEND);
+                file_put_contents('./notifyUrl_st.txt',"~~~~~~~~~~~~~~~第三方订单数据~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
+                file_put_contents('./notifyUrl_st.txt',$orderinfo.PHP_EOL,FILE_APPEND);
+                file_put_contents('./notifyUrl_st.txt',"~~~~~~~~~~~~~~~回调报文~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
+                file_put_contents('./notifyUrl_st.txt',print_r($data,true).PHP_EOL,FILE_APPEND);
                 if($res == 'success') {
-                    file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回成功~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
-                    file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
+                    file_put_contents('./notifyUrl_st.txt',"~~~~~~~~~~~~~~~第三方回调返回成功~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
+                    file_put_contents('./notifyUrl_st.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
                     $ordertable->where(array('id'=>$v['id']))->update(array('callback_status'=>1,'callback_num'=>1,'callback_time'=>time()));
                     return ['msg'=>'回调成功!','status'=>1];
                 } else {
-                    file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回失败~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
-                    file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
+                    file_put_contents('./notifyUrl_st.txt',"~~~~~~~~~~~~~~~第三方回调返回失败~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
+                    file_put_contents('./notifyUrl_st.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
                     $ordertable->where(array('id'=>$v['id'],'status'=>1,'callback_status'=>0))->update(array('callback_status'=>0,'callback_num'=>1,'callback_time'=>time()));
                     return ['msg'=>'回调成功!第三方返回失败'];
                 }
@@ -558,14 +568,14 @@ class OrderController extends Controller
     public function sfpushfirst(StoreRequest $request){
         $order_sn=$request->input('order_sn');
         $ordertable =Order::getordersntable($order_sn);
-        $orderinfo=$ordertable->where(array("order_sn"=>$order_sn))->get();
+        $orderinfo=$ordertable->setConnection('mysql2')->where(array("order_sn"=>$order_sn))->get();
         if($orderinfo) {
             foreach ($orderinfo as $k=>$v) {
                 $url=$v['notifyUrl'];
                 $data=array(
                     'order_sn'=>$v['order_sn'],
                     'out_order_sn'=>$v['out_order_sn'],
-                    'sk_money'=>$v['sk_money'],
+                    'paymoney'=>$v['sk_money'],
                     'pay_time'=>$v['pay_time'],
                     'status'=>$v['status']
                 );
@@ -575,16 +585,18 @@ class OrderController extends Controller
                 }
                 $data['sign']=$this->getSignK($data,$businessinfo['accessKey']);
                 $res=$this->https_post_kfs($url,$data);
-                file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方订单数据~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
-                file_put_contents('./notifyUrl_sd.txt',$orderinfo.PHP_EOL,FILE_APPEND);
+                file_put_contents('./notifyUrl_st.txt',"~~~~~~~~~~~~~~~第三方订单数据~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
+                file_put_contents('./notifyUrl_st.txt',$orderinfo.PHP_EOL,FILE_APPEND);
+                file_put_contents('./notifyUrl_st.txt',"~~~~~~~~~~~~~~~回调报文~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
+                file_put_contents('./notifyUrl_st.txt',print_r($data,true).PHP_EOL,FILE_APPEND);
                 if($res == 'success') {
-                    file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回成功~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
-                    file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
+                    file_put_contents('./notifyUrl_st.txt',"~~~~~~~~~~~~~~~第三方回调返回成功~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
+                    file_put_contents('./notifyUrl_st.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
                     $ordertable->where(array('id'=>$v['id']))->update(array('callback_status'=>1,'callback_num'=>1,'callback_time'=>time()));
                     return ['msg'=>'回调成功!','status'=>1];
                 } else {
-                    file_put_contents('./notifyUrl_sd.txt',"~~~~~~~~~~~~~~~第三方回调返回失败~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
-                    file_put_contents('./notifyUrl_sd.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
+                    file_put_contents('./notifyUrl_st.txt',"~~~~~~~~~~~~~~~第三方回调返回失败~~~~~~~~~~~~~~~".PHP_EOL,FILE_APPEND);
+                    file_put_contents('./notifyUrl_st.txt',print_r($res,true).PHP_EOL,FILE_APPEND);
                     $ordertable->where(array('id'=>$v['id'],'status'=>1,'callback_status'=>0))->update(array('callback_status'=>0,'callback_num'=>1,'callback_time'=>time()));
                     return ['msg'=>'回调成功!第三方返回失败','status'=>1];
                 }

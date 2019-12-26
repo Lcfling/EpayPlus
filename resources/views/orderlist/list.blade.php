@@ -25,14 +25,19 @@
         </select>
     </div>
     <div class="layui-inline">
+        <select name="payType">
+            <option value="">请选择支付类型</option>
+            <option value="1" {{isset($input['payType'])&&$input['payType']==1?'selected':''}}>微信</option>
+            <option value="2" {{isset($input['payType'])&&$input['payType']==2?'selected':''}}>支付宝</option>
+        </select>
+    </div>
+    <div class="layui-inline">
         <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true})" autocomplete="off" class="layui-input">
     </div>
-    <div class="layui-inline">
+    <div class="layui-inline" style="padding-top: 10px;float: right;padding-right: 95px;">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
         <button id="res" class="layui-btn layui-btn-primary">重置</button>
-    </div>
-    <div class="layui-inline">
-        <button class="layui-btn layui-btn-warm" name="excel" value="excel" lay-submit lay-filter="formDemo">导出EXCEL</button>
+        <button class="layui-btn layui-btn-warm" name="excel" value="excel">导出EXCEL</button>
     </div>
 @endsection
 @section('table')
@@ -146,6 +151,7 @@
                 $("input[name='user_id']").val('');
                 $("input[name='creatime']").val('');
                 $("select[name='status']").val('');
+                $("select[name='payType']").val('');
                 $('form').submit();
             });
         });

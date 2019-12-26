@@ -16,6 +16,9 @@
         <input type="text"  value="{{ $input['erweima_id'] or '' }}" name="erweima_id" placeholder="请输入二维码ID" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
+        <input type="text"  value="{{ $input['remark'] or '' }}" name="remark" placeholder="请输入流水类型" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
         <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}'})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">

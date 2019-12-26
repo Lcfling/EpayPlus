@@ -27,6 +27,7 @@
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
+            <col class="hidden-xs" width="150">
         </colgroup>
         <thead>
         <tr>
@@ -35,6 +36,7 @@
             <th class="hidden-xs">商户昵称</th>
             <th class="hidden-xs">商户电话</th>
             <th class="hidden-xs">商户费率</th>
+            <th class="hidden-xs">商户余额</th>
             <th class="hidden-xs">成功率</th>
             <th class="hidden-xs">收款总额</th>
             <th class="hidden-xs">实收金额(扣除费率)</th>
@@ -51,6 +53,7 @@
                 <td class="hidden-xs">{{$info['nickname']}}</td>
                 <td class="hidden-xs">{{$info['mobile']}}</td>
                 <td class="hidden-xs">{{$info['fee']*100}}%</td>
+                <td class="hidden-xs">{{$info['balance']/100}}</td>
                 <td class="hidden-xs">{{$info['sucrate']}}%</td>
                 <td class="hidden-xs">{{$info['tol_sore']/100}}</td>
                 <td class="hidden-xs">{{$info['sore_balance']/100}}</td>

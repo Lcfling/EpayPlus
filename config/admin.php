@@ -46,5 +46,6 @@ return [
     'cannot_del_admin_ids'          =>  '1',
 
     //search-min_date
-    'min_date'                      =>'2019-11-11',
+    'min_date'                      =>'2019-12-12',
+    'zhu_img'                       =>'http://119.28.226.32:8787/'
 ];

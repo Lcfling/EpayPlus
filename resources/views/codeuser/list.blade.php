@@ -16,6 +16,10 @@
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
     </div>
+    <div class="layui-inline" style="padding-left: 90px;">
+            <label style="font-size: 20px;">已接单&nbsp;:&nbsp;</label><span class="layui-btn layui-btn-small">{{$jiedan['is']}}人</span>
+            <label style="font-size: 20px;margin-left: 20px">未接单&nbsp;:&nbsp;</label><span class="layui-btn layui-btn-small layui-btn-danger">{{$jiedan['no']}}人</span>
+    </div>
 @endsection
 @section('table')
     <table class="layui-table" lay-even lay-skin="nob">
@@ -38,7 +42,7 @@
         <thead>
         <tr>
             <th class="hidden-xs">序号</th>
-            <th class="hidden-xs">手机号</th>
+            <th class="hidden-xs">账号</th>
             <th class="hidden-xs">上级ID</th>
             <th class="hidden-xs">身份</th>
             <th class="hidden-xs">剩余分数</th>
@@ -57,13 +61,13 @@
         @foreach($pager as $info)
             <tr>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
-                <td class="hidden-xs">{{$info['mobile']}}</td>
+                <td class="hidden-xs">{{$info['account']}}</td>
                 <td class="hidden-xs">{{$info['pid']}}</td>
                 <td class="hidden-xs">{{$info['shenfen']}}</td>
                 <td class="hidden-xs">{{$info['balance']/100}}</td>
                 <td class="hidden-xs">{{$info['rate']*100}}%</td>
                 <td class="hidden-xs">{{$info['rates']*100}}%</td>
-                <td class="hidden-xs">@if($info['take_status']==0)<span class="layui-btn layui-btn-small">未接单</span>@elseif($info['take_status']==1)<span class="layui-btn layui-btn-small layui-btn-warm">已接单</span>@endif</td>
+                <td class="hidden-xs">@if($info['take_status']==0)<span class="layui-btn layui-btn-small layui-btn-danger">未接单</span>@elseif($info['take_status']==1)<span class="layui-btn layui-btn-small">已接单</span>@endif</td>
                 <td class="hidden-xs">
                     @if($info['jh_status']==0)<span class="layui-btn layui-btn-small layui-btn-danger">未激活</span>
                     @elseif($info['jh_status']==1)<span class="layui-btn layui-btn-small layui-btn-normal">已激活</span>
@@ -98,6 +102,7 @@
         <input type="hidden" id="token" value="{{csrf_token()}}">
     </table>
     <div class="page-wrap">
+{{--        {{$pager->total()}}--}}
         {{$pager->render()}}
     </div>
 @endsection

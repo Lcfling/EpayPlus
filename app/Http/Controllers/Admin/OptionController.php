@@ -50,7 +50,7 @@ class OptionController extends Controller
      */
     public function store(StoreRequest $request){
         $data=$request->all();
-        unset($data['_token']);
+        unset($data['_token']);        
         $res=$this->add_unique($data['key']);
         if(!$res){
             $data['creatime']=time();

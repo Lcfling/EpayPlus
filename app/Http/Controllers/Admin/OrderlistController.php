@@ -20,9 +20,17 @@ class OrderlistController extends Controller
         }else{
             $weeksuf = computeWeek(time(),false);
         }
+
         $order =new Order;
         $order->setTable('order_'.$weeksuf);
         $sql=$order->orderBy('creatime','desc');
+
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $sql->whereBetween('creatime',[$start,$end]);
+        }
 
         if(true==$request->has('business_code')){
             $sql->where('business_code','=',$request->input('business_code'));
@@ -38,6 +46,9 @@ class OrderlistController extends Controller
         }
         if(true==$request->has('status')){
             $sql->where('status','=',$request->input('status'));
+        }
+        if(true==$request->has('payType')){
+            $sql->where('payType','=',$request->input('payType'));
         }
 
         if(true==$request->input('excel')&& true==$request->has('excel')){

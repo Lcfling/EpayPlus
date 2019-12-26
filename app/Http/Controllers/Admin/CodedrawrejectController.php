@@ -35,6 +35,7 @@ class CodedrawrejectController extends Controller
         }
 
         $data = $reject->where('status',2)->orderBy('creatime','desc')->paginate(10)->appends($request->all());
+        
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['endtime'] =date("Y-m-d H:i:s",$value["endtime"]);

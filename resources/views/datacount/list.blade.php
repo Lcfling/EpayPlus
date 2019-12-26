@@ -203,7 +203,29 @@
         </fieldset>
     </div>
 
+    <div class="layui-inline" style="width: 30%;margin-left: 30px">
+        <fieldset class="layui-elem-field site-demo-button">
+            <legend>账单核算</legend>
+            <br>
+            <blockquote class="layui-elem-quote layui-text" style="veritical-align:middle;">
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">卡上余额</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 120px">{{$data['plat']['card_balance']}}元</span>
+                </div>
 
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">平台盈利</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 120px">{{$data['plat']['plat_profit']}}元</span>
+                </div>
+
+                <div class="layui-form-item">
+                    <label style="font-size: 15px;">总沉淀资金</label>
+                    <span class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 105px">{{$data['plat']['down_money']}}元</span>
+                </div>
+            </blockquote>
+            <br>
+        </fieldset>
+    </div>
 
 @endsection
 @section('js')

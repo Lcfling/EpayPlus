@@ -24,6 +24,13 @@ class OrderfalseController extends Controller
         $order->setTable('order_'.$weeksuf);
         $sql=$order->orderBy('creatime','desc');
 
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $sql->whereBetween('creatime',[$start,$end]);
+        }
+
         if(true==$request->has('business_code')){
             $sql->where('business_code','=',$request->input('business_code'));
         }

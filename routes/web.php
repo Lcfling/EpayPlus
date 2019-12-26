@@ -19,7 +19,7 @@ Route::group(['namespace'  => "Auth"], function () {
     Route::get('/logout',               'LoginController@logout')->name('logout');
 });
 //后台主要模块
-Route::group(['middleware' => ['auth', 'permission']], function () {
+Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], function () {
     Route::get('/',                     'HomeController@index');
     Route::get('/gewt',                 'HomeController@configr');
     Route::get('/index',                'HomeController@welcome');

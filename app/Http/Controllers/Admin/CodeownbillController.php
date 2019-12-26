@@ -10,8 +10,13 @@ class CodeownbillController extends Controller
 {
     public function own($id,Request $request){
         $id=$id?$id:'';
+        if(true==$request->has('creatime')){
+            $time = strtotime($request->input('creatime'));
+            $tablepfe = date('Ymd',$time);
+        }else{
+            $tablepfe=date('Ymd');
+        }
 
-        $tablepfe=date('Ymd');
         $account =new Billflow;
         $account->setTable('account_'.$tablepfe);
         $sql=$account->orderBy('creatime','desc');

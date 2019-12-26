@@ -46,6 +46,7 @@ class HomeController extends BaseController
      * 欢迎首页
      */
     public function welcome(){
+        
         $rid=getrole(Auth::id());
         if($rid==4){
             return '';

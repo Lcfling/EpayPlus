@@ -72,7 +72,8 @@ class CallcenterController extends Controller
 
             $path = $file->getRealPath();       //真实路径
             $filename = $file_relative_path.'/'.date('Ymd').mt_rand(999,9999).'.'.$ext;//文件路径
-
+            //$filename='callcenter/'.date('Ymd').mt_rand(999,9999).'.'.$ext;
+            //$isImg=Storage::disk('oss')->put($filename, file_get_contents($path)); //存入服务器
             Storage::disk('callcenter')->put($filename, file_get_contents($path)); //存入服务器
             $data['creatime']=time();
             $data['url']=$filename;
@@ -82,6 +83,8 @@ class CallcenterController extends Controller
             }else{
                 return ['msg'=>'添加失败！'];
             }
+
+
         }else{
             return ['msg'=>'请选择二维码图片！'];
         }

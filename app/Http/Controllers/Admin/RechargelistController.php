@@ -39,7 +39,7 @@ class RechargelistController extends Controller
         $data = $czrecord->where('status',0)->orderBy('creatime','desc')->paginate(10)->appends($request->all());
         foreach ($data as $key =>$value){
             $data[$key]['creatime'] =date("Y-m-d H:i:s",$value["creatime"]);
-            $data[$key]['czimg']='http://epp.zgzyph.com'.$value["czimg"];
+            $data[$key]['czimg']=config('admin.zhu_img').$value["czimg"];
         }
         $min=config('admin.min_date');
         return view('rechargelist.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
