@@ -28,6 +28,7 @@
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
             <col class="hidden-xs" width="150">
@@ -42,7 +43,8 @@
             <th class="hidden-xs">码商ID</th>
             <th class="hidden-xs">余额</th>
             <th class="hidden-xs">总跑分</th>
-            <th class="hidden-xs">总佣金</th>
+            <th class="hidden-xs">跑分佣金</th>
+            <th class="hidden-xs">激活佣金</th>
             <th class="hidden-xs">冻结金额</th>
             <th class="hidden-xs">提现总金额</th>
             <th class="hidden-xs">提现实际到账总金额</th>
@@ -61,6 +63,7 @@
                 <td class="hidden-xs">{{$info['balance']/100}}</td>
                 <td class="hidden-xs">{{$info['tol_sore']/100}}</td>
                 <td class="hidden-xs">{{$info['tol_brokerage']/100}}</td>
+                <td class="hidden-xs">{{$info['active_brokerage']/100}}</td>
                 <td class="hidden-xs">{{$info['freeze_money']/100}}</td>
                 <td class="hidden-xs">{{$info['drawMoney']/100}}</td>
                 <td class="hidden-xs">{{$info['tradeMoney']/100}}</td>

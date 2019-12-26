@@ -64,16 +64,29 @@ class BindController extends Controller
             return ['msg'=>'手机号不是您开户时的手机号','status'=>0];
         }else{
             Redis::set('bind_code'.$mobile,(int)$code,300);
+            $statusStr = array(
+                "0" => "短信发送成功!",
+                "-1" => "参数不全!",
+                "-2" => "服务器空间不支持,请确认支持curl或者fsocket，联系您的空间商解决或者更换空间！",
+                "30" => "密码错误!",
+                "40" => "账号不存在!",
+                "41" => "余额不足!",
+                "42" => "帐户已过期!",
+                "43" => "IP地址限制!",
+                "50" => "内容含有敏感词!",
+                "10001" => "请勿频繁发送!"
+            );
             //发送短信
             $res = Verificat::dxbsend($mobile,(int)$code,$ip);
+            $msg = $statusStr[$res];
             if($res=="0"){
-                Verificat::insertsendcode((int)$code,$mobile,6,$ip,1,'发送成功！');
+                Verificat::insertsendcode((int)$code,$mobile,6,$ip,1,$msg);
                 return ['msg'=>'发送成功！','status'=>1];
-            }elseif($res=="123"){
-                Verificat::insertsendcode((int)$code,$mobile,6,$ip,0,'一分钟只能发送一条！');
-                return ['msg'=>'一分钟只能发送一条！','status'=>0];
+            }elseif($res=="10001"){
+                Verificat::insertsendcode((int)$code,$mobile,6,$ip,0,$msg);
+                return ['msg'=>'请勿频繁发送！','status'=>0];
             }else{
-                Verificat::insertsendcode((int)$code,$mobile,6,$ip,0,$res);
+                Verificat::insertsendcode((int)$code,$mobile,6,$ip,0,$msg);
                 return ['msg'=>'发送失败！','status'=>0];
             }
         }

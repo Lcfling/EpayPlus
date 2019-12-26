@@ -3,7 +3,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label" style="width: 100px">手机号：</label>
         <div class="layui-input-inline">
-            <input type="text" value="{{$info['mobile'] or ''}}" name="account" required lay-verify="tel" placeholder="请输入手机号"  autocomplete="off" class="layui-input" @if($id!=0) disabled @endif>
+            <input type="text" value="{{$info['account'] or ''}}" name="account" required lay-verify="tel" placeholder="请输入手机号"  autocomplete="off" class="layui-input" @if($id!=0) disabled @endif>
         </div>
     </div>
 
