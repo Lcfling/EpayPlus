@@ -25,6 +25,8 @@
             <col class="hidden-xs" width="50">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
+            <col class="hidden-xs" width="120">
+            <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
             <col class="hidden-xs" width="100">
@@ -41,6 +43,8 @@
         <tr>
             <th class="hidden-xs">序号</th>
             <th class="hidden-xs">码商ID</th>
+            <th class="hidden-xs">码商手机号</th>
+            <th class="hidden-xs">码商姓名</th>
             <th class="hidden-xs">余额</th>
             <th class="hidden-xs">总跑分</th>
             <th class="hidden-xs">跑分佣金</th>
@@ -60,6 +64,8 @@
             <tr>
                 <td class="hidden-xs">{{$info['id']}}</td>
                 <td class="hidden-xs">{{$info['user_id']}}</td>
+                <td class="hidden-xs">{{$info['account']}}</td>
+                <td class="hidden-xs">{{$info['name']}}</td>
                 <td class="hidden-xs">{{$info['balance']/100}}</td>
                 <td class="hidden-xs">{{$info['tol_sore']/100}}</td>
                 <td class="hidden-xs">{{$info['tol_brokerage']/100}}</td>

@@ -16,6 +16,11 @@ class QrcodeController extends Controller
      */
     public function index(StoreRequest $request){
         $erweima=Qrcode::query();
+
+        if(true==$request->has('id')){
+            $erweima->where('id','=',$request->input('id'));
+        }
+
         if(true==$request->has('user_id')){
             $erweima->where('user_id','=',$request->input('user_id'));
         }
@@ -33,7 +38,14 @@ class QrcodeController extends Controller
             $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
             $data[$key]['erweima']=config('admin.zhu_img').$value["erweima"];
         }
+        $qrcode=[];
+        $open=Qrcode::where(array('status'=>0,'code_status'=>0))->count();
+        $no_del=Qrcode::where('status',0)->count();
+        $all=Qrcode::count();
+        $qrcode['open']=$open;
+        $qrcode['no_del']=$no_del;
+        $qrcode['all']=$all;
         $min=config('admin.min_date');
-        return view('qrcode.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
+        return view('qrcode.list',['list'=>$data,'qrcode'=>$qrcode,'min'=>$min,'input'=>$request->all()]);
     }
 }

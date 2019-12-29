@@ -10,10 +10,18 @@
         <input type="text"  value="{{ $input['name'] or '' }}" name="name" placeholder="请输入姓名" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
+        <input type="text"  value="{{ $input['id'] or '' }}" name="id" placeholder="请输入二维码ID" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-inline">
         <input type="text"  value="{{ $input['creatime'] or '' }}" name="creatime" placeholder="创建时间" onclick="layui.laydate({elem: this, festival: true,min:'{{$min}}'})" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-inline">
         <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">搜索</button>
+    </div>
+    <div class="layui-inline" style="padding-left: 90px;">
+        <label style="font-size: 20px;">开启&nbsp;:&nbsp;</label><span class="layui-btn layui-btn-small layui-btn-normal">{{$qrcode['open']}}个</span>
+        <label style="font-size: 20px;margin-left: 20px">未删除&nbsp;:&nbsp;</label><span class="layui-btn layui-btn-small layui-btn-default">{{$qrcode['no_del']}}个</span>
+        <label style="font-size: 20px;margin-left: 20px">全部&nbsp;:&nbsp;</label><span class="layui-btn layui-btn-small layui-btn-warm">{{$qrcode['all']}}个</span>
     </div>
 @endsection
 @section('table')

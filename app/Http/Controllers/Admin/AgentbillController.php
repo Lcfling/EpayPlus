@@ -22,6 +22,13 @@ class AgentbillController extends Controller
         $agentbill->setTable('agent_billflow_'.$weeksuf);
         $sql=$agentbill->orderBy('creatime','desc');
 
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $sql->whereBetween('creatime',[$start,$end]);
+        }
+
         if(true==$request->has('order_sn')){
             $sql->where('order_sn','=',$request->input('order_sn'));
         }

@@ -23,6 +23,13 @@ class BusbillController extends Controller
         $busbill->setTable('business_billflow_'.$weeksuf);
         $sql=$busbill->orderBy('creatime','desc');
 
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $sql->whereBetween('creatime',[$start,$end]);
+        }
+
         if(true==$request->has('order_sn')){
             $sql->where('order_sn','=',$request->input('order_sn'));
         }

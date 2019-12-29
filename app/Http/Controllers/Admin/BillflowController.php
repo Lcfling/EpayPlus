@@ -23,6 +23,14 @@ class BillflowController extends Controller
         $account =new Billflow;
         $account->setTable('account_'.$tablepfe);
         $sql=$account->orderBy('creatime','desc');
+
+        if(true==$request->has('creatime')){
+            $creatime=$request->input('creatime');
+            $start=strtotime($creatime);
+            $end=strtotime('+1day',$start);
+            $sql->whereBetween('creatime',[$start,$end]);
+        }
+
         if(true==$request->has('user_id')){
             $sql->where('user_id','=',$request->input('user_id'));
         }
