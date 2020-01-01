@@ -7,7 +7,7 @@ use App\Models\Order;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+ini_set("memory_limit","300M");
 class OrderlistController extends Controller
 {
     /**
@@ -23,6 +23,7 @@ class OrderlistController extends Controller
 
         $order =new Order;
         $order->setTable('order_'.$weeksuf);
+
         $sql=$order->orderBy('creatime','desc');
 
         if(true==$request->has('creatime')){

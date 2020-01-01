@@ -7,7 +7,7 @@ use App\Models\Order;
 use App\Models\Orderrecord;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+ini_set("memory_limit","300M");
 class OrderfalseController extends Controller
 {
     /**

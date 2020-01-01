@@ -14,6 +14,7 @@ use App\Models\Order;
 use App\Models\Business;
 use App\Models\Codecount;
 use App\Models\Rebate;
+ini_set("memory_limit","300M");
 class OrderController extends Controller
 {
     /**
