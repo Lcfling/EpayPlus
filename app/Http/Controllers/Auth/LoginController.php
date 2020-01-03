@@ -49,9 +49,19 @@ class LoginController extends Controller
 
         //判断账号是否存在
         $count = User::where('username','=',$request->input('username'))->first();
+
         if(!$count){
             return redirect('/admin/login')->withErrors([trans('fzs.login.false_account')]);
         }
+        //登录检测
+        if($count['is_login']==0){
+            return redirect('/admin/login')->withErrors([trans('fzs.login.false_is_login')]);
+        }
+        //ip检测
+        if($count['last_ip']!=$request->ip()){
+            return redirect('/admin/login')->withErrors([trans('fzs.login.false_last_ip')]);
+        }
+
         $user = new User();
         if(!$this->verifyGooglex($request->input('ggkey'),htmlformat($request->input('username')))){
             return redirect('/admin/login')->withErrors([trans('fzs.login.false_ggkey')]);

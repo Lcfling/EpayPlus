@@ -7,73 +7,103 @@ use App\Models\Order;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-ini_set("memory_limit","300M");
+
 class OrderlistController extends Controller
 {
     /**
      * 订单列表
      */
-    public function index(StoreRequest $request){
-        if(true==$request->has('creatime')){
+    public function index(StoreRequest $request)
+    {
+
+        if (true == $request->has('creatime')) {
             $time = strtotime($request->input('creatime'));
-            $weeksuf = computeWeek($time,false);
-        }else{
-            $weeksuf = computeWeek(time(),false);
+            $weeksuf = computeWeek($time, false);
+        } else {
+            $weeksuf = computeWeek(time(), false);
         }
 
-        $order =new Order;
-        $order->setTable('order_'.$weeksuf);
+        $order = new Order;
+        $order->setTable('order_' . $weeksuf);
 
-        $sql=$order->orderBy('creatime','desc');
+        $sql = $order->orderBy('creatime', 'desc');
 
-        if(true==$request->has('creatime')){
-            $creatime=$request->input('creatime');
-            $start=strtotime($creatime);
-            $end=strtotime('+1day',$start);
-            $sql->whereBetween('creatime',[$start,$end]);
-        }
-
-        if(true==$request->has('business_code')){
-            $sql->where('business_code','=',$request->input('business_code'));
-        }
-        if(true==$request->has('order_sn')){
-            $sql->where('order_sn','=',$request->input('order_sn'));
-        }
-        if(true==$request->has('out_order_sn')){
-            $sql->where('out_order_sn','=',$request->input('out_order_sn'));
-        }
-        if(true==$request->has('user_id')){
-            $sql->where('user_id','=',$request->input('user_id'));
-        }
-        if(true==$request->has('status')){
-            $sql->where('status','=',$request->input('status'));
-        }
-        if(true==$request->has('payType')){
-            $sql->where('payType','=',$request->input('payType'));
+        if (true == $request->has('creatime')) {
+            $creatime = $request->input('creatime');
+            $start = strtotime($creatime);
+            $end = strtotime('+1day', $start);
+            $sql->whereBetween('creatime', [$start, $end]);
         }
 
-        if(true==$request->input('excel')&& true==$request->has('excel')){
-            $head = array('商户标识','平台订单号','商户订单号','码商ID','二维码ID','码商收款','收款金额','实际到账金额','支付类型','支付状态','回调状态','创建时间');
-            $excel = $sql->select('business_code','order_sn','out_order_sn','user_id','erweima_id','sk_status','sk_money','tradeMoney','payType','status','callback_status','creatime')->get()->toArray();
-            foreach ($excel as $key=>$value){
-                $excel[$key]['sk_status']=$this->sk_status($value['sk_status']);
-                $excel[$key]['sk_money']=$value['sk_money']/100;
-                $excel[$key]['tradeMoney']=$value['tradeMoney']/100;
-                $excel[$key]['payType']=$this->payName($value['payType']);
-                $excel[$key]['status']=$this->statusName($value['status']);
-                $excel[$key]['callback_status']=$this->callback($value['callback_status']);
-                $excel[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
+        if (true == $request->has('business_code')) {
+            $sql->where('business_code', '=', $request->input('business_code'));
+        }
+        if (true == $request->has('order_sn')) {
+            $sql->where('order_sn', '=', $request->input('order_sn'));
+        }
+        if (true == $request->has('out_order_sn')) {
+            $sql->where('out_order_sn', '=', $request->input('out_order_sn'));
+        }
+        if (true == $request->has('user_id')) {
+            $sql->where('user_id', '=', $request->input('user_id'));
+        }
+        if (true == $request->has('status')) {
+            $sql->where('status', '=', $request->input('status'));
+        }
+        if (true == $request->has('payType')) {
+            $sql->where('payType', '=', $request->input('payType'));
+        }
+
+        if (true == $request->input('excel') && true == $request->has('excel')) {
+            if(false==$request->has('creatime')){
+                echo "<script>alert('请选择日期!');location.href='".$_SERVER["HTTP_REFERER"]."';</script>";
+            }else{
+                $head = array('商户标识', '平台订单号', '商户订单号', '码商ID', '二维码ID', '码商收款', '收款金额', '实际到账金额', '支付类型', '支付状态', '回调状态', '创建时间');
+
+                    $excel = $sql->select('business_code', 'order_sn', 'out_order_sn', 'user_id', 'erweima_id', 'sk_status', 'sk_money', 'tradeMoney', 'payType', 'status', 'callback_status', 'creatime')->get()->toArray();
+
+                    foreach ($excel as $key=>$value){
+                        $excel[$key]['sk_status']=$this->sk_status($value['sk_status']);
+                        $excel[$key]['sk_money']=$value['sk_money']/100;
+                        $excel[$key]['tradeMoney']=$value['tradeMoney']/100;
+                        $excel[$key]['payType']=$this->payName($value['payType']);
+                        $excel[$key]['status']=$this->statusName($value['status']);
+                        $excel[$key]['callback_status']=$this->callback($value['callback_status']);
+                        $excel[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
+                    }
+                    exportExcel($head,$excel,'订单记录'.date('YmdHis',time()),'',true);
+
             }
-            exportExcel($head,$excel,'订单记录'.date('YmdHis',time()),'',true);
-        }else{
-            $data=$sql->paginate(10)->appends($request->all());
-            foreach ($data as $key=>$value){
-                $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
-                $data[$key]['pay_time']=date("Y-m-d H:i:s",$value["pay_time"]);
+
+
+        } else {
+            $data = $sql->paginate(10)->appends($request->all());
+            foreach ($data as $key => $value) {
+                $data[$key]['creatime'] = date("Y-m-d H:i:s", $value["creatime"]);
+                $data[$key]['pay_time'] = date("Y-m-d H:i:s", $value["pay_time"]);
             }
         }
-        $min=config('admin.min_date');
-        return view('orderlist.list',['list'=>$data,'min'=>$min,'input'=>$request->all()]);
+        $min = config('admin.min_date');
+        return view('orderlist.list', ['list' => $data, 'min' => $min, 'input' => $request->all()]);
+    }
+
+    /**
+     * excel导出赋值
+     */
+    private function getEdata($data){
+        $head = array('商户标识', '平台订单号', '商户订单号', '码商ID', '二维码ID', '码商收款', '收款金额', '实际到账金额', '支付类型', '支付状态', '回调状态', '创建时间');
+        foreach ($data as $key=>$value){
+            $data[$key]['sk_status']=$this->sk_status($value['sk_status']);
+            $data[$key]['sk_money']=$value['sk_money']/100;
+            $data[$key]['tradeMoney']=$value['tradeMoney']/100;
+            $data[$key]['payType']=$this->payName($value['payType']);
+            $data[$key]['status']=$this->statusName($value['status']);
+            $data[$key]['callback_status']=$this->callback($value['callback_status']);
+            $data[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
+        }
+        exportExcel($head,$data,'订单记录'.date('YmdHis',time()),'',true);
+
+
     }
     /**
      * 码商收款
@@ -151,4 +181,5 @@ class OrderlistController extends Controller
                 break;
         }
     }
+
 }

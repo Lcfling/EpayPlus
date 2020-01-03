@@ -33,9 +33,17 @@ Route::group(['namespace'  => "Auth"], function () {
     Route::post('/valUser',             'BindController@checkUserLogin');//效验账号密码的真实性
     Route::post('/sendSMS',             'BindController@sendSMS');//发送验证码
     Route::post('/bindCode',            'BindController@bindCode');//绑定加效验
+
+    Route::get('/lastip',                 'LastipController@index');    //授权IP
+    Route::post('/valAccountIp',          'LastipController@checkAccount'); //效验账号是否存在
+    Route::post('/valUserIp',             'LastipController@checkUserLogin');//效验账号密码的真实性
+    Route::post('/sendSMSIp',             'LastipController@sendSMS');//发送验证码
+    Route::post('/bindCodeIp',            'LastipController@bindCode');//绑定加效验
+
     Route::get('/login',                'LoginController@showLoginForm')->name('login');//登录
     Route::post('/login',               'LoginController@login');
     Route::get('/logout',               'LoginController@logout')->name('logout');
+
 });
 //后台主要模块
 Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], function () {
@@ -45,7 +53,9 @@ Route::group(['namespace' => "Admin",'middleware' => ['auth', 'permission']], fu
     Route::post('/sort',                'HomeController@changeSort');
     Route::resource('/menus',           'MenuController');
     Route::resource('/logs',            'LogController');
-    Route::resource('/users',           'UserController');
+    Route::resource('/users',           'UserController');//后台用户列表
+    Route::post('/users_islogin',       'UserController@users_islogin');//代理登陆
+
     Route::resource('/ucenter',         'UcenterController');
     Route::get('/userinfo',             'UserController@userInfo');
     Route::post('/saveinfo/{type}',     'UserController@saveInfo');

@@ -43,6 +43,12 @@ class CodeuserController extends Controller
             $data[$key]['imsi_num']=$value['imsi_num']-$num;
             $data[$key]['tol_brokerage']=$value['tol_brokerage']+$value['active_brokerage'];
             $data[$key]['reg_time']=date("Y-m-d H:i:s",$value["reg_time"]);
+            if($data[$key]['user_id']==1){
+                $data[$key]['pid']=0;
+            }
+            if($data[$key]['user_id']==117){
+                $data[$key]['rates']='0.0180';
+            }
         }
         $min=config('admin.min_date');
 
@@ -79,7 +85,12 @@ class CodeuserController extends Controller
         }else{
             $paccount='';
         }
-
+        if($user_id==1){
+            $info['pid']=0;
+        }
+        if($user_id==117){
+            $info['rates']='0.0180';
+        }
         return view('codeuser.showinfo',['id'=>$user_id,'info'=>$info,'paccount'=>$paccount]);
     }
     /**
@@ -225,6 +236,9 @@ class CodeuserController extends Controller
     //费率页面
     public function ownfee($user_id){
         $info = $user_id?Codeuser::find($user_id):[];
+        if($user_id==117){
+            $info['rates']='0.0180';
+        }
         $info['rate']=$info['rate']*100;
         $info['rates']=$info['rates']*100;
         return view('codeuser.ownfee',['id'=>$user_id,'info'=>$info]);

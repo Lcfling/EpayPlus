@@ -3,20 +3,17 @@
 namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
+
 use App\Models\User;
 use App\Models\Verificat;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Redis;
-use PragmaRX\Google2FA\Google2FA;
-class BindController extends Controller
+
+class LastipController extends Controller
 {
     public function index(){
 
-//        $google2fa = new Google2FA();
-//        //生成二维码
-//        $qrCodeUrl = $google2fa->getQRCodeUrl("EPayPlusAdmin",18338017626,'UMWVWP7C2QBTXUHZ');
-//        dump($qrCodeUrl);
-        return view('auth.register');
+        return view('auth.lastip');
     }
     /**
      * 效验用户名是否存在
@@ -39,7 +36,7 @@ class BindController extends Controller
             //获取到用户信息
             $user = User::where('username','=',htmlformat($account))->first();
             if(!App::make('hash')->check(htmlformat($password),$user['password'])){
-                return ['msg'=>'旧密码不正确！','status'=>0];
+                return ['msg'=>'密码不正确！','status'=>0];
             }else{
                 return ['msg'=>'验证成功！','status'=>1];
             }
@@ -55,30 +52,29 @@ class BindController extends Controller
         $account = htmlformat($request->input('account'));
         //获取手机号
         $mobile = htmlformat($request->input('mobile'));
+
         //获取ip
         $ip = $request->ip();
-        $user = User::where('username','=',$account)->first();
+
         //验证码
         $code = mt_rand(100000,999999);
-        if($mobile!=$user['mobile']){
-            return ['msg'=>'手机号不是您开户时的手机号','status'=>0];
+
+        Redis::setex('bind_code_ip'.$mobile,300,(int)$code);
+
+        //发送短信
+        $res = Verificat::yxtsend($mobile,(int)$code,$ip);
+
+        if($res=="0"){
+            Verificat::insertsendcode((int)$code,$mobile,6,$ip,1,'发送成功！');
+            return ['msg'=>'发送成功！','status'=>1];
+        }elseif($res=="10001"){
+            Verificat::insertsendcode((int)$code,$mobile,6,$ip,0,'一分钟只能发送一条！');
+            return ['msg'=>'请勿频繁发送！','status'=>0];
         }else{
-            Redis::set('bind_code'.$mobile,(int)$code,300);
-
-            //发送短信
-            $res = Verificat::yxtsend($mobile,(int)$code,$ip);
-
-            if($res=="0"){
-                Verificat::insertsendcode((int)$code,$mobile,6,$ip,1,'发送成功！');
-                return ['msg'=>'发送成功！','status'=>1];
-            }elseif($res=="10001"){
-                Verificat::insertsendcode((int)$code,$mobile,6,$ip,0,'一分钟只能发送一条！');
-                return ['msg'=>'请勿频繁发送！','status'=>0];
-            }else{
-                Verificat::insertsendcode((int)$code,$mobile,6,$ip,0,$res);
-                return ['msg'=>'发送失败！','status'=>0];
+            Verificat::insertsendcode((int)$code,$mobile,6,$ip,0,$res);
+            return ['msg'=>'发送失败！','status'=>0];
             }
-        }
+
     }
     /**
      * 绑定+效验验证码
@@ -91,17 +87,20 @@ class BindController extends Controller
         //获取验证码
         $code = htmlformat($request->input('code'));
         //从redis中获取验证码
-        $codes = Redis::get('bind_code'.$mobile);
+        $codes = Redis::get('bind_code_ip'.$mobile);
         if($codes==null){
             return ['msg'=>'验证码已失效！','status'=>0];
         }else if($code!=$codes){
             return ['msg'=>'验证码不正确！','status'=>0];
         }else if($codes==$codes){
-            $user = User::where('username','=',$account)->first();
-            $google2fa = new Google2FA();
-            //生成二维码
-            $qrCodeUrl = $google2fa->getQRCodeUrl("EPayPlusAdmin",$mobile,$user['ggkey']);
-            return ['msg'=>'验证通过！','status'=>1,"url"=>$qrCodeUrl];
+            $ip=request()->ip();
+            $count = User::where('username','=',$account)->update(array('last_ip'=>$ip));
+            if($count!==false){
+                return ['msg'=>'授权成功！','status'=>1];
+            }else{
+                return ['msg'=>'授权失败！','status'=>0];
+            }
+
         }
     }
 }

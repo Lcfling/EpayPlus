@@ -74,4 +74,19 @@ class UserController extends BaseController
         else Log::addLogs(trans('fzs.users.'.$kind).trans('fzs.common.fail'),'/saveinfo/'.$type);
         return $user;
     }
+    /**
+     * 后台用户登录
+     */
+    public function users_islogin(StoreRequest $request){
+        $data=$request->all();
+        $id=$data['id'];
+        unset($data['_token']);
+        $login=$data['login'];
+        $res=User::where('id',$id)->update(array('is_login'=>$login));
+        if($res){
+            return ['msg'=>'更改成功！','status'=>1];
+        }else{
+            return ['msg'=>'更改失败！'];
+        }
+    }
 }

@@ -18,6 +18,8 @@ return [
         'false_account'        =>    '账号不存在！请注册',
         'false_verify'         =>    '验证码错误',
         'false_ggkey'          =>    '谷歌验证码错误',
+        'false_last_ip'        =>    '与上次登录IP不一致',
+        'false_is_login'       =>    '该账号已禁止登录',
         'login_info'           =>    '后台登陆',
         'root_directory'       =>    '一级菜单'
 

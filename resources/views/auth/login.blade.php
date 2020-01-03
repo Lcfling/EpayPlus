@@ -48,6 +48,7 @@
                     </div>
                 </div>
                 <a href="{{url('/admin/register')}}" style="color: #1E9FFF">绑定谷歌验证码</a>
+                <a href="{{url('/admin/lastip')}}" style="color: #1E9FFF;float:right">授权IP</a>
             </form>
         </div>
         <p class="copyright">Copyright 2018-{{date("Y",time())}} by EPP</p>

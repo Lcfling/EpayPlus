@@ -14,7 +14,7 @@ use App\Models\Order;
 use App\Models\Business;
 use App\Models\Codecount;
 use App\Models\Rebate;
-ini_set("memory_limit","300M");
+
 class OrderController extends Controller
 {
     /**
@@ -62,18 +62,23 @@ class OrderController extends Controller
             $sql->whereBetween('creatime',[$start,$end]);
         }
         if(true==$request->input('excel')&& true==$request->has('excel')){
-            $head = array('商户标识','平台订单号','商户订单号','码商ID','二维码ID','码商收款','收款金额','实际到账金额','支付类型','支付状态','回调状态','创建时间');
-            $excel = $sql->where([["status",2],['user_id','>',0]])->where('status',2)->select('business_code','order_sn','out_order_sn','user_id','erweima_id','sk_status','sk_money','tradeMoney','payType','status','callback_status','creatime')->get()->toArray();
-            foreach ($excel as $key=>$value){
-                $excel[$key]['sk_status']=$this->sk_status($value['sk_status']);
-                $excel[$key]['sk_money']=$value['sk_money']/100;
-                $excel[$key]['tradeMoney']=$value['tradeMoney']/100;
-                $excel[$key]['payType']=$this->payName($value['payType']);
-                $excel[$key]['status']='过期';
-                $excel[$key]['callback_status']=$this->callback($value['callback_status']);
-                $excel[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
+            if(false==$request->has('creatime')){
+                echo "<script>alert('请选择日期!');location.href='".$_SERVER["HTTP_REFERER"]."';</script>";
+            }else{
+                $head = array('商户标识','平台订单号','商户订单号','码商ID','二维码ID','码商收款','收款金额','实际到账金额','支付类型','支付状态','回调状态','创建时间');
+                $excel = $sql->where([["status",2],['user_id','>',0]])->where('status',2)->select('business_code','order_sn','out_order_sn','user_id','erweima_id','sk_status','sk_money','tradeMoney','payType','status','callback_status','creatime')->get()->toArray();
+                foreach ($excel as $key=>$value){
+                    $excel[$key]['sk_status']=$this->sk_status($value['sk_status']);
+                    $excel[$key]['sk_money']=$value['sk_money']/100;
+                    $excel[$key]['tradeMoney']=$value['tradeMoney']/100;
+                    $excel[$key]['payType']=$this->payName($value['payType']);
+                    $excel[$key]['status']='过期';
+                    $excel[$key]['callback_status']=$this->callback($value['callback_status']);
+                    $excel[$key]['creatime']=date("Y-m-d H:i:s",$value["creatime"]);
+                }
+                exportExcel($head,$excel,'订单过期记录'.date('YmdHis',time()),'',true);
             }
-            exportExcel($head,$excel,'订单过期记录'.date('YmdHis',time()),'',true);
+
         }else{
             $data=$sql->where([["status",2],['user_id','>',0]])->paginate(10)->appends($request->all());
             foreach ($data as $key=>$value){
